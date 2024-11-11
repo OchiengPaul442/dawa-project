@@ -65,7 +65,7 @@ const BestDealsCarousel: React.FC = () => {
       setCurrentIndex((prevIndex) =>
         prevIndex === products.length - 1 ? 0 : prevIndex + 1,
       );
-    }, 3000); // Change slide every 3 seconds
+    }, 3000);
   };
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const BestDealsCarousel: React.FC = () => {
               key={index}
               onClick={() => handleDotClick(index)}
               className={`h-2 w-2 rounded-full transition-all duration-200 ${
-                index === currentIndex ? 'w-4 bg-orange-500' : 'bg-gray-300'
+                index === currentIndex ? 'w-4 bg-primary_1' : 'bg-gray-300'
               }`}
             ></button>
           ))}
@@ -114,7 +114,7 @@ const BestDealsCarousel: React.FC = () => {
       >
         {products.map((product, index) => (
           <div
-            key={`${product.id}-${index}`} // Ensure unique key if IDs are duplicated
+            key={`${product.id}-${index}`}
             onClick={() => {
               // TODO: Handle product click
             }}

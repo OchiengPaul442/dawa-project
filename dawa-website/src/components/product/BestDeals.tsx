@@ -105,7 +105,7 @@ const BestDeals: React.FC = () => {
           <div
             key={product.id}
             onClick={() => handleClick(product.id)}
-            className="hover:bg-white :hover:shadow-md rounded-lg flex items-center px-2 py-4 w-full max-w-[273px] mx-auto sm:mx-0 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+            className="hover:bg-white :hover:shadow-md rounded-lg flex items-center px-2 py-2 w-full sm:max-w-[273px] mx-auto sm:mx-0 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
           >
             {/* Product Image */}
             <div className="w-[80px] h-[80px] sm:w-[117px] sm:h-[117px] md:w-[120px] md:h-[120px] lg:w-[117px] lg:h-[139px] relative flex-shrink-0">
