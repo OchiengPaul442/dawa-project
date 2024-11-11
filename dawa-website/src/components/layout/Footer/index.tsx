@@ -48,11 +48,11 @@ const Footer = () => {
         <FooterLinkSection
           title="Quick Links"
           links={[
-            { href: '/', label: 'About us' },
-            { href: '/contact', label: 'Contact us' },
-            { href: '/products', label: 'Products' },
-            { href: '/login', label: 'Login' },
-            { href: '/signup', label: 'Sign Up' },
+            { href: '#', label: 'About us' },
+            { href: '#', label: 'Contact us' },
+            { href: '#', label: 'Products' },
+            { href: '/account', label: 'Login' },
+            { href: '/account', label: 'Sign Up' },
           ]}
         />
 
@@ -61,8 +61,8 @@ const Footer = () => {
           title="Customer Area"
           links={[
             { href: '/account', label: 'My Account' },
-            { href: '/terms', label: 'Terms' },
-            { href: '/privacy-policy', label: 'Privacy Policy' },
+            { href: '#', label: 'Terms' },
+            { href: '#', label: 'Privacy Policy' },
           ]}
         />
 

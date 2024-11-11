@@ -13,7 +13,7 @@ const Newsletter = ({ container = false }: { container?: boolean }) => {
         className={`${container ? '' : 'container mx-auto'} flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-16 space-y-4 md:space-y-0`}
       >
         {/* Left Section */}
-        <div className="flex items-start space-x-4 text-white md:w-1/2 relative">
+        <div className="flex sm:flex-row flex-col items-center sm:items-start w-full space-x-4 text-white md:w-1/2 relative">
           <EnvelopIcons className="w-64 h-2w-64" />
 
           <div className="flex flex-col gap-4">
@@ -30,11 +30,11 @@ const Newsletter = ({ container = false }: { container?: boolean }) => {
         </div>
 
         {/* Right Section */}
-        <div className="md:w-1/2 relative">
+        <div className="w-full md:w-1/2 relative">
           {/* Circle Elements Decoration */}
           <CircleElements className="absolute z-0 right-[45px] top-[113%] transform -translate-y-1/2 w-10 h-10 opacity-60" />
 
-          <form className="relative z-20 flex items-center bg-white rounded-md shadow-md w-full p-1 max-w-lg mx-auto overflow-hidden">
+          <form className="relative z-20 flex sm:flex-row flex-col items-center bg-white rounded-md shadow-md w-full p-1 max-w-lg mx-auto overflow-hidden">
             <input
               type="email"
               placeholder="Enter your email here"
