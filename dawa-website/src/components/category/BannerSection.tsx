@@ -9,13 +9,13 @@ const BannerSection = () => {
       {/* Text and Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-transparent z-10 flex items-center p-8 sm:p-12">
         <div className="w-2/3 sm:w-1/2 flex flex-col gap-1 lg:gap-4">
-          <h3 className="text-sm font-semibold text-gray-400 uppercase">
+          <h3 className="text-xs md:text-sm font-semibold text-gray-400 uppercase">
             Most Viewed Category
           </h3>
-          <h2 className="text-3xl font-bold mt-2 text-black">
+          <h2 className="text-xl md:text-3xl font-bold mt-2 text-black">
             Laptop & Computers Category
           </h2>
-          <p className="text-gray-500 mt-2 leading-relaxed">
+          <p className="text-xs md:text-sm text-gray-500 mt-2 leading-relaxed">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore.
           </p>
