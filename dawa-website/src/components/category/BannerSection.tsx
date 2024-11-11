@@ -1,5 +1,5 @@
 'use client';
-
+import CustomImage from '../common/CustomImage';
 import Image from 'next/image';
 import React from 'react';
 
@@ -24,12 +24,11 @@ const BannerSection = () => {
 
       {/* Background Image */}
       <div className="absolute inset-0 right-0">
-        <Image
+        <CustomImage
           src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Laptop & Computers Banner"
-          layout="fill"
-          objectFit="cover"
-          className="object-cover"
+          fill
+          style={{ objectFit: 'cover' }}
         />
       </div>
     </div>

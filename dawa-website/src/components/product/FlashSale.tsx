@@ -1,8 +1,8 @@
+// components/FlashSale.tsx
 'use client';
-import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
-
+import CustomImage from '../common/CustomImage';
+import React, { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 
 // Reusable useWindowSize Hook
@@ -23,7 +23,7 @@ const useWindowSize = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial setting
+    handleResize();
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -77,45 +77,76 @@ const products: Product[] = [
     imageUrl:
       'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&auto=format&fit=crop&q=60',
   },
+  {
+    id: 5,
+    name: 'Apple Watch Series 7',
+    price: 'UGX25,000',
+    stockLeft: 15,
+    totalStock: 100,
+    imageUrl:
+      'https://images.unsplash.com/photo-1593642532444-44d02e8e96c5?w=500&auto=format&fit=crop&q=60',
+  },
+  {
+    id: 6,
+    name: 'Samsung Galaxy S21 Ultra',
+    price: 'UGX35,000',
+    stockLeft: 10,
+    totalStock: 100,
+    imageUrl:
+      'https://images.unsplash.com/photo-1593642532444-44d02e8e96c5?w=500&auto=format&fit=crop&q=60',
+  },
+  {
+    id: 7,
+    name: 'Sony PlayStation 5',
+    price: 'UGX25,000',
+    stockLeft: 20,
+    totalStock: 100,
+    imageUrl:
+      'https://images.unsplash.com/photo-1593642532444-44d02e8e96c5?w=500&auto=format&fit=crop&q=60',
+  },
 ];
 
 const FlashSale: React.FC = () => {
   const size = useWindowSize();
   const [itemsPerView, setItemsPerView] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fixed card dimensions
-  const CARD_WIDTH = 448; // Fixed card width in pixels
-  const CARD_HEIGHT = 150; // Fixed card height in pixels
-  const CARD_MARGIN = 16; // Gap between cards
-
-  // Adjust itemsPerView based on screen size and fixed card width
+  // Adjust itemsPerView based on screen size
   useEffect(() => {
     if (size.width) {
-      setItemsPerView(Math.floor(size.width / (CARD_WIDTH + CARD_MARGIN)));
+      if (size.width < 640) {
+        // Mobile
+        setItemsPerView(1);
+      } else if (size.width >= 640 && size.width < 768) {
+        // Small tablet
+        setItemsPerView(2);
+      } else if (size.width >= 768 && size.width < 1024) {
+        // Medium tablet
+        setItemsPerView(3);
+      } else {
+        // Desktop and above
+        setItemsPerView(4);
+      }
+      setCurrentIndex(0); // Reset to first slide on resize
     }
   }, [size.width]);
 
   // Auto-scroll functionality
   useEffect(() => {
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current);
-    }
-
-    autoScrollRef.current = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-    }, 3000); // 3 seconds
-
-    return () => {
-      if (autoScrollRef.current) {
-        clearInterval(autoScrollRef.current);
-      }
+    const autoScroll = () => {
+      setCurrentIndex((prevIndex) => {
+        const newIndex = prevIndex + 1;
+        return newIndex >= products.length ? 0 : newIndex;
+      });
     };
-  }, []);
 
-  // Calculate translation based on the current index
-  const translateX = -currentIndex * (CARD_WIDTH + CARD_MARGIN);
+    const interval = setInterval(autoScroll, 3000);
+
+    return () => clearInterval(interval);
+  }, [itemsPerView]);
+
+  // Calculate translation based on the current index and itemsPerView
+  const translateX = -(currentIndex * (100 / itemsPerView));
 
   // Countdown timer (e.g., 5 hours)
   const [timeLeft, setTimeLeft] = useState(5 * 60 * 60);
@@ -138,63 +169,57 @@ const FlashSale: React.FC = () => {
     return `${hrs} : ${mins} : ${secs}`;
   };
 
+  // Determine if carousel is scrollable
+  const isCarouselScrollable = products.length > itemsPerView;
+
   return (
     <div className="w-full py-6 container mx-auto bg-primary_1 md:rounded-xl relative overflow-hidden">
       <div className="px-4 flex flex-col lg:flex-row items-center">
         {/* Left Section with Countdown */}
-        <div className="lg:w-4/12 w-full flex flex-col items-start gap-4  text-white text-center lg:text-left lg:mb-0 relative z-10">
+        <div className="lg:w-4/12 w-full flex flex-col items-start gap-4 text-white text-center lg:text-left relative z-10">
           <h2 className="text-3xl font-bold">Flash Sale</h2>
           <p className="text-sm">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore
+            Limited time offer! Grab your favorite products at unbeatable
+            prices.
           </p>
           <div className="text-4xl font-bold">{formatTime(timeLeft)}</div>
         </div>
 
         {/* Right Section with Carousel */}
         <div className="lg:w-8/12 w-full py-1 relative z-10">
-          {/* Carousel Container with Fixed Width */}
-          <div
-            className="flex overflow-hidden"
-            style={{
-              maxWidth: itemsPerView * (CARD_WIDTH + CARD_MARGIN),
-            }}
-          >
+          {/* Carousel Container with Overflow Hidden */}
+          <div className="overflow-hidden relative w-full">
             {/* Carousel Inner with Dynamic TranslateX */}
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{
-                transform: `translateX(${translateX}px)`,
-                gap: `${CARD_MARGIN}px`,
+                transform: `translateX(${translateX}%)`,
+                width: `${(products.length * 100) / itemsPerView}%`,
+                gap: '16px',
               }}
             >
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-xl p-4 shadow-lg flex items-center"
+                  className="bg-white rounded-xl p-4 shadow-lg flex md:flex-row md:items-center gap-4"
                   style={{
-                    width: `${CARD_WIDTH}px`,
-                    height: `${CARD_HEIGHT}px`,
-                    flexShrink: 0,
+                    flex: `0 0 ${100 / itemsPerView}%`,
                   }}
                 >
-                  <div className="relative w-28 h-full rounded-xl overflow-hidden flex-shrink-0">
-                    <Image
+                  <div className="relative w-28 h-28 rounded-xl overflow-hidden flex-shrink-0">
+                    <CustomImage
                       src={product.imageUrl}
                       alt={product.name}
                       fill
-                      className="object-cover"
-                      sizes="112px"
-                      priority={false}
-                      loading="lazy"
+                      style={{ objectFit: 'cover', borderRadius: '12px' }}
                     />
                   </div>
-                  <div className="flex-1 flex flex-col justify-between h-full py-2 ml-4">
+                  <div className="flex flex-col justify-center h-full items-start">
                     <h3 className="font-semibold text-black text-sm lg:text-base">
                       {product.name}
                     </h3>
                     <div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between flex-wrap gap-2 items-center">
                         <p className="text-primary_1 font-bold text-sm lg:text-base">
                           {product.price}
                         </p>
@@ -215,18 +240,22 @@ const FlashSale: React.FC = () => {
           </div>
 
           {/* Dot Indicators */}
-          <div className="flex justify-start mt-4 ml-4 space-x-2">
-            {products.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'w-6 bg-white' : 'w-2 bg-gray-400/45'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+          {isCarouselScrollable && (
+            <div className="flex justify-center mt-4 space-x-2">
+              {products.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? 'w-6 bg-white'
+                      : 'w-2 bg-gray-400/45'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Background Overlay (Optional) */}

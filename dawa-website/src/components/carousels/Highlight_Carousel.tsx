@@ -104,8 +104,6 @@ const Highlight_Carousel: React.FC = () => {
                   alt={slide.title}
                   fill
                   style={{ objectFit: 'cover' }}
-                  className="rounded-lg"
-                  priority
                 />
               </div>
             </div>

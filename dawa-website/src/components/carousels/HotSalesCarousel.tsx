@@ -1,6 +1,6 @@
 'use client';
 import FireIcon from '@public/assets/svgs/fireIcon.svg';
-import Image from 'next/image';
+import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -219,12 +219,15 @@ const HotSalesCarousel: React.FC = () => {
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden h-full flex flex-col justify-between">
                   {/* Product Image */}
                   <div className="relative w-full h-[266px] mb-2">
-                    <Image
+                    <CustomImage
                       src={product.imageUrl}
                       alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-t-2xl"
+                      fill
+                      style={{
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 16,
+                        borderTopRightRadius: 16,
+                      }}
                     />
                     {/* Sale Badge */}
                     <div className="absolute top-2 right-2 h-12 w-12 flex justify-center items-center bg-primary_1 text-white text-xs font-bold px-2 py-1 rounded-full">

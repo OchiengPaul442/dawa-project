@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -139,12 +139,15 @@ const PopularSearchCarousel: React.FC = () => {
               >
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden h-full">
                   <div className="relative w-full h-56">
-                    <Image
+                    <CustomImage
                       src={product.imageUrl}
                       alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-t-2xl"
+                      fill
+                      style={{
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 16,
+                        borderTopRightRadius: 16,
+                      }}
                     />
                   </div>
                   <div className="p-4 text-center">

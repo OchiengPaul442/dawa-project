@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -106,9 +106,9 @@ const Top10ProductCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
-  const itemWidth = 348.35; // Card width in pixels
-  const itemHeight = 400; // Card height in pixels
-  const itemMarginRight = 16; // Margin-right between items (in pixels)
+  const itemWidth = 348.35;
+  const itemHeight = 400;
+  const itemMarginRight = 40;
 
   // Adjust itemsToShow based on screen size
   useEffect(() => {
@@ -220,14 +220,15 @@ const Top10ProductCarousel: React.FC = () => {
                   className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-full"
                 >
                   <div className="relative w-full h-3/4">
-                    <Image
+                    <CustomImage
                       src={product.imageUrl}
                       alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-t-2xl"
-                      priority={false}
-                      loading="lazy"
+                      fill
+                      style={{
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 16,
+                        borderTopRightRadius: 16,
+                      }}
                     />
                   </div>
                   <div className="p-4 flex flex-col justify-between flex-grow">

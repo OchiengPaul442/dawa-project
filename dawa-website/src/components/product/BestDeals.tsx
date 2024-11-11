@@ -1,7 +1,6 @@
 'use client';
-import Image from 'next/image';
 import React from 'react';
-
+import CustomImage from '../common/CustomImage';
 import StarRating from '../common/StarRating';
 
 // Define the structure of each product item
@@ -105,16 +104,15 @@ const BestDeals: React.FC = () => {
           <div
             key={product.id}
             onClick={() => handleClick(product.id)}
-            className="hover:bg-white :hover:shadow-md rounded-lg flex items-center px-2 py-2 w-full sm:max-w-[273px] mx-auto sm:mx-0 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+            className="hover:bg-white :hover:shadow-md hover:scale-105 rounded-lg flex items-center px-2 py-2 w-full sm:max-w-[273px] mx-auto sm:mx-0 cursor-pointer hover:shadow-lg transform transition duration-300 ease-in-out"
           >
             {/* Product Image */}
-            <div className="w-[80px] h-[80px] sm:w-[117px] sm:h-[117px] md:w-[120px] md:h-[120px] lg:w-[117px] lg:h-[139px] relative flex-shrink-0">
-              <Image
+            <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-30 md:h-30 lg:w-28 lg:h-35 relative flex-shrink-0">
+              <CustomImage
                 src={product.imageUrl}
                 alt={product.name}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
+                fill
+                style={{ objectFit: 'cover', borderRadius: '10%' }}
               />
             </div>
 

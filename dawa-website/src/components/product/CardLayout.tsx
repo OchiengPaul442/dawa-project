@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import React from 'react';
 import { AiOutlineCheck, AiOutlineHeart } from 'react-icons/ai';
-
+import CustomImage from '../common/CustomImage';
 import Button from '@/components/common/Button';
 import StarRating from '@/components/common/StarRating';
 
@@ -49,12 +49,15 @@ const renderGridLayout = (
 ) => (
   <div className="flex flex-col w-full h-[415px] gap-4">
     <div className="relative w-full h-[370px]">
-      <Image
-        src={product.imageUrl || '/placeholder-image.png'}
+      <CustomImage
+        src={product.imageUrl}
         alt={product.name}
-        layout="fill"
-        objectFit="cover"
-        className="rounded-t-2xl h-full"
+        fill
+        style={{
+          objectFit: 'cover',
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+        }}
       />
     </div>
     <div className="flex flex-col justify-between gap-2 p-2 h-full">
@@ -94,12 +97,15 @@ const renderListLayout = (
 ) => (
   <div className="flex flex-col md:flex-row gap-4">
     <div className="relative w-full h-48 md:w-48 md:h-auto flex-shrink-0">
-      <Image
-        src={product.imageUrl || '/placeholder-image.png'}
+      <CustomImage
+        src={product.imageUrl}
         alt={product.name}
-        layout="fill"
-        objectFit="cover"
-        className="rounded-l-2xl"
+        fill
+        style={{
+          objectFit: 'cover',
+          borderTopLeftRadius: 16,
+          borderBottomLeftRadius: 16,
+        }}
       />
     </div>
     <div className="flex flex-col lg:flex-row gap-4 justify-between w-full p-4">

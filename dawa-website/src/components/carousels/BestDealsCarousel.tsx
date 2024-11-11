@@ -1,6 +1,6 @@
-import Image from 'next/image';
+'use client';
 import React, { useEffect, useRef, useState } from 'react';
-
+import CustomImage from '../common/CustomImage';
 import StarRating from '../common/StarRating';
 
 const products = [
@@ -124,13 +124,12 @@ const BestDealsCarousel: React.FC = () => {
             className="flex items-center px-2 py-4 w-[273px] sm:mx-0 cursor-pointer transform transition duration-300 ease-in-out"
           >
             {/* Product Image */}
-            <div className="w-[80px] h-[80px] sm:w-[117px] sm:h-[117px] md:w-[120px] md:h-[120px] lg:w-[117px] lg:h-[139px] relative flex-shrink-0">
-              <Image
+            <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-30 md:h-30 lg:w-28 lg:h-35 relative flex-shrink-0">
+              <CustomImage
                 src={product.imageUrl}
                 alt={product.name}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
+                fill
+                style={{ objectFit: 'cover', borderRadius: '10%' }}
               />
             </div>
 

@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -162,7 +162,7 @@ const RecentlyViewedCarousel: React.FC = () => {
         {/* Carousel */}
         <div className="flex overflow-hidden">
           <div
-            className="flex transition-transform py-1 duration-500 ease-in-out"
+            className="flex transition-transform py-2 duration-500 ease-in-out"
             style={{
               transform: `translateX(-${currentIndex * (cardWidth + cardMargin)}px)`,
             }}
@@ -176,16 +176,15 @@ const RecentlyViewedCarousel: React.FC = () => {
                 style={{
                   marginRight: cardMargin,
                 }}
-                className=" flex items-center px-2 py-4 w-[273px] sm:mx-0 cursor-pointer  transform  transition duration-300 ease-in-out"
+                className="hover:bg-white :hover:shadow-md hover:scale-105 rounded-lg hover:shadow-lg flex items-center px-2 py-2 w-[273px] sm:mx-0 cursor-pointer  transform  transition duration-300 ease-in-out"
               >
                 {/* Product Image */}
                 <div className="w-[80px] h-[80px] sm:w-[117px] sm:h-[117px] md:w-[120px] md:h-[120px] lg:w-[117px] lg:h-[139px] relative flex-shrink-0">
-                  <Image
+                  <CustomImage
                     src={product.imageUrl}
                     alt={product.name}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
+                    fill
+                    style={{ objectFit: 'cover', borderRadius: '12px' }}
                   />
                 </div>
 
