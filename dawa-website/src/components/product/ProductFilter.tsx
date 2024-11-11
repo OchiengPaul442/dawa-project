@@ -1,4 +1,3 @@
-// components/product/ProductFilter.tsx
 'use client';
 import React, { useState } from 'react';
 import { FaCheckCircle, FaMinus, FaPlus } from 'react-icons/fa';

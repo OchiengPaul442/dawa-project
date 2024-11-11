@@ -71,8 +71,8 @@ const NavBar: React.FC = () => {
               <SheetContent side="right" className="w-64">
                 <SheetHeader>
                   <SheetTitle>
-                    <Link href="/" className="flex items-center mb-1">
-                      <Logo className={`w-auto h-12 -ml-6`} />
+                    <Link href="/" className="flex items-center">
+                      <Logo className={`w-auto h-24 -ml-8`} />
                     </Link>
                   </SheetTitle>
                 </SheetHeader>
