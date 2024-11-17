@@ -106,7 +106,7 @@ const Sidebar: React.FC = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    handleResize(); // Set initial value
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -116,15 +116,15 @@ const Sidebar: React.FC = () => {
     if (!isCategoryHovered && !isSubcategoriesHovered) {
       const timeout = setTimeout(() => {
         setHoveredCategory(null);
-      }, 200); // Slight delay to allow moving between elements
+      }, 200);
       return () => clearTimeout(timeout);
     }
   }, [isCategoryHovered, isSubcategoriesHovered]);
 
   return (
-    <div className="relative" style={{ width: '300px' }}>
+    <div className="relative w-full lg:w-[300px]">
       <div
-        className={`bg-white rounded-xl border border-gray-200 sticky top-[100px] transition-all duration-200 ${
+        className={`bg-white rounded-xl border border-gray-200 transition-all duration-200 ${
           hoveredCategory ? 'rounded-r-none' : 'rounded-xl'
         }`}
       >
@@ -147,13 +147,14 @@ const Sidebar: React.FC = () => {
                 onMouseLeave={() => setIsCategoryHovered(false)}
               >
                 <Link
+                  className="w-full"
                   href={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
                 >
                   <span className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
                       <span className="font-medium">{category.name}</span>
                       <span className="text-sm text-gray-500">
-                        {category.count.toLocaleString()}
+                        {`(${category.count.toLocaleString()})`}
                       </span>
                     </div>
                     {!isMobile && (
@@ -179,9 +180,10 @@ const Sidebar: React.FC = () => {
               {hoveredCategory.subcategories?.map((subcategory) => (
                 <div
                   key={subcategory.name}
-                  className="p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between"
+                  className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between"
                 >
                   <Link
+                    className="w-full"
                     href={`/categories/${encodeURIComponent(
                       hoveredCategory.name.toLowerCase(),
                     )}/${encodeURIComponent(subcategory.name.toLowerCase())}`}
