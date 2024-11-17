@@ -7,10 +7,14 @@ import { Button as ShadcnButton } from '../ui/button';
 type IconPosition = 'left' | 'right';
 
 interface ButtonProps {
+  type?: 'button' | 'submit' | 'reset';
   children?: ReactNode;
   icon?: React.ComponentType<{ className?: string }>;
   iconPosition?: IconPosition;
   className?: string;
+
+  disabled?: boolean;
+  loading?: boolean;
   onClick?: () => void;
 }
 

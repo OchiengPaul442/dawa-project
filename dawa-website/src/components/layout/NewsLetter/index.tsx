@@ -4,10 +4,16 @@ import React from 'react';
 
 import Button from '../../common/Button';
 
-const Newsletter = ({ container = false }: { container?: boolean }) => {
+const Newsletter = ({
+  container = false,
+  hide = false,
+}: {
+  container?: boolean;
+  hide?: boolean;
+}) => {
   return (
     <section
-      className={`bg-primary_1 py-12 relative overflow-hidden ${container ? 'rounded-2xl container mx-auto' : ''}`}
+      className={`bg-primary_1 py-12 mt-64 relative overflow-hidden ${hide ? 'hidden' : ''} ${container ? 'rounded-2xl container mx-auto' : ''}`}
     >
       <div
         className={`${container ? '' : 'container mx-auto'} flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-16 space-y-4 md:space-y-0`}

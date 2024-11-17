@@ -11,6 +11,7 @@ interface LayoutProps {
   children: ReactNode;
   newsletterProps?: {
     container?: boolean;
+    hide?: boolean;
   };
 }
 
@@ -24,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children, newsletterProps }) => {
       <NavBar />
 
       {/* Main Content */}
-      <main className="py-6 flex-grow">{children}</main>
+      <main className="flex-grow">{children}</main>
 
       {/* Newsletter Section */}
       {newsletterProps && <Newsletter {...newsletterProps} />}
