@@ -1,128 +1,205 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link'; // Adjust if using a different routing library
 
-interface SidebarProps {
-  height?: string;
+interface Category {
+  name: string;
+  count: number;
+  icon?: string;
+  subcategories?: {
+    name: string;
+    count: number;
+  }[];
 }
 
-// Define categories outside the component to ensure stable reference
-const categories = [
+// Categories data
+const categories: Category[] = [
   {
-    name: 'Laptop & Computer',
-    count: 45,
-    subcategories: ['Hardware', 'Memory', 'Storage', 'Software'],
+    name: 'Vehicles',
+    count: 30141,
+    subcategories: [
+      { name: 'Cars', count: 22863 },
+      { name: 'Buses & Microbuses', count: 898 },
+      { name: 'Heavy Equipment', count: 338 },
+      { name: 'Motorbikes & Scooters', count: 2539 },
+      { name: 'Trucks & Trailers', count: 1308 },
+      { name: 'Vehicle Parts & Accessories', count: 2161 },
+      { name: 'Watercraft & Boats', count: 34 },
+    ],
   },
   {
-    name: 'Smartphone',
-    count: 21,
-    subcategories: ['Android', 'iOS'],
+    name: 'Property',
+    count: 29771,
+    subcategories: [
+      { name: 'Houses & Apartments', count: 15000 },
+      { name: 'Land & Plots', count: 8000 },
+      { name: 'Commercial Property', count: 6771 },
+    ],
   },
   {
-    name: 'TV',
-    count: 32,
-    subcategories: ['Smart TV', 'LED', 'OLED', 'QLED'],
+    name: 'Phones & Tablets',
+    count: 27766,
+    subcategories: [
+      { name: 'Mobile Phones', count: 20000 },
+      { name: 'Tablets', count: 5000 },
+      { name: 'Accessories', count: 2766 },
+    ],
   },
   {
-    name: 'Wireless Hardware',
-    count: 129,
-    subcategories: ['Routers', 'Wi-Fi Extenders', 'Modems'],
+    name: 'Electronics',
+    count: 40091,
+    subcategories: [
+      { name: 'Computers', count: 15000 },
+      { name: 'TV & Audio', count: 12000 },
+      { name: 'Cameras', count: 8000 },
+      { name: 'Gaming', count: 5091 },
+    ],
   },
   {
-    name: 'Virtual Reality',
-    count: 29,
-    subcategories: ['Headsets', 'Accessories'],
+    name: 'Home, Appliances & Furniture',
+    count: 51021,
+    subcategories: [
+      { name: 'Furniture', count: 20000 },
+      { name: 'Kitchen Appliances', count: 15000 },
+      { name: 'Home Decor', count: 16021 },
+    ],
   },
   {
-    name: 'Ultrabook',
-    count: 44,
+    name: 'Health & Beauty',
+    count: 6737,
+    subcategories: [
+      { name: 'Skincare', count: 2000 },
+      { name: 'Haircare', count: 1500 },
+      { name: 'Makeup', count: 2237 },
+      { name: 'Medical Equipment', count: 1000 },
+    ],
   },
   {
-    name: 'Desktop PC’s',
-    count: 34,
+    name: 'Fashion',
+    count: 24914,
+    subcategories: [
+      { name: 'Clothing', count: 15000 },
+      { name: 'Shoes', count: 5000 },
+      { name: 'Accessories', count: 4914 },
+    ],
   },
   {
-    name: 'Speaker',
-    count: 49,
-    subcategories: ['Bluetooth', 'Wired'],
-  },
-  {
-    name: 'Routers',
-    count: 129,
-  },
-  {
-    name: 'PC Components',
-    count: 129,
-    subcategories: ['Processors', 'Graphics Cards', 'RAM', 'Storage'],
+    name: 'Sports, Arts & Outdoors',
+    count: 3355,
+    subcategories: [
+      { name: 'Sports Equipment', count: 2000 },
+      { name: 'Art Supplies', count: 855 },
+      { name: 'Outdoor Gear', count: 500 },
+    ],
   },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ height = '500px' }) => {
-  const [openCategory, setOpenCategory] = useState<string>(categories[0].name);
-  const [activeCategory, setActiveCategory] = useState<string>(
-    categories[0].name,
-  );
+const Sidebar: React.FC = () => {
+  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
+  const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+  const [isSubcategoriesHovered, setIsSubcategoriesHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Detect if the screen is mobile-sized
   useEffect(() => {
-    setOpenCategory(categories[0].name);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleCategory = (categoryName: string) => {
-    if (openCategory === categoryName) {
-      setOpenCategory('');
-    } else {
-      setOpenCategory(categoryName);
+  // Hide subcategories panel if neither the category nor the subcategories are hovered
+  useEffect(() => {
+    if (!isCategoryHovered && !isSubcategoriesHovered) {
+      const timeout = setTimeout(() => {
+        setHoveredCategory(null);
+      }, 200); // Slight delay to allow moving between elements
+      return () => clearTimeout(timeout);
     }
-    setActiveCategory(categoryName);
-  };
+  }, [isCategoryHovered, isSubcategoriesHovered]);
 
   return (
-    <ScrollArea
-      className="max-h-full w-full bg-white border border-gray-200 rounded-2xl p-4"
-      style={{ height }}
-    >
-      <h2 className="font-semibold text-lg mb-4">Show all categories</h2>
-      <ul className="space-y-4">
-        {categories.map((category) => (
-          <li key={category.name} className="flex flex-col">
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => toggleCategory(category.name)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  toggleCategory(category.name);
-                }
-              }}
-              className={`flex items-center justify-between font-semibold cursor-pointer transition-colors duration-200 ${
-                activeCategory === category.name
-                  ? 'text-primary_1'
-                  : 'text-gray-900'
-              }`}
-              aria-expanded={openCategory === category.name}
-            >
-              <span className="flex items-center">
-                {category.name}
-                <span className="ml-2 text-sm text-gray-400">
-                  ({category.count})
-                </span>
-              </span>
-            </div>
-            {category.subcategories && openCategory === category.name && (
-              <ul className="ml-4 mt-2 space-y-1 text-sm text-gray-600">
-                {category.subcategories.map((sub) => (
-                  <li
-                    key={sub}
-                    className="hover:text-gray-800 transition-colors duration-200 cursor-pointer"
+    <div className="relative" style={{ width: '300px' }}>
+      <div
+        className={`bg-white rounded-xl border border-gray-200 sticky top-[100px] transition-all duration-200 ${
+          hoveredCategory ? 'rounded-r-none' : 'rounded-xl'
+        }`}
+      >
+        <ScrollArea className="h-[calc(100vh-400px)]">
+          <div className="p-4 space-y-1">
+            {categories.map((category) => (
+              <div
+                key={category.name}
+                className={`p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                  hoveredCategory?.name === category.name
+                    ? 'bg-gray-100 text-orange-500'
+                    : 'hover:bg-gray-50 hover:text-orange-500'
+                }`}
+                onMouseEnter={() => {
+                  if (!isMobile) {
+                    setHoveredCategory(category);
+                    setIsCategoryHovered(true);
+                  }
+                }}
+                onMouseLeave={() => setIsCategoryHovered(false)}
+              >
+                <Link
+                  href={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
+                >
+                  <span className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{category.name}</span>
+                      <span className="text-sm text-gray-500">
+                        {category.count.toLocaleString()}
+                      </span>
+                    </div>
+                    {!isMobile && (
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                    )}
+                  </span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Subcategories Panel */}
+      {!isMobile && hoveredCategory && (
+        <div
+          className="absolute bg-white rounded-r-xl min-w-[300px] left-[300px] top-0 z-50"
+          onMouseEnter={() => setIsSubcategoriesHovered(true)}
+          onMouseLeave={() => setIsSubcategoriesHovered(false)}
+        >
+          <ScrollArea className="h-[calc(100vh-400px)]">
+            <div className="p-4 space-y-1">
+              {hoveredCategory.subcategories?.map((subcategory) => (
+                <div
+                  key={subcategory.name}
+                  className="p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between"
+                >
+                  <Link
+                    href={`/categories/${encodeURIComponent(
+                      hoveredCategory.name.toLowerCase(),
+                    )}/${encodeURIComponent(subcategory.name.toLowerCase())}`}
                   >
-                    {sub}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </ScrollArea>
+                    <span className="w-full flex items-center justify-between">
+                      <span className="font-medium">{subcategory.name}</span>
+                      <span className="text-sm text-gray-500">
+                        {subcategory.count.toLocaleString()} ads
+                      </span>
+                    </span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+    </div>
   );
 };
 
