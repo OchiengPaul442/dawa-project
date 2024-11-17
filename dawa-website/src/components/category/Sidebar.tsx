@@ -123,14 +123,14 @@ const Sidebar: React.FC = () => {
   }, [isCategoryHovered, isSubcategoriesHovered]);
 
   return (
-    <div className="relative w-full lg:w-[300px]">
+    <div className="w-full lg:w-[320px]">
       {/* Sidebar Container */}
       <div
         className={`bg-white rounded-xl border border-gray-200 sticky top-[100px] transition-all duration-200 ${
           hoveredCategory ? 'rounded-r-none' : 'rounded-xl'
         }`}
       >
-        <ScrollArea className="h-[calc(100vh-300px)] lg:h-[calc(100vh-400px)]">
+        <ScrollArea className="h-[calc(100vh-320px)] lg:h-[calc(100vh-400px)]">
           <div className="p-4 space-y-1">
             {categories.map((category) => (
               <div
@@ -174,11 +174,11 @@ const Sidebar: React.FC = () => {
       {/* Subcategories Panel */}
       {isLargeScreen && hoveredCategory && (
         <div
-          className="absolute bg-white rounded-r-xl border-r border-y min-w-[300px] left-[300px] top-0 z-50"
+          className="absolute bg-white rounded-r-xl border-r border-y min-w-[320px] left-[320px] top-0 z-50"
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
-          <ScrollArea className="h-[calc(100vh-300px)] lg:h-[calc(100vh-400px)]">
+          <ScrollArea className="h-[calc(100vh-320px)] lg:h-[calc(100vh-400px)]">
             <div className="p-4 space-y-1">
               {hoveredCategory.subcategories?.map((subcategory) => (
                 <div

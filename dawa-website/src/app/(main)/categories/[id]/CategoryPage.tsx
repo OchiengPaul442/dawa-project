@@ -204,8 +204,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     <div className="container mx-auto py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar and Filter Section */}
-        <div className="lg:col-span-1">
-          <div className="space-y-8 lg:sticky lg:top-[100px] z-50">
+        <div className="lg:col-span-1 relative">
+          <div className="space-y-8">
             <Sidebar />
 
             {/* Filter Section */}
@@ -228,7 +228,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
           {/* Filters and Sorting Options */}
           <div className="flex flex-col lg:flex-row flex-wrap justify-between items-center gap-4">
-            <h2 className="text-2xl font-semibold">Laptop Products</h2>
+            <h2 className="text-2xl font-semibold capitalize">
+              {decodeURIComponent(category as string)}
+            </h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewType('grid')}

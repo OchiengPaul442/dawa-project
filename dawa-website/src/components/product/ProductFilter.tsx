@@ -55,7 +55,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
   const displayedColors = showMoreColors ? allColors : allColors.slice(0, 4);
 
   return (
-    <div className="p-4">
+    <section className="p-4">
       <h3 className="text-lg font-semibold mb-4">Filters</h3>
 
       {/* Price Range Slider */}
@@ -211,7 +211,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           Reset Filter
         </Button>
       </div>
-    </div>
+    </section>
   );
 };
 
