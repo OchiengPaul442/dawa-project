@@ -105,7 +105,7 @@ const Sidebar: React.FC = () => {
   // Detect if the screen is large-sized (lg: and above)
   useEffect(() => {
     const handleResize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024); // Tailwind's lg breakpoint is 1024px
+      setIsLargeScreen(window.innerWidth >= 1024);
     };
     handleResize(); // Set initial value
     window.addEventListener('resize', handleResize);
@@ -117,7 +117,7 @@ const Sidebar: React.FC = () => {
     if (!isCategoryHovered && !isSubcategoriesHovered) {
       const timeout = setTimeout(() => {
         setHoveredCategory(null);
-      }, 200); // Slight delay to allow moving between elements
+      }, 200);
       return () => clearTimeout(timeout);
     }
   }, [isCategoryHovered, isSubcategoriesHovered]);
