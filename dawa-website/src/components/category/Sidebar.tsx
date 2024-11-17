@@ -3,14 +3,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link'; // Adjust if using a different routing library
 
+interface Subcategory {
+  name: string;
+  count: number;
+}
+
 interface Category {
   name: string;
   count: number;
-  icon?: string;
-  subcategories?: {
-    name: string;
-    count: number;
-  }[];
+  subcategories?: Subcategory[];
 }
 
 // Categories data
@@ -99,14 +100,14 @@ const Sidebar: React.FC = () => {
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [isSubcategoriesHovered, setIsSubcategoriesHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
-  // Detect if the screen is mobile-sized
+  // Detect if the screen is large-sized (lg: and above)
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsLargeScreen(window.innerWidth >= 1024); // Tailwind's lg breakpoint is 1024px
     };
-    handleResize();
+    handleResize(); // Set initial value
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -116,19 +117,20 @@ const Sidebar: React.FC = () => {
     if (!isCategoryHovered && !isSubcategoriesHovered) {
       const timeout = setTimeout(() => {
         setHoveredCategory(null);
-      }, 200);
+      }, 200); // Slight delay to allow moving between elements
       return () => clearTimeout(timeout);
     }
   }, [isCategoryHovered, isSubcategoriesHovered]);
 
   return (
     <div className="relative w-full lg:w-[300px]">
+      {/* Sidebar Container */}
       <div
-        className={`bg-white rounded-xl border border-gray-200 transition-all duration-200 ${
+        className={`bg-white rounded-xl border border-gray-200 sticky top-[100px] transition-all duration-200 ${
           hoveredCategory ? 'rounded-r-none' : 'rounded-xl'
         }`}
       >
-        <ScrollArea className="h-[calc(100vh-400px)]">
+        <ScrollArea className="h-[calc(100vh-300px)] lg:h-[calc(100vh-400px)]">
           <div className="p-4 space-y-1">
             {categories.map((category) => (
               <div
@@ -139,7 +141,7 @@ const Sidebar: React.FC = () => {
                     : 'hover:bg-gray-50 hover:text-orange-500'
                 }`}
                 onMouseEnter={() => {
-                  if (!isMobile) {
+                  if (isLargeScreen) {
                     setHoveredCategory(category);
                     setIsCategoryHovered(true);
                   }
@@ -147,8 +149,9 @@ const Sidebar: React.FC = () => {
                 onMouseLeave={() => setIsCategoryHovered(false)}
               >
                 <Link
-                  className="w-full"
                   href={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
+                  passHref
+                  className="w-full"
                 >
                   <span className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-3">
@@ -157,7 +160,7 @@ const Sidebar: React.FC = () => {
                         {`(${category.count.toLocaleString()})`}
                       </span>
                     </div>
-                    {!isMobile && (
+                    {isLargeScreen && (
                       <ChevronRight className="h-4 w-4 text-gray-400" />
                     )}
                   </span>
@@ -169,13 +172,13 @@ const Sidebar: React.FC = () => {
       </div>
 
       {/* Subcategories Panel */}
-      {!isMobile && hoveredCategory && (
+      {isLargeScreen && hoveredCategory && (
         <div
-          className="absolute bg-white rounded-r-xl min-w-[300px] left-[300px] top-0 z-50"
+          className="absolute bg-white rounded-r-xl border-r border-y min-w-[300px] left-[300px] top-0 z-50"
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
-          <ScrollArea className="h-[calc(100vh-400px)]">
+          <ScrollArea className="h-[calc(100vh-300px)] lg:h-[calc(100vh-400px)]">
             <div className="p-4 space-y-1">
               {hoveredCategory.subcategories?.map((subcategory) => (
                 <div
@@ -183,15 +186,16 @@ const Sidebar: React.FC = () => {
                   className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between"
                 >
                   <Link
-                    className="w-full"
                     href={`/categories/${encodeURIComponent(
                       hoveredCategory.name.toLowerCase(),
                     )}/${encodeURIComponent(subcategory.name.toLowerCase())}`}
+                    passHref
+                    className="w-full"
                   >
-                    <span className="w-full flex items-center justify-between">
+                    <span className="flex items-center justify-between w-full">
                       <span className="font-medium">{subcategory.name}</span>
                       <span className="text-sm text-gray-500">
-                        {subcategory.count.toLocaleString()} ads
+                        {`${subcategory.count.toLocaleString()} ads`}
                       </span>
                     </span>
                   </Link>
