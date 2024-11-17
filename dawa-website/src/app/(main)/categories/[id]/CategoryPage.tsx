@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { FaTh, FaThList } from 'react-icons/fa';
 
 import BannerSection from '@/components/category/BannerSection';
@@ -130,7 +131,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     useState<Product[]>(productsData);
   const [priceRange, setPriceRange] = useState<[number, number]>([
     20_000_000, 80_000_000,
-  ]); // Default range: 500k to 10m
+  ]); // Default range: 20m to 80m UGX
   const [location, setLocation] = useState<string>('');
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
@@ -194,51 +195,55 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const resetFilters = () => {
     setLocation('');
     setSelectedColors([]);
-    setPriceRange([500_000, 10_000_000]);
+    setPriceRange([20_000_000, 80_000_000]);
     setFilteredProducts(productsData);
     setFilterOption('default');
   };
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="flex flex-col w-full lg:grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="space-y-8">
-          <Sidebar height="400px" />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar and Filter Section */}
+        <div className="lg:col-span-1">
+          <div className="space-y-8 lg:sticky lg:top-[100px] z-50">
+            <Sidebar />
 
-          {/* Filter Section */}
-          <ProductFilter
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            location={location}
-            setLocation={setLocation}
-            selectedColors={selectedColors}
-            setSelectedColors={setSelectedColors}
-            applyFilters={applyFilters}
-            resetFilters={resetFilters}
-          />
+            {/* Filter Section */}
+            <ProductFilter
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              location={location}
+              setLocation={setLocation}
+              selectedColors={selectedColors}
+              setSelectedColors={setSelectedColors}
+              applyFilters={applyFilters}
+              resetFilters={resetFilters}
+            />
+          </div>
         </div>
 
-        <div className="col-span-3 space-y-14">
+        {/* Main Content Section */}
+        <div className="lg:col-span-3 space-y-14">
           <BannerSection />
 
           {/* Filters and Sorting Options */}
-          <div className="flex flex-row flex-wrap justify-between items-center gap-4">
+          <div className="flex flex-col lg:flex-row flex-wrap justify-between items-center gap-4">
             <h2 className="text-2xl font-semibold">Laptop Products</h2>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewType('grid')}
-                className={
-                  viewType === 'grid' ? 'text-primary_1' : 'text-gray-400'
-                }
+                className={`p-2 rounded-md ${
+                  viewType === 'grid' ? 'text-primary_1' : 'text-gray-300'
+                } transition-colors duration-200`}
                 aria-label="View as Grid"
               >
                 <FaTh size={18} />
               </button>
               <button
                 onClick={() => setViewType('list')}
-                className={
-                  viewType === 'list' ? 'text-primary_1' : 'text-gray-400'
-                }
+                className={`p-2 rounded-md ${
+                  viewType === 'list' ? 'text-primary_1' : 'text-gray-300'
+                } transition-colors duration-200`}
                 aria-label="View as List"
               >
                 <FaThList size={18} />
@@ -248,7 +253,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
               <select
                 value={filterOption}
                 onChange={handleFilterChange}
-                className="text-black font-semibold bg-transparent focus:outline-none cursor-pointer rounded-md px-2 py-1"
+                className="text-black font-semibold focus:outline-none cursor-pointer rounded-md px-2 py-1"
                 aria-label="Sort Products"
               >
                 <option value="default">Popularity</option>
@@ -261,10 +266,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
           {/* Products Display */}
           <div
-            className={`flex ${
+            className={`${
               viewType === 'grid'
                 ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
-                : 'flex-col gap-4'
+                : 'flex flex-col gap-4'
             }`}
           >
             {filteredProducts.length > 0 ? (

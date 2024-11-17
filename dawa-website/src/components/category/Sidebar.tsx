@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronRight } from 'lucide-react';
-import Link from 'next/link'; // Adjust if using a different routing library
+import Link from 'next/link';
 
 interface Subcategory {
   name: string;
