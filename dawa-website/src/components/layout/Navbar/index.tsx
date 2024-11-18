@@ -33,13 +33,13 @@ const NavBar: React.FC = () => {
 
   const navLinks = [
     { href: '/cat', label: 'All Categories' },
-    { href: '/cat/accessories', label: 'Accessories' },
-    { href: '/cat/smartphone', label: 'Smartphone' },
-    { href: '/cat/computer', label: 'Computer' },
-    { href: '/cat/gaming', label: 'Gaming Equipments' },
-    { href: '/cat/tv-monitors', label: 'TV & Monitors' },
-    { href: '/cat/headphones', label: 'Headphones' },
-    { href: '/cat/speaker', label: 'Speaker' },
+    { href: '/cat/vehicles', label: 'Vehicles' },
+    { href: '/cat/property', label: 'Property' },
+    { href: '/cat/phones & Tablets', label: 'Phones & Tablets' },
+    { href: '/cat/electronics', label: 'Electronics' },
+    { href: '/cat/health & beauty', label: 'Health & Beauty' },
+    { href: '/cat/fashion', label: 'Fashion' },
+    { href: '/cat/sports, Arts & Outdoors', label: 'Sports, Arts & Outdoors' },
     {
       href: '/cat/hot-deals',
       label: 'HOT DEALS',
