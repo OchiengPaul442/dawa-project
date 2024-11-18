@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaTh, FaThList } from 'react-icons/fa';
-
+import { useRouter } from 'next/navigation';
 import BannerSection from '@/components/category/BannerSection';
 import Sidebar from '@/components/category/Sidebar';
 import CardLayout from '@/components/product/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
+import CategoriesPage from './CategoriesPage';
 
 interface CategoryPageProps {
-  category: string;
+  category: string[];
 }
 
 interface Product {
@@ -123,6 +124,7 @@ const productsData: Product[] = [
 ];
 
 const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
+  const router = useRouter();
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [filterOption, setFilterOption] = useState<
     'default' | 'rating' | 'price_low_to_high' | 'price_high_to_low'
@@ -141,7 +143,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const STEP = 100_000; // 100,000 UGX
 
   const handleViewMore = (productId: number) => {
-    console.log(`View more details for product ID: ${productId}`);
+    router.push(`/prod/${productId}`);
   };
 
   // Function to apply filters
@@ -200,6 +202,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     setFilterOption('default');
   };
 
+  if (category.length === 0) {
+    return <CategoriesPage />;
+  }
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -229,7 +235,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
           {/* Filters and Sorting Options */}
           <div className="flex flex-col lg:flex-row flex-wrap justify-between items-center gap-4">
             <h2 className="text-2xl font-semibold capitalize">
-              {decodeURIComponent(category as string)}
+              {decodeURIComponent(category.join('/'))}
             </h2>
             <div className="flex items-center gap-2">
               <button

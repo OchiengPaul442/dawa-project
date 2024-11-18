@@ -3,6 +3,7 @@ import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
+import { useRouter } from 'next/navigation';
 import StarRating from '../common/StarRating';
 
 interface Product {
@@ -101,6 +102,7 @@ const useWindowSize = () => {
 };
 
 const Top10ProductCarousel: React.FC = () => {
+  const router = useRouter();
   const size = useWindowSize();
   const [itemsToShow, setItemsToShow] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -216,7 +218,7 @@ const Top10ProductCarousel: React.FC = () => {
                 }}
               >
                 <div
-                  onClick={() => console.log('clicked', product.id)}
+                  onClick={() => router.push(`/prod/${product.id}`)}
                   className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-full"
                 >
                   <div className="relative w-full h-3/4">

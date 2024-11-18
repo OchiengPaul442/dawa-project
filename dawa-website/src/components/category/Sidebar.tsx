@@ -149,7 +149,7 @@ const Sidebar: React.FC = () => {
                 onMouseLeave={() => setIsCategoryHovered(false)}
               >
                 <Link
-                  href={`/categories/${encodeURIComponent(category.name.toLowerCase())}`}
+                  href={`/cat/${encodeURIComponent(category.name.toLowerCase())}`}
                   passHref
                   className="w-full"
                 >
@@ -174,7 +174,7 @@ const Sidebar: React.FC = () => {
       {/* Subcategories Panel */}
       {isLargeScreen && hoveredCategory && (
         <div
-          className="absolute bg-white rounded-r-xl border-r border-y min-w-[320px] left-[320px] top-0 z-50"
+          className="absolute bg-white rounded-r-xl border-r border-y min-w-[320px] left-[320px] top-0 z-30"
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
@@ -186,7 +186,7 @@ const Sidebar: React.FC = () => {
                   className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between"
                 >
                   <Link
-                    href={`/categories/${encodeURIComponent(
+                    href={`/cat/${encodeURIComponent(
                       hoveredCategory.name.toLowerCase(),
                     )}/${encodeURIComponent(subcategory.name.toLowerCase())}`}
                     passHref

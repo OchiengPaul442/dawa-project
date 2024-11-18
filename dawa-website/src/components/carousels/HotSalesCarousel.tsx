@@ -3,9 +3,9 @@ import FireIcon from '@public/assets/svgs/fireIcon.svg';
 import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-
 import Button from '../common/Button';
 import { Progress } from '../ui/progress';
+import { useRouter } from 'next/navigation';
 
 interface Product {
   id: number;
@@ -132,6 +132,7 @@ const products: Product[] = [
 ];
 
 const HotSalesCarousel: React.FC = () => {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const cardWidth = 250;
@@ -265,7 +266,7 @@ const HotSalesCarousel: React.FC = () => {
                     {/* View More Button */}
                     <Button
                       onClick={() => {
-                        // TODO: Handle product click
+                        router.push(`/prod/${product.id}`);
                       }}
                       className="w-full mt-4 h-12 text-primary_1 bg-transparent hover:bg-transparent border-2 border-primary_1 rounded-lg"
                     >

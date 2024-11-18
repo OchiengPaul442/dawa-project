@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import CustomImage from '../common/CustomImage';
 import StarRating from '../common/StarRating';
 
+import { useRouter } from 'next/navigation';
+
 const products = [
   {
     id: 1,
@@ -43,6 +45,7 @@ const products = [
 ];
 
 const BestDealsCarousel: React.FC = () => {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const cardWidth = 273;
   const cardMargin = 36;
@@ -116,7 +119,7 @@ const BestDealsCarousel: React.FC = () => {
           <div
             key={`${product.id}-${index}`}
             onClick={() => {
-              // TODO: Handle product click
+              router.push(`/prod/${product.id}`);
             }}
             style={{
               marginRight: cardMargin,

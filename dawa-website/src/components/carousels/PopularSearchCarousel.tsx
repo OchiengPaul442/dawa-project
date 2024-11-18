@@ -1,5 +1,6 @@
 'use client';
 import CustomImage from '../common/CustomImage';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
@@ -55,6 +56,7 @@ const products: Product[] = [
 ];
 
 const PopularSearchCarousel: React.FC = () => {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const cardWidth = 250;
@@ -133,7 +135,7 @@ const PopularSearchCarousel: React.FC = () => {
             {products.map((product) => (
               <div
                 key={product.id}
-                onClick={() => console.log('clicked', product.id)}
+                onClick={() => router.push(`/prod/${product.id}`)}
                 className="flex-shrink-0 w-[250px] h-[355px] mr-9 cursor-pointer last:mr-0"
                 style={{ marginRight: `${cardMargin}px` }}
               >

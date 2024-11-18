@@ -2,7 +2,7 @@
 import CustomImage from '../common/CustomImage';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-
+import { useRouter } from 'next/navigation';
 import StarRating from '../common/StarRating';
 
 interface Product {
@@ -90,6 +90,7 @@ const products: Product[] = [
 ];
 
 const RecentlyViewedCarousel: React.FC = () => {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const cardWidth = 273;
@@ -171,7 +172,7 @@ const RecentlyViewedCarousel: React.FC = () => {
               <div
                 key={product.id}
                 onClick={() => {
-                  // TODO: Handle product click
+                  router.push(`/prod/${product.id}`);
                 }}
                 style={{
                   marginRight: cardMargin,

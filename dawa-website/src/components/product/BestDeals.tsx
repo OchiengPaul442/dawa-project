@@ -2,6 +2,7 @@
 import React from 'react';
 import CustomImage from '../common/CustomImage';
 import StarRating from '../common/StarRating';
+import { useRouter } from 'next/navigation';
 
 // Define the structure of each product item
 interface Product {
@@ -89,9 +90,10 @@ const products: Product[] = [
 ];
 
 const BestDeals: React.FC = () => {
+  const router = useRouter();
   // Handler to handle clicks and log product ID
   const handleClick = (productId: number) => {
-    console.log(`Product ID: ${productId}`);
+    router.push(`/prod/${productId}`);
   };
 
   return (

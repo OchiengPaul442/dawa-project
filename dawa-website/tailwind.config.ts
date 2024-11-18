@@ -69,6 +69,18 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      animation: {
+        pulse: 'pulse 1.5s infinite',
+        'pulse-slow': 'pulse 2s infinite',
+        'pulse-slower': 'pulse 2.5s infinite',
+      },
+      keyframes: {
+        pulse: {
+          '0%': { transform: 'scale(0.9)', opacity: '0.4' },
+          '50%': { transform: 'scale(1)', opacity: '0.6' },
+          '100%': { transform: 'scale(1.1)', opacity: '0' },
+        },
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

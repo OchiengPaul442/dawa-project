@@ -32,16 +32,16 @@ const NavBar: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { href: '/categories', label: 'All Categories' },
-    { href: '/categories/accessories', label: 'Accessories' },
-    { href: '/categories/smartphone', label: 'Smartphone' },
-    { href: '/categories/computer', label: 'Computer' },
-    { href: '/categories/gaming', label: 'Gaming Equipments' },
-    { href: '/categories/tv-monitors', label: 'TV & Monitors' },
-    { href: '/categories/headphones', label: 'Headphones' },
-    { href: '/categories/speaker', label: 'Speaker' },
+    { href: '/cat', label: 'All Categories' },
+    { href: '/cat/accessories', label: 'Accessories' },
+    { href: '/cat/smartphone', label: 'Smartphone' },
+    { href: '/cat/computer', label: 'Computer' },
+    { href: '/cat/gaming', label: 'Gaming Equipments' },
+    { href: '/cat/tv-monitors', label: 'TV & Monitors' },
+    { href: '/cat/headphones', label: 'Headphones' },
+    { href: '/cat/speaker', label: 'Speaker' },
     {
-      href: '/categories/hot-deals',
+      href: '/cat/hot-deals',
       label: 'HOT DEALS',
       icon: <FireIcon className="w-5 h-5 mr-1" />,
     },
@@ -132,7 +132,7 @@ const NavBar: React.FC = () => {
 
           {/* Icons and Buttons */}
           <div className="flex items-center gap-8">
-            <Link href="/categories">
+            <Link href="/cat">
               <FiGrid className="hidden lg:block text-xl text-gray-700 cursor-pointer" />
             </Link>
 

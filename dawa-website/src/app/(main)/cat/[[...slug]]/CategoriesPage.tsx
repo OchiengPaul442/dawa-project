@@ -9,8 +9,6 @@ import {
 } from 'react-icons/fa';
 
 import BestDealsCarousel from '@/components/carousels/BestDealsCarousel';
-import HotSalesCarousel from '@/components/carousels/HotSalesCarousel';
-import RecentlyViewedCarousel from '@/components/carousels/RecentlyViewedCarousel';
 import BannerSection from '@/components/category/BannerSection';
 import Sidebar from '@/components/category/Sidebar';
 
@@ -83,12 +81,6 @@ const CategoriesPage = () => {
           {/* Best Deals Carousel */}
           <BestDealsCarousel />
         </div>
-      </section>
-
-      {/* Carousels Section */}
-      <section className="grid grid-cols-1 gap-8">
-        <HotSalesCarousel />
-        <RecentlyViewedCarousel />
       </section>
     </div>
   );
