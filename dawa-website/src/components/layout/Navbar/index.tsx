@@ -138,7 +138,7 @@ const NavBar: React.FC = () => {
 
             {/* Favorites Icon with Badge for Large Screens */}
             <Link
-              href="/favorites"
+              href="/wishlist"
               className="relative hidden lg:flex items-center"
             >
               <FaHeart className="text-xl text-gray-700 cursor-pointer" />

@@ -38,7 +38,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "jest.setup.ts",
-    "next.config.mjs"
+    "next.config.mjs",
+    "src/app/(main)/wishlist"
   ],
   "exclude": ["node_modules"]
 }
