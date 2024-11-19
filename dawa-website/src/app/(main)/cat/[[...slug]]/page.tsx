@@ -2,18 +2,19 @@ import CategoryPage from './CategoryPage';
 
 interface PageProps {
   params: Promise<{
-    slug?: string[];
+    slug?: string[] | string;
   }>;
 }
 
 export default async function Page({ params }: PageProps) {
-  // Wait for params to resolve
+  // Await the params object
   const resolvedParams = await params;
 
-  const slug = Array.isArray(resolvedParams?.slug)
-    ? resolvedParams.slug
-    : resolvedParams?.slug
-      ? [resolvedParams.slug]
+  // Decode and process the slug
+  const slug = Array.isArray(resolvedParams.slug)
+    ? resolvedParams.slug.map((s) => decodeURIComponent(s))
+    : resolvedParams.slug
+      ? [decodeURIComponent(resolvedParams.slug)]
       : [];
 
   return <CategoryPage category={slug} />;

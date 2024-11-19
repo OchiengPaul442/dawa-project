@@ -22,7 +22,7 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
   parentCategory,
 }) => {
   const router = useRouter();
-  const pathname = decodeURIComponent(usePathname()); // Decode pathname for accurate active state
+  const pathname = decodeURIComponent(usePathname());
   const [showMore, setShowMore] = useState(false);
 
   const toggleShowMore = () => {
@@ -43,7 +43,7 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
       {/* Main Category */}
       <div>
         <h2
-          onClick={() => router.push(`/cat/${parentCategory.toLowerCase()}`)}
+          onClick={() => router.push(`/cat/${parentCategory}`)}
           className={`text-lg font-semibold cursor-pointer ${
             isActive(`/cat/${parentCategory}`)
               ? `text-[${themeColors.primary}]`

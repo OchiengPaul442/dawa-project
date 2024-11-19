@@ -35,18 +35,32 @@ const NavBar: React.FC = () => {
     { href: '/cat', label: 'All Categories' },
     { href: '/cat/vehicles', label: 'Vehicles' },
     { href: '/cat/property', label: 'Property' },
-    { href: '/cat/phones & Tablets', label: 'Phones & Tablets' },
-    { href: '/cat/electronics', label: 'Electronics' },
-    { href: '/cat/health & beauty', label: 'Health & Beauty' },
-    { href: '/cat/fashion', label: 'Fashion' },
-    { href: '/cat/sports, Arts & Outdoors', label: 'Sports, Arts & Outdoors' },
     {
-      href: '/cat/hot-deals',
+      href: `/cat/${encodeURIComponent('phones & Tablets')}`,
+      label: 'Phones & Tablets',
+    },
+    {
+      href: `/cat/${encodeURIComponent('electronics')}`,
+      label: 'Electronics',
+    },
+    {
+      href: `/cat/${encodeURIComponent('health & beauty')}`,
+      label: 'Health & Beauty',
+    },
+    {
+      href: `/cat/${encodeURIComponent('fashion')}`,
+      label: 'Fashion',
+    },
+    {
+      href: `/cat/${encodeURIComponent('sports, Arts & Outdoors')}`,
+      label: 'Sports, Arts & Outdoors',
+    },
+    {
+      href: `/cat/${encodeURIComponent('hot deals')}`,
       label: 'HOT DEALS',
       icon: <FireIcon className="w-5 h-5 mr-1" />,
     },
   ];
-
   return (
     <nav className="bg-white">
       {/* Section 1: Top Nav */}
