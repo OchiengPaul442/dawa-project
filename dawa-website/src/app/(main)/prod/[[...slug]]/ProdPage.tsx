@@ -4,6 +4,7 @@ import ImageCarousel from '@/components/carousels/ImageCarousel';
 import ProductTabs from '@/components/product/ProductTabs';
 import ShareSection from '@/components/product/ShareSection';
 import ProductDetails from '@/components/product/ProductDetails';
+import Link from 'next/link';
 
 const product = {
   title: 'LED Monitor With High Quality In The World',
@@ -114,21 +115,22 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
       </div>
     );
   }
+
   return (
     <div className="flex flex-col gap-10">
       <section className="container mx-auto py-10 px-5">
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 flex items-center space-x-2 mb-6">
-          <a href="/" className="hover:underline text-primary_1">
+          <Link href="/" className="hover:underline text-primary_1">
             Home
-          </a>
+          </Link>
           <span>/</span>
-          <a
+          <Link
             href="/cat/TV & Monitors"
             className="hover:underline text-primary_1"
           >
             TV & Monitors
-          </a>
+          </Link>
           <span>/</span>
           <span className="text-gray-800">LED</span>
         </div>
