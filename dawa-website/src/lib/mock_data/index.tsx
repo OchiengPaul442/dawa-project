@@ -1,0 +1,198 @@
+import {
+  FaCar,
+  FaHome,
+  FaMobileAlt,
+  FaTv,
+  FaCouch,
+  FaHeartbeat,
+  FaTshirt,
+  FaFutbol,
+  FaTools,
+  FaGamepad,
+  FaPaintBrush,
+  FaSkating,
+} from 'react-icons/fa';
+
+export const categories: any[] = [
+  {
+    name: 'Vehicles',
+    count: 30141,
+    icon: <FaCar className="text-primary_1" />,
+    subcategories: [
+      { name: 'Cars', count: 22863, icon: <FaCar /> },
+      { name: 'Buses & Microbuses', count: 898, icon: <FaCar /> },
+      { name: 'Heavy Equipment', count: 338, icon: <FaTools /> },
+      { name: 'Motorbikes & Scooters', count: 2539, icon: <FaCar /> },
+      { name: 'Trucks & Trailers', count: 1308, icon: <FaCar /> },
+      { name: 'Vehicle Parts & Accessories', count: 2161, icon: <FaTools /> },
+      { name: 'Watercraft & Boats', count: 34, icon: <FaCar /> },
+    ],
+  },
+  {
+    name: 'Property',
+    count: 29771,
+    icon: <FaHome className="text-primary_1" />,
+    subcategories: [
+      { name: 'Houses & Apartments', count: 15000, icon: <FaHome /> },
+      { name: 'Land & Plots', count: 8000, icon: <FaHome /> },
+      { name: 'Commercial Property', count: 6771, icon: <FaHome /> },
+    ],
+  },
+  {
+    name: 'Phones & Tablets',
+    count: 27766,
+    icon: <FaMobileAlt className="text-primary_1" />,
+    subcategories: [
+      { name: 'Mobile Phones', count: 20000, icon: <FaMobileAlt /> },
+      { name: 'Tablets', count: 5000, icon: <FaTv /> },
+      { name: 'Accessories', count: 2766, icon: <FaTools /> },
+    ],
+  },
+  {
+    name: 'Electronics',
+    count: 40091,
+    icon: <FaTv className="text-primary_1" />,
+    subcategories: [
+      { name: 'Computers', count: 15000, icon: <FaTv /> },
+      { name: 'TV & Audio', count: 12000, icon: <FaTv /> },
+      { name: 'Cameras', count: 8000, icon: <FaTv /> },
+      { name: 'Gaming', count: 5091, icon: <FaGamepad /> },
+    ],
+  },
+  {
+    name: 'Home, Appliances & Furniture',
+    count: 51021,
+    icon: <FaCouch className="text-primary_1" />,
+    subcategories: [
+      { name: 'Furniture', count: 20000, icon: <FaCouch /> },
+      { name: 'Kitchen Appliances', count: 15000, icon: <FaTools /> },
+      { name: 'Home Decor', count: 16021, icon: <FaPaintBrush /> },
+    ],
+  },
+  {
+    name: 'Health & Beauty',
+    count: 6737,
+    icon: <FaHeartbeat className="text-primary_1" />,
+    subcategories: [
+      { name: 'Skincare', count: 2000, icon: <FaHeartbeat /> },
+      { name: 'Haircare', count: 1500, icon: <FaHeartbeat /> },
+      { name: 'Makeup', count: 2237, icon: <FaHeartbeat /> },
+      { name: 'Medical Equipment', count: 1000, icon: <FaTools /> },
+    ],
+  },
+  {
+    name: 'Fashion',
+    count: 24914,
+    icon: <FaTshirt className="text-primary_1" />,
+    subcategories: [
+      { name: 'Clothing', count: 15000, icon: <FaTshirt /> },
+      { name: 'Shoes', count: 5000, icon: <FaTshirt /> },
+      { name: 'Accessories', count: 4914, icon: <FaTools /> },
+    ],
+  },
+  {
+    name: 'Sports, Arts & Outdoors',
+    count: 3355,
+    icon: <FaFutbol className="text-primary_1" />,
+    subcategories: [
+      { name: 'Sports Equipment', count: 2000, icon: <FaSkating /> },
+      { name: 'Art Supplies', count: 855, icon: <FaPaintBrush /> },
+      { name: 'Outdoor Gear', count: 500, icon: <FaSkating /> },
+    ],
+  },
+];
+
+export const productsData: any[] = [
+  {
+    id: 1,
+    name: 'MacBook Pro 2020 With 260 SSD',
+    price: 1480000,
+    originalPrice: 3200000,
+    rating: 4.5,
+    reviews: 12,
+    imageUrl:
+      'https://images.unsplash.com/photo-1600262300671-295cb21f4d06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8TWFjQm9vayUyMFBybyUyMDIwMjAlMjBXaXRoJTIwU1NEfGVufDB8fDB8fHww',
+    sku: '123141241251251',
+    location: 'Kampala',
+    color: 'White',
+    features: [
+      'Direct Full Array',
+      'Quantum Dot Technology',
+      'Ambient Mode',
+      'One Remote Control',
+    ],
+  },
+  {
+    id: 2,
+    name: 'Dell XPS 15 Ultra',
+    price: 500000000,
+    originalPrice: 600000000,
+    rating: 4.8,
+    reviews: 25,
+    imageUrl:
+      'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8RGVsbCUyMFhQUyUyMDE1fGVufDB8fDB8fHww',
+    sku: '987654321098765',
+    location: 'Gulu',
+    color: 'Black',
+    features: [
+      'InfinityEdge Display',
+      'Intel i9 Processor',
+      '32GB RAM',
+      '1TB SSD',
+    ],
+  },
+  {
+    id: 3,
+    name: 'Asus ZenBook 14',
+    price: 75000,
+    originalPrice: 100000,
+    rating: 4.2,
+    reviews: 8,
+    imageUrl:
+      'https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8QXN1cyUyMFplbkJvb2slMjAxNHxlbnwwfHwwfHw%3D',
+    sku: '192837465564738',
+    location: 'Jinja',
+    color: 'Blue',
+    features: ['OLED Display', 'AMD Ryzen Processor', '16GB RAM', '512GB SSD'],
+  },
+  {
+    id: 4,
+    name: 'Budget Laptop 2023',
+    price: 5000,
+    originalPrice: 8000,
+    rating: 3.8,
+    reviews: 5,
+    imageUrl:
+      'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8QnVkZ2V0JTIwTGFwdG9wJTIwMjAyM3xlbnwwfHwwfHx8MA%3D%3D',
+    sku: '555666777888999',
+    location: 'Fort Portal',
+    color: 'Green',
+    features: [
+      'Basic Display',
+      'Intel Celeron Processor',
+      '4GB RAM',
+      '128GB SSD',
+    ],
+  },
+  {
+    id: 5,
+    name: 'Elite Laptop Pro Max',
+    price: 100_000_000,
+    originalPrice: 150_000_000,
+    rating: 5.0,
+    reviews: 50,
+    imageUrl:
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8RWxpZ2UlMjBMYXB0b3B8ZW58MHx8MHx8',
+    sku: '999888777666555',
+    location: 'Mbarara',
+    color: 'Purple',
+    features: [
+      '4K Display',
+      'Intel Xeon Processor',
+      '64GB RAM',
+      '4TB SSD',
+      'Advanced Cooling System',
+      'Liquid Metal Finish',
+    ],
+  },
+];

@@ -15,7 +15,7 @@ const Loading: React.FC = () => {
         <div className="absolute w-40 h-40 rounded-full bg-[#FFA200] opacity-10 animate-pulse-slower"></div>
 
         {/* Letter D */}
-        <div className="text-6xl font-bold text-[#FFA200] z-10">D</div>
+        <div className="text-6xl font-bold text-black z-10">D</div>
       </div>
     </div>
   );
