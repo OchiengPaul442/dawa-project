@@ -39,7 +39,7 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
   };
 
   return (
-    <div className="space-y-4 bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md max-w-sm">
+    <div className="space-y-4 bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md lg:max-w-sm">
       {/* Main Category */}
       <div>
         <h2

@@ -47,10 +47,10 @@ const WishlistHeader: FC<WishlistHeaderProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-primary_1" />
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-sm md:text-lg lg:text-xl font-semibold text-gray-900">
               My Favorites
             </h1>
             <span className="text-gray-500">({totalItems} items)</span>

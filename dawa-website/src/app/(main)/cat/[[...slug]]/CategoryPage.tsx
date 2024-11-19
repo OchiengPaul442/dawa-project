@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CardLayout from '@/components/product/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
@@ -8,6 +8,8 @@ import FiltersAndSorting from '@/components/category/FiltersAndSorting';
 import CategoriesAndSubcategories from '@/components/category/CategoriesAndSubcategories';
 import { productsData, categories } from '@/lib/mock_data';
 import CategoriesPage from './CategoriesPage';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 
 interface CategoryPageProps {
   category: string[];
@@ -26,9 +28,19 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const [location, setLocation] = useState<string>('');
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
+  // Find the selected category and subcategory
   const selectedCategory = categories.find(
     (cat) => cat.name.toLowerCase() === category[0]?.toLowerCase(),
   );
+
+  const selectedSubcategory =
+    selectedCategory?.subcategories?.find(
+      (sub: any) => sub.name.toLowerCase() === category[1]?.toLowerCase(),
+    ) || null;
+
+  useEffect(() => {
+    applyFilters();
+  }, [location, priceRange, selectedColors]);
 
   const handleViewMore = (productId: number) => {
     router.push(`/prod/${productId}`);
@@ -88,12 +100,58 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     return <CategoriesPage />;
   }
 
+  // Generate breadcrumb items with counts
+  const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Categories', href: '/cat' },
+    ...(selectedCategory
+      ? [
+          {
+            name: `${selectedCategory.name} (${selectedCategory.count})`,
+            href: `/cat/${selectedCategory.name.toLowerCase()}`,
+          },
+        ]
+      : []),
+    ...(selectedSubcategory
+      ? [
+          {
+            name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
+            href: `/cat/${selectedCategory?.name.toLowerCase()}/${selectedSubcategory.name.toLowerCase()}`,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="container mx-auto py-8 px-4">
+      {/* Breadcrumb */}
+      <nav
+        className="flex flex-wrap items-center space-x-2 text-gray-700 text-sm mb-6"
+        aria-label="Breadcrumb"
+      >
+        <ul className="flex flex-wrap items-center space-x-2">
+          {breadcrumbItems.map((item, index) => (
+            <li key={index} className="flex items-center">
+              <Link
+                href={item.href}
+                className="hover:underline text-primary font-medium"
+              >
+                {item.name}
+              </Link>
+              {index < breadcrumbItems.length - 1 && (
+                <ChevronRight
+                  className="h-4 w-4 text-gray-500 mx-2 shrink-0"
+                  aria-hidden="true"
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Categories, Subcategories, and Filters */}
         <div className="lg:col-span-1 flex flex-col space-y-6 h-auto">
-          {/* Reusable Component */}
           <CategoriesAndSubcategories
             categoryName={selectedCategory.name}
             categoryCount={selectedCategory.count}
@@ -101,7 +159,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             parentCategory={category[0]}
           />
 
-          {/* Product Filter */}
           <div className="mt-6">
             <ProductFilter
               priceRange={priceRange}
@@ -118,7 +175,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-14">
-          {/* Filters and Sorting */}
           <FiltersAndSorting
             category={category}
             viewType={viewType}
@@ -127,7 +183,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             handleFilterChange={handleFilterChange}
           />
 
-          {/* Products */}
           <div
             className={`${
               viewType === 'grid'

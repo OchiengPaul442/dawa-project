@@ -1,13 +1,14 @@
 'use client';
 
-import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
-import FireIcon from '@public/assets/svgs/fireIcon.svg';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaHeart, FaSearch } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
 import { HiOutlineMenu } from 'react-icons/hi';
-
+import Link from 'next/link';
+import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
+import Sidebar from '@/components/category/Sidebar';
 import {
   Sheet,
   SheetContent,
@@ -18,8 +19,17 @@ import {
 
 import Button from '../../common/Button';
 
-const NavBar: React.FC = () => {
+interface NavBarProps {
+  closeOnSelect?: boolean;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
+  const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   // Track scroll position to set sticky state
   useEffect(() => {
@@ -30,6 +40,31 @@ const NavBar: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showDropdown]);
+
+  // Close the sheet when an item inside it is clicked
+  const handleSheetItemClick = () => {
+    setIsSheetOpen(false);
+  };
 
   const navLinks = [
     { href: '/cat', label: 'All Categories' },
@@ -58,11 +93,11 @@ const NavBar: React.FC = () => {
     {
       href: `/cat/${encodeURIComponent('hot deals')}`,
       label: 'HOT DEALS',
-      icon: <FireIcon className="w-5 h-5 mr-1" />,
     },
   ];
+
   return (
-    <nav className="bg-white">
+    <nav className="bg-white relative z-50">
       {/* Section 1: Top Nav */}
       <div
         className={`${
@@ -72,11 +107,11 @@ const NavBar: React.FC = () => {
         <div
           className={`container mx-auto flex items-center justify-between ${
             isSticky ? 'py-1 lg:py-0 h-16' : 'py-2 h-20'
-          } px-4 transition-all duration-300 ease-in-out gap-4`}
+          } px-4 transition-all duration-300 ease-in-out gap-8`}
         >
           {/* Menu Trigger for Mobile */}
           <div className="flex items-center gap-4 lg:hidden">
-            <Sheet>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <button>
                   <HiOutlineMenu className="text-2xl text-gray-700" />
@@ -91,25 +126,31 @@ const NavBar: React.FC = () => {
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-4 mt-4">
-                  {navLinks.map(({ href, label, icon }) => (
+                  {navLinks.map(({ href, label }) => (
                     <Link
                       key={href}
                       href={href}
                       className={`flex items-center ${
                         label === 'HOT DEALS'
-                          ? 'font-extrabold text-black'
+                          ? 'font-extrabold text-primary_1'
                           : 'font-semibold text-[#4D4D4D]'
                       }`}
+                      onClick={handleSheetItemClick}
                     >
-                      {icon}
                       {label}
                     </Link>
                   ))}
                   <div className="relative mt-4 flex justify-between items-center">
-                    <div className="flex items-center">
+                    <button
+                      onClick={() => {
+                        handleSheetItemClick;
+                        router.push('/wishlist');
+                      }}
+                      className="flex items-center"
+                    >
                       <FaHeart className="text-xl text-gray-700 cursor-pointer" />
                       <span className="ml-2">Favorites</span>
-                    </div>
+                    </button>
                     <span className="bg-primary_1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
                       12
                     </span>
@@ -130,6 +171,31 @@ const NavBar: React.FC = () => {
             </Link>
           </div>
 
+          {/* All Categories Dropdown Trigger (conditionally rendered) */}
+          {pathname !== '/cat' && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                className="hidden lg:flex items-center gap-2 text-gray-700 hover:text-primary_1"
+                onClick={() => setShowDropdown((prev) => !prev)}
+              >
+                <FiGrid className="text-2xl" />
+              </button>
+              <AnimatePresence>
+                {showDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute left-0 top-full mt-2 w-auto z-50"
+                  >
+                    <Sidebar onSelect={handleSheetItemClick} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
           {/* Search Bar */}
           <div className="flex-1 flex items-center">
             <div className="relative w-full">
@@ -146,11 +212,7 @@ const NavBar: React.FC = () => {
 
           {/* Icons and Buttons */}
           <div className="flex items-center gap-8">
-            <Link href="/cat">
-              <FiGrid className="hidden lg:block text-xl text-gray-700 cursor-pointer" />
-            </Link>
-
-            {/* Favorites Icon with Badge for Large Screens */}
+            {/* Favorites Icon with Badge */}
             <Link
               href="/wishlist"
               className="relative hidden lg:flex items-center"
@@ -175,26 +237,6 @@ const NavBar: React.FC = () => {
               </Link>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Bottom Row: Categories (hidden on mobile) */}
-      <div className="hidden lg:flex bg-white">
-        <div className="container mx-auto px-4 py-2 flex items-center gap-6 text-sm font-medium text-gray-600 overflow-x-auto">
-          {navLinks.map(({ href, label, icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`whitespace-nowrap ${
-                label === 'HOT DEALS'
-                  ? 'font-extrabold flex text-black items-center'
-                  : 'font-semibold text-gray-500 hover:text-primary_1'
-              }`}
-            >
-              {icon}
-              {label}
-            </Link>
-          ))}
         </div>
       </div>
     </nav>

@@ -19,7 +19,11 @@ interface Category {
   icon: React.ReactNode;
 }
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  onSelect?: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [isSubcategoriesHovered, setIsSubcategoriesHovered] = useState(false);
@@ -41,8 +45,14 @@ const Sidebar: React.FC = () => {
     }
   }, [isCategoryHovered, isSubcategoriesHovered]);
 
+  const handleItemClick = () => {
+    if (onSelect) {
+      onSelect();
+    }
+  };
+
   return (
-    <div className="w-full lg:w-[340px]">
+    <div className="w-full lg:w-[340px] relative z-50">
       {/* Sidebar Container */}
       <div
         className={`bg-white rounded-xl border sticky top-[100px] ${
@@ -51,27 +61,57 @@ const Sidebar: React.FC = () => {
             : 'rounded-xl border-gray-200'
         }`}
       >
-        <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-310px)]">
+        <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-290px)]">
           <div className="p-4 space-y-1">
-            {categories.map((category) => (
+            {/* Link for All Categories */}
+            <Link href="/cat" passHref onClick={handleItemClick}>
               <div
-                key={category.name}
                 className={`p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${
-                  hoveredCategory?.name === category.name
+                  hoveredCategory === null
                     ? 'bg-gray-100 text-primary_1'
                     : 'hover:bg-gray-50 hover:text-primary_1'
                 }`}
                 onMouseEnter={() => {
                   if (isLargeScreen) {
-                    setHoveredCategory(category);
+                    setHoveredCategory(null);
                     setIsCategoryHovered(true);
                   }
                 }}
                 onMouseLeave={() => setIsCategoryHovered(false)}
               >
-                <Link
-                  href={`/cat/${encodeURIComponent(category.name.toLowerCase())}`}
-                  passHref
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">📂</span>
+                  <div className="flex flex-col items-start w-full truncate">
+                    <span className="font-sm truncate">All Categories</span>
+                  </div>
+                </div>
+                {isLargeScreen && (
+                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                )}
+              </div>
+            </Link>
+
+            {/* Render Categories */}
+            {categories.map((category) => (
+              <Link
+                key={category.name}
+                href={`/cat/${encodeURIComponent(category.name.toLowerCase())}`}
+                passHref
+                onClick={handleItemClick}
+              >
+                <div
+                  className={`p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                    hoveredCategory?.name === category.name
+                      ? 'bg-gray-100 text-primary_1'
+                      : 'hover:bg-gray-50 hover:text-primary_1'
+                  }`}
+                  onMouseEnter={() => {
+                    if (isLargeScreen) {
+                      setHoveredCategory(category);
+                      setIsCategoryHovered(true);
+                    }
+                  }}
+                  onMouseLeave={() => setIsCategoryHovered(false)}
                 >
                   <div className="w-full truncate">
                     <div className="flex items-center gap-2">
@@ -84,11 +124,11 @@ const Sidebar: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </Link>
-                {isLargeScreen && (
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
+                  {isLargeScreen && (
+                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                  )}
+                </div>
+              </Link>
             ))}
           </div>
         </ScrollArea>
@@ -101,28 +141,29 @@ const Sidebar: React.FC = () => {
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
-          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-310px)]">
+          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-290px)]">
             <div className="p-4 space-y-1">
               {hoveredCategory.subcategories?.map((subcategory) => (
-                <div
+                <Link
                   key={subcategory.name}
-                  className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between"
+                  href={`/cat/${encodeURIComponent(
+                    hoveredCategory.name.toLowerCase(),
+                  )}/${encodeURIComponent(subcategory.name.toLowerCase())}`}
+                  passHref
+                  onClick={handleItemClick}
                 >
-                  <Link
-                    href={`/cat/${encodeURIComponent(hoveredCategory.name.toLowerCase())}/${encodeURIComponent(
-                      subcategory.name.toLowerCase(),
-                    )}`}
-                    passHref
-                  >
+                  <div className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between">
                     <div className="flex items-center gap-3 justify-between w-full truncate">
-                      {subcategory.icon}
-                      <span className="font-medium truncate">
-                        {subcategory.name}
-                      </span>
+                      <div className="flex items-start gap-2">
+                        {subcategory.icon}
+                        <span className="font-medium truncate">
+                          {subcategory.name}
+                        </span>
+                      </div>
                       <span className="text-sm text-gray-500 truncate">{`${subcategory.count.toLocaleString()} ads`}</span>
                     </div>
-                  </Link>
-                </div>
+                  </div>
+                </Link>
               ))}
             </div>
           </ScrollArea>

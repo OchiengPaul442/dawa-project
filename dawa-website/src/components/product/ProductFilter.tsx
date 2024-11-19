@@ -69,32 +69,45 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           min={MIN_PRICE}
           max={MAX_PRICE}
           onChange={(values) => setPriceRange([values[0], values[1]])}
-          renderTrack={({ props, children }) => (
-            <div
-              {...props}
-              className="w-full h-2 bg-gray-200 rounded-full mt-4 relative"
-              style={{
-                background: `linear-gradient(to right, #E0E0E0 0%, #E0E0E0 ${
-                  ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
-                }%, #FFA200 ${
-                  ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
-                }%, #FFA200 ${
-                  ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
-                }%, #E0E0E0 ${
-                  ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
-                }%, #E0E0E0 100%)`,
-              }}
-            >
-              {children}
-            </div>
-          )}
-          renderThumb={({ props }) => (
-            <div
-              {...props}
-              className="w-4 h-4 bg-[#FFA200] rounded-full shadow outline-none"
-            ></div>
-          )}
+          renderTrack={({ props, children }) => {
+            const { key, ...otherProps } = props as any;
+            return (
+              <div
+                {...otherProps}
+                key={key} // Pass `key` directly
+                className="w-full h-2 bg-gray-200 rounded-full mt-4 relative"
+                style={{
+                  background: `linear-gradient(to right, #E0E0E0 0%, #E0E0E0 ${
+                    ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
+                    100
+                  }%, #FFA200 ${
+                    ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
+                    100
+                  }%, #FFA200 ${
+                    ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
+                    100
+                  }%, #E0E0E0 ${
+                    ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
+                    100
+                  }%, #E0E0E0 100%)`,
+                }}
+              >
+                {children}
+              </div>
+            );
+          }}
+          renderThumb={({ props }) => {
+            const { key, ...otherProps } = props; // Extract `key` from props
+            return (
+              <div
+                {...otherProps}
+                key={key} // Pass `key` directly
+                className="w-4 h-4 bg-[#FFA200] rounded-full shadow outline-none"
+              ></div>
+            );
+          }}
         />
+
         <div className="flex justify-between text-sm text-gray-700 mt-2">
           <span>{formatPrice(priceRange[0])}</span>
           <span>{formatPrice(priceRange[1])}</span>
