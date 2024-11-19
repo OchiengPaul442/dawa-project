@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/category/Sidebar';
 import CardLayout from '@/components/product/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
-import CategoriesPage from './CategoriesPage';
 import FiltersAndSorting from '@/components/category/FiltersAndSorting';
-import { productsData } from '@/lib/mock_data';
+import CategoriesAndSubcategories from '@/components/category/CategoriesAndSubcategories';
+import { productsData, categories } from '@/lib/mock_data';
+import CategoriesPage from './CategoriesPage';
 
 interface CategoryPageProps {
   category: string[];
@@ -21,16 +21,19 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   >('default');
   const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
   const [priceRange, setPriceRange] = useState<[number, number]>([
-    20_000_000, 80_000_000,
+    0, 80_000_000,
   ]);
   const [location, setLocation] = useState<string>('');
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+
+  const selectedCategory = categories.find(
+    (cat) => cat.name.toLowerCase() === category[0]?.toLowerCase(),
+  );
 
   const handleViewMore = (productId: number) => {
     router.push(`/prod/${productId}`);
   };
 
-  // Apply filters
   const applyFilters = () => {
     let filtered = [...productsData];
 
@@ -52,7 +55,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     setFilteredProducts(filtered);
   };
 
-  // Handle filter sorting
   const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = event.target.value as
       | 'default'
@@ -77,22 +79,30 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const resetFilters = () => {
     setLocation('');
     setSelectedColors([]);
-    setPriceRange([20_000_000, 80_000_000]);
+    setPriceRange([0, 80_000_000]);
     setFilteredProducts(productsData);
     setFilterOption('default');
   };
 
-  if (category.length === 0) {
+  if (!selectedCategory) {
     return <CategoriesPage />;
   }
 
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-        {/* Sidebar and Filters */}
-        <div className="lg:col-span-1 relative">
-          <div className="space-y-8">
-            <Sidebar />
+        {/* Categories, Subcategories, and Filters */}
+        <div className="lg:col-span-1 flex flex-col space-y-6 h-auto">
+          {/* Reusable Component */}
+          <CategoriesAndSubcategories
+            categoryName={selectedCategory.name}
+            categoryCount={selectedCategory.count}
+            subcategories={selectedCategory.subcategories}
+            parentCategory={category[0]}
+          />
+
+          {/* Product Filter */}
+          <div className="mt-6">
             <ProductFilter
               priceRange={priceRange}
               setPriceRange={setPriceRange}

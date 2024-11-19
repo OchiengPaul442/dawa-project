@@ -1,8 +1,8 @@
 'use client';
+
 import React, { useState } from 'react';
 import { FaCheckCircle, FaMinus, FaPlus } from 'react-icons/fa';
 import { Range } from 'react-range';
-
 import { formatPrice } from '@/lib/utils';
 
 import { Button } from '../ui/button';
@@ -55,13 +55,13 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
   const displayedColors = showMoreColors ? allColors : allColors.slice(0, 4);
 
   return (
-    <section className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Filters</h3>
+    <section className="bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md space-y-6">
+      <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
 
       {/* Price Range Slider */}
-      <div className="mb-6">
-        <label className="text-sm font-semibold text-gray-500 mb-2">
-          Price range (UGX)
+      <div>
+        <label className="text-sm font-medium text-gray-600 mb-2 block">
+          Price Range (UGX)
         </label>
         <Range
           values={priceRange}
@@ -69,47 +69,31 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           min={MIN_PRICE}
           max={MAX_PRICE}
           onChange={(values) => setPriceRange([values[0], values[1]])}
-          renderTrack={({ props, children }) => {
-            // Cast props to any to safely extract 'key'
-            const { key, style, ...restProps } = props as any;
-            return (
-              <div
-                {...restProps}
-                className="w-full h-1 bg-gray-300 rounded-full mt-4"
-                style={{
-                  ...style,
-                  background: `linear-gradient(to right, gray 0%, gray ${
-                    ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, orange ${
-                    ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, orange ${
-                    ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, gray ${
-                    ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, gray 100%)`,
-                }}
-              >
-                {children}
-              </div>
-            );
-          }}
-          renderThumb={({ props }) => {
-            // Cast props to any to safely extract 'key'
-            const { key, ...restProps } = props as any;
-            return (
-              <div
-                key={key}
-                {...restProps}
-                className="w-4 h-4 bg-primary_1 rounded-full shadow outline-none"
-              >
-                <div className="w-3 h-3 bg-primary_1 rounded-full" />
-              </div>
-            );
-          }}
+          renderTrack={({ props, children }) => (
+            <div
+              {...props}
+              className="w-full h-2 bg-gray-200 rounded-full mt-4 relative"
+              style={{
+                background: `linear-gradient(to right, #E0E0E0 0%, #E0E0E0 ${
+                  ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
+                }%, #FFA200 ${
+                  ((priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
+                }%, #FFA200 ${
+                  ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
+                }%, #E0E0E0 ${
+                  ((priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100
+                }%, #E0E0E0 100%)`,
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...props}
+              className="w-4 h-4 bg-[#FFA200] rounded-full shadow outline-none"
+            ></div>
+          )}
         />
         <div className="flex justify-between text-sm text-gray-700 mt-2">
           <span>{formatPrice(priceRange[0])}</span>
@@ -118,12 +102,14 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       </div>
 
       {/* Location Dropdown */}
-      <div className="mb-4">
+      <div>
+        <label className="text-sm font-medium text-gray-600 mb-2 block">
+          Location
+        </label>
         <select
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-3 bg-white text-gray-500 font-medium border border-gray-200 rounded-md"
-          aria-label="Choose Location"
+          className="w-full p-2 bg-gray-50 text-gray-800 font-medium border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFA200] outline-none"
         >
           <option value="">Choose Location</option>
           <option value="Kampala">Kampala</option>
@@ -135,25 +121,24 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       </div>
 
       {/* Color Selection */}
-      <div className="mb-4">
+      <div>
         <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-gray-500">Color</label>
+          <label className="text-sm font-medium text-gray-600">Color</label>
           <button
             onClick={toggleSelectAllColors}
-            className="text-gray-500 text-sm flex items-center"
-            aria-label="Select or Deselect All Colors"
+            className="text-[#FFA200] text-sm flex items-center"
           >
             <FaCheckCircle
-              className={
+              className={`mr-1 ${
                 selectedColors.length === allColors.length
-                  ? 'text-primary_1'
+                  ? 'text-[#FFA200]'
                   : 'text-gray-400'
-              }
+              }`}
             />
-            <span className="ml-1">Select All</span>
+            Select All
           </button>
         </div>
-        <div className="flex flex-wrap gap-2 py-4 mt-2">
+        <div className="flex flex-wrap gap-2 py-2">
           {displayedColors.map((color) => (
             <button
               key={color}
@@ -164,13 +149,11 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                     : [...prevColors, color],
                 )
               }
-              className={`px-4 py-3 rounded-md text-sm ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                 selectedColors.includes(color)
-                  ? 'bg-orange-100 text-primary_1 border border-primary_2'
-                  : 'bg-transparent text-primary_1 border border-primary_2'
-              }`}
-              aria-pressed={selectedColors.includes(color)}
-              aria-label={`Filter by ${color} color`}
+                  ? 'bg-[#FFF4E0] border-[#FFA200] text-[#FFA200]'
+                  : 'bg-gray-50 border-gray-300 text-gray-800 hover:bg-gray-100'
+              } border`}
             >
               {color}
             </button>
@@ -179,7 +162,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
         {allColors.length > 4 && (
           <button
             onClick={() => setShowMoreColors(!showMoreColors)}
-            className="text-primary_1 text-sm mt-2 flex items-center"
+            className="text-[#FFA200] text-sm mt-2 flex items-center"
           >
             {showMoreColors ? (
               <>
@@ -197,18 +180,18 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       </div>
 
       {/* Filter and Reset Buttons */}
-      <div className="flex flex-col gap-2 mt-6">
+      <div className="space-y-2">
         <Button
           onClick={applyFilters}
-          className="w-full bg-primary_1 text-white py-2 h-12 rounded-xl hover:bg-primary_1 font-semibold"
+          className="w-full bg-[#FFA200] text-white py-2 rounded-md shadow hover:bg-[#FF8C00] transition-all duration-200"
         >
-          FILTER
+          Apply Filters
         </Button>
         <Button
           onClick={resetFilters}
-          className="w-full bg-transparent text-primary_1 shadow-none hover:bg-transparent h-12 font-semibold"
+          className="w-full bg-transparent text-[#FFA200] border border-[#FFA200] py-2 rounded-md hover:bg-[#FFF4E0] transition-all duration-200"
         >
-          Reset Filter
+          Reset Filters
         </Button>
       </div>
     </section>

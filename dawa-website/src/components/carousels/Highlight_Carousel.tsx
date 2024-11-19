@@ -2,7 +2,9 @@ import Gadgets from '@public/assets/images/gadgets.png';
 import Perfumes from '@public/assets/images/perfums.png';
 import Shoe from '@public/assets/images/shoe.png';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+import Button from '../common/Button';
 
 const slides: any[] = [
   {
@@ -32,6 +34,7 @@ const slides: any[] = [
 ];
 
 const Highlight_Carousel: React.FC = () => {
+  const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const slideInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -92,9 +95,12 @@ const Highlight_Carousel: React.FC = () => {
                     {slide.price}
                   </p>
                 </div>
-                <button className="mt-3 px-2 sm:mt-4 h-10 lg:h-12 lg:w-[240px] w-full sm:w-auto max-w-[200px] bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors">
+                <Button
+                  onClick={() => router.push(`/prod/${slide.id}`)}
+                  className="mt-3 px-2 sm:mt-4 h-10 lg:h-12 lg:w-[240px] w-full sm:w-auto max-w-[200px] bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
+                >
                   LEARN MORE
-                </button>
+                </Button>
               </div>
 
               {/* Image Section */}
