@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaLock, FaUser, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
+import {
+  FaUnlock,
+  FaUserCircle,
+  FaEnvelope,
+  FaEye,
+  FaEyeSlash,
+} from 'react-icons/fa';
 import Button from '@/components/common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
@@ -90,7 +96,7 @@ const RegistrationForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <InputField
           label="First Name"
-          icon={FaUser}
+          icon={FaUserCircle}
           type="text"
           placeholder="First name"
           {...register('firstName')}
@@ -99,7 +105,7 @@ const RegistrationForm: React.FC = () => {
 
         <InputField
           label="Last Name"
-          icon={FaUser}
+          icon={FaUserCircle}
           type="text"
           placeholder="Last name"
           {...register('lastName')}
@@ -119,15 +125,15 @@ const RegistrationForm: React.FC = () => {
                 enableAreaCodes={true}
                 value={value}
                 onChange={(phone) => onChange(phone)}
-                inputClass={`w-full bg-gray-50 border rounded-md p-2 ${
+                inputClass={`w-full bg-gray-50 border rounded-lg p-2 ${
                   errors.phone ? 'border-red-500' : 'border-gray-300'
                 }`}
                 containerClass="w-full"
-                buttonClass="bg-gray-50 border border-gray-300 rounded-md"
+                buttonClass="bg-gray-50 border border-gray-300 rounded-lg"
                 inputProps={{
                   placeholder: 'Enter phone number',
                   className:
-                    'w-full flex-grow outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-r-md px-12 py-2 bg-gray-50',
+                    'w-full flex-grow outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-r-md px-12 py-4 bg-gray-50',
                 }}
               />
             )}
@@ -152,11 +158,11 @@ const RegistrationForm: React.FC = () => {
             Password
           </label>
           <div
-            className={`flex items-center border rounded-md p-2 bg-gray-50 ${
+            className={`flex items-center border rounded-lg p-4 ${
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <FaLock className="text-gray-400 mr-2" />
+            <FaUnlock className="text-gray-400 mr-2" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter password"

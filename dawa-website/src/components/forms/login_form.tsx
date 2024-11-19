@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUnlock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import Button from '@/components/common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import GoogleIcon from '@public/assets/svgs/google.svg';
@@ -9,20 +9,26 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputField from '@/components/account/InputField';
+import { FaUserCircle } from 'react-icons/fa';
 
 // Improved type definitions
 interface ILoginInputs {
-  email: string;
+  emailOrUsername: string;
   password: string;
   rememberMe: boolean;
 }
 
 // Enhanced validation schema
 const schema = yup.object().shape({
-  email: yup
+  emailOrUsername: yup
     .string()
-    .email('Please enter a valid email address')
-    .required('Email is required'),
+    .required('Username/Email is required')
+    .test('is-valid', 'Please enter a valid email or username', (value) => {
+      if (!value) return false;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const usernameRegex = /^[a-zA-Z0-9._-]{3,}$/;
+      return emailRegex.test(value) || usernameRegex.test(value);
+    }),
   password: yup
     .string()
     .min(6, 'Password must be at least 6 characters')
@@ -42,7 +48,7 @@ const LoginForm: React.FC = () => {
     mode: 'onChange',
     resolver: yupResolver(schema),
     defaultValues: {
-      email: '',
+      emailOrUsername: '',
       password: '',
       rememberMe: false,
     },
@@ -67,12 +73,12 @@ const LoginForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email Field */}
         <InputField
-          label="Email Address"
-          icon={FaEnvelope}
-          type="email"
-          placeholder="Enter your email"
-          {...register('email')}
-          errors={errors.email?.message}
+          type="text"
+          label="Username/Email Address"
+          placeholder="Enter your username or email"
+          icon={FaUserCircle}
+          {...register('emailOrUsername')}
+          errors={errors.emailOrUsername?.message}
         />
 
         {/* Password Field */}
@@ -81,11 +87,11 @@ const LoginForm: React.FC = () => {
             Password
           </label>
           <div
-            className={`flex items-center border rounded-md p-2 bg-gray-50 ${
+            className={`flex items-center border rounded-lg p-4 ${
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <FaLock className="text-gray-400 mr-2" />
+            <FaUnlock className="text-gray-400 mr-2" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"

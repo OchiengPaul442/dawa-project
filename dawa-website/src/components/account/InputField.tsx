@@ -15,7 +15,7 @@ const InputField: React.FC<InputFieldProps> = ({
   <div>
     <label className="block font-semibold text-gray-700 mb-1">{label}</label>
     <div
-      className={`flex items-center border rounded-md p-2 bg-gray-50 ${
+      className={`flex items-center border rounded-lg p-4 ${
         errors ? 'border-red-500' : 'border-gray-300'
       }`}
     >
