@@ -1,16 +1,20 @@
-import React from 'react';
 import ProdPage from './ProdPage';
 
 interface PageProps {
-  params: { slug?: string[] };
+  params: Promise<{
+    slug?: string[];
+  }>;
 }
 
-const Page: React.FC<PageProps> = async ({ params }) => {
-  const slug = Array.isArray(params.slug)
-    ? params.slug
-    : params.slug
-      ? [params.slug]
-      : [];
+const Page = async ({ params }: PageProps) => {
+  // Wait for params to resolve
+  const resolvedParams = await params;
+
+  const slug = resolvedParams?.slug
+    ? Array.isArray(resolvedParams.slug)
+      ? resolvedParams.slug
+      : [resolvedParams.slug]
+    : [];
 
   return <ProdPage slug={slug} />;
 };
