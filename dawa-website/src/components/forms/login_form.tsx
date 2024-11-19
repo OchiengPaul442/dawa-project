@@ -87,7 +87,7 @@ const LoginForm: React.FC = () => {
             Password
           </label>
           <div
-            className={`flex items-center border rounded-lg p-4 ${
+            className={`flex items-center border rounded-lg p-4 focus-within:border-primary_1 ${
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >

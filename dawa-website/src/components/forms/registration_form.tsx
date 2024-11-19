@@ -133,7 +133,7 @@ const RegistrationForm: React.FC = () => {
                 inputProps={{
                   placeholder: 'Enter phone number',
                   className:
-                    'w-full flex-grow outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-r-md px-12 py-4 bg-gray-50',
+                    'w-full flex-grow focus-within:border-primary_1 outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-r-md px-12 py-4 bg-gray-50',
                 }}
               />
             )}
@@ -158,7 +158,7 @@ const RegistrationForm: React.FC = () => {
             Password
           </label>
           <div
-            className={`flex items-center border rounded-lg p-4 ${
+            className={`flex items-center border rounded-lg p-4 focus-within:border-primary_1 ${
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
