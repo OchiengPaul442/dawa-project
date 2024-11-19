@@ -126,23 +126,24 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     <div className="container mx-auto py-8 px-4">
       {/* Breadcrumb */}
       <nav
-        className="flex flex-wrap items-center space-x-2 text-gray-700 text-sm mb-6"
+        className="flex flex-wrap items-center text-sm mb-6"
         aria-label="Breadcrumb"
       >
-        <ul className="flex flex-wrap items-center space-x-2">
+        <ul className="flex items-center space-x-2">
           {breadcrumbItems.map((item, index) => (
             <li key={index} className="flex items-center">
               <Link
                 href={item.href}
-                className="hover:underline text-primary font-medium"
+                className={`${
+                  index === breadcrumbItems.length - 1
+                    ? 'text-gray-500 cursor-default'
+                    : 'hover:underline text-primary_1 font-medium'
+                }`}
               >
                 {item.name}
               </Link>
               {index < breadcrumbItems.length - 1 && (
-                <ChevronRight
-                  className="h-4 w-4 text-gray-500 mx-2 shrink-0"
-                  aria-hidden="true"
-                />
+                <span className="text-gray-400 mx-2">/</span>
               )}
             </li>
           ))}
