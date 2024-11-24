@@ -17,6 +17,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import InputField from '@/components/account/InputField';
+import Link from 'next/link';
 
 // Define the shape of form data
 interface IFormInputs {
@@ -87,31 +88,32 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 p-8 bg-gray-50 lg:rounded-r-2xl">
+    <div className="flex flex-col w-full md:w-[60%] px-10 py-12 md:px-12 md:py-16">
       <h2 className="text-2xl font-semibold mb-2">Create an Account</h2>
       <p className="text-gray-500 mb-6">
         Please fill in your details to create your account.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <InputField
-          label="First Name"
-          icon={FaUserCircle}
-          type="text"
-          placeholder="First name"
-          {...register('firstName')}
-          errors={errors.firstName?.message}
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex flex-col w-full justify-between md:flex-row gap-4">
+          <InputField
+            label="First Name"
+            icon={FaUserCircle}
+            type="text"
+            placeholder="First name"
+            {...register('firstName')}
+            errors={errors.firstName?.message}
+          />
 
-        <InputField
-          label="Last Name"
-          icon={FaUserCircle}
-          type="text"
-          placeholder="Last name"
-          {...register('lastName')}
-          errors={errors.lastName?.message}
-        />
-
+          <InputField
+            label="Last Name"
+            icon={FaUserCircle}
+            type="text"
+            placeholder="Last name"
+            {...register('lastName')}
+            errors={errors.lastName?.message}
+          />
+        </div>
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
             Phone Number
@@ -202,7 +204,7 @@ const RegistrationForm: React.FC = () => {
           />
           <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
             I agree to the{' '}
-            <a href="#" className="text-primary_1 hover:underline">
+            <a href="/legal/terms" className="text-primary_1 hover:underline">
               Terms and Policies
             </a>
           </label>
@@ -221,6 +223,12 @@ const RegistrationForm: React.FC = () => {
           REGISTER
         </Button>
 
+        <div className="flex items-center justify-center mt-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="px-4 text-sm text-gray-500">or</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
         <Button
           type="button"
           icon={GoogleIcon}
@@ -228,6 +236,13 @@ const RegistrationForm: React.FC = () => {
         >
           Register with Google
         </Button>
+
+        <p className="mt-8 text-sm text-center text-gray-500">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary_1 hover:underline">
+            Log In
+          </Link>
+        </p>
       </form>
     </div>
   );

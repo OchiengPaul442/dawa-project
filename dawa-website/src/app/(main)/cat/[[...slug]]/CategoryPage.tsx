@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import CardLayout from '@/components/product/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
@@ -9,122 +9,190 @@ import CategoriesAndSubcategories from '@/components/category/CategoriesAndSubca
 import { productsData, categories } from '@/lib/mock_data';
 import CategoriesPage from './CategoriesPage';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import CustomPagination from '@/components/common/CustomPagination';
 
+// Types
 interface CategoryPageProps {
   category: string[];
 }
 
+interface BreadcrumbItem {
+  name: string;
+  href: string;
+}
+
+type FilterOptionType =
+  | 'default'
+  | 'rating'
+  | 'price_low_to_high'
+  | 'price_high_to_low';
+type ViewType = 'grid' | 'list';
+
+const ITEMS_PER_PAGE = 9;
+
 const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
-  const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
-  const [filterOption, setFilterOption] = useState<
-    'default' | 'rating' | 'price_low_to_high' | 'price_high_to_low'
-  >('default');
-  const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
-  const [priceRange, setPriceRange] = useState<[number, number]>([
-    0, 80_000_000,
-  ]);
-  const [location, setLocation] = useState<string>('');
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [viewType, setViewType] = useState<ViewType>('grid');
+  const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Find the selected category and subcategory
-  const selectedCategory = categories.find(
-    (cat) => cat.name.toLowerCase() === category[0]?.toLowerCase(),
+  // Filter states
+  const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
+  const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
+    0, 80000000,
+  ]);
+  const [appliedLocation, setAppliedLocation] = useState<string>('');
+  const [appliedSelectedColors, setAppliedSelectedColors] = useState<string[]>(
+    [],
   );
 
-  const selectedSubcategory =
-    selectedCategory?.subcategories?.find(
-      (sub: any) => sub.name.toLowerCase() === category[1]?.toLowerCase(),
-    ) || null;
+  // Memoized values
+  const selectedCategory = useMemo(
+    () =>
+      categories.find(
+        (cat) => cat.name.toLowerCase() === category[0]?.toLowerCase(),
+      ),
+    [category],
+  );
 
-  useEffect(() => {
-    applyFilters();
-  }, [location, priceRange, selectedColors]);
+  const selectedSubcategory = useMemo(
+    () =>
+      selectedCategory?.subcategories?.find(
+        (sub: any) => sub.name.toLowerCase() === category[1]?.toLowerCase(),
+      ),
+    [selectedCategory, category],
+  );
 
-  const handleViewMore = (productId: number) => {
-    router.push(`/prod/${productId}`);
-  };
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
-  const applyFilters = () => {
-    let filtered = [...productsData];
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
 
-    if (location) {
-      filtered = filtered.filter((product) => product.location === location);
-    }
+  // Results summary text
+  const resultsSummary = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const end = Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length);
+    return `Showing ${start}-${end} of ${filteredProducts.length} results`;
+  }, [currentPage, filteredProducts.length]);
 
-    filtered = filtered.filter(
-      (product) =>
-        product.price >= priceRange[0] && product.price <= priceRange[1],
-    );
+  const breadcrumbItems: BreadcrumbItem[] = useMemo(
+    () => [
+      { name: 'Home', href: '/' },
+      { name: 'Categories', href: '/cat' },
+      ...(selectedCategory
+        ? [
+            {
+              name: `${selectedCategory.name} (${selectedCategory.count})`,
+              href: `/cat/${selectedCategory.name.toLowerCase()}`,
+            },
+          ]
+        : []),
+      ...(selectedSubcategory
+        ? [
+            {
+              name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
+              href: `/cat/${selectedCategory?.name.toLowerCase()}/${selectedSubcategory.name.toLowerCase()}`,
+            },
+          ]
+        : []),
+    ],
+    [selectedCategory, selectedSubcategory],
+  );
 
-    if (selectedColors.length > 0) {
-      filtered = filtered.filter((product) =>
-        selectedColors.includes(product.color),
+  // Handlers
+  const handleViewMore = useCallback(
+    (productId: number) => {
+      router.push(`/prod/${productId}`);
+    },
+    [router],
+  );
+
+  const applyFilters = useCallback(
+    (
+      priceRange: [number, number],
+      location: string,
+      selectedColors: string[],
+    ) => {
+      let filtered = [...productsData];
+
+      if (location) {
+        filtered = filtered.filter((product) => product.location === location);
+      }
+
+      filtered = filtered.filter(
+        (product) =>
+          product.price >= priceRange[0] && product.price <= priceRange[1],
       );
-    }
 
-    setFilteredProducts(filtered);
-  };
+      if (selectedColors.length > 0) {
+        filtered = filtered.filter((product) =>
+          selectedColors.includes(product.color),
+        );
+      }
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = event.target.value as
-      | 'default'
-      | 'rating'
-      | 'price_low_to_high'
-      | 'price_high_to_low';
-    setFilterOption(selectedOption);
+      setFilteredProducts(filtered);
+      setCurrentPage(1);
+    },
+    [],
+  );
 
-    let sortedProducts = [...filteredProducts];
+  const handleApplyFilters = useCallback(
+    (
+      newPriceRange: [number, number],
+      newLocation: string,
+      newSelectedColors: string[],
+    ) => {
+      setAppliedPriceRange(newPriceRange);
+      setAppliedLocation(newLocation);
+      setAppliedSelectedColors(newSelectedColors);
+      applyFilters(newPriceRange, newLocation, newSelectedColors);
+    },
+    [applyFilters],
+  );
 
-    if (selectedOption === 'rating') {
-      sortedProducts = sortedProducts.sort((a, b) => b.rating - a.rating);
-    } else if (selectedOption === 'price_low_to_high') {
-      sortedProducts = sortedProducts.sort((a, b) => a.price - b.price);
-    } else if (selectedOption === 'price_high_to_low') {
-      sortedProducts = sortedProducts.sort((a, b) => b.price - a.price);
-    }
-
-    setFilteredProducts(sortedProducts);
-  };
-
-  const resetFilters = () => {
-    setLocation('');
-    setSelectedColors([]);
-    setPriceRange([0, 80_000_000]);
+  const resetFilters = useCallback(() => {
+    setAppliedPriceRange([0, 80000000]);
+    setAppliedLocation('');
+    setAppliedSelectedColors([]);
     setFilteredProducts(productsData);
-    setFilterOption('default');
-  };
+    setCurrentPage(1);
+  }, []);
+
+  const handleFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedOption = event.target.value as FilterOptionType;
+      setFilterOption(selectedOption);
+
+      let sortedProducts = [...filteredProducts];
+      switch (selectedOption) {
+        case 'rating':
+          sortedProducts.sort((a, b) => b.rating - a.rating);
+          break;
+        case 'price_low_to_high':
+          sortedProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price_high_to_low':
+          sortedProducts.sort((a, b) => b.price - a.price);
+          break;
+        default:
+          break;
+      }
+
+      setFilteredProducts(sortedProducts);
+      setCurrentPage(1);
+    },
+    [filteredProducts],
+  );
 
   if (!selectedCategory) {
     return <CategoriesPage />;
   }
 
-  // Generate breadcrumb items with counts
-  const breadcrumbItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Categories', href: '/cat' },
-    ...(selectedCategory
-      ? [
-          {
-            name: `${selectedCategory.name} (${selectedCategory.count})`,
-            href: `/cat/${selectedCategory.name.toLowerCase()}`,
-          },
-        ]
-      : []),
-    ...(selectedSubcategory
-      ? [
-          {
-            name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
-            href: `/cat/${selectedCategory?.name.toLowerCase()}/${selectedSubcategory.name.toLowerCase()}`,
-          },
-        ]
-      : []),
-  ];
-
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* Breadcrumb */}
+      {/* Breadcrumb Navigation */}
       <nav
         className="flex flex-wrap items-center text-sm mb-6"
         aria-label="Breadcrumb"
@@ -151,7 +219,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
-        {/* Categories, Subcategories, and Filters */}
+        {/* Sidebar */}
         <div className="lg:col-span-1 flex flex-col space-y-6 h-auto">
           <CategoriesAndSubcategories
             categoryName={selectedCategory.name}
@@ -162,50 +230,67 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
           <div className="mt-6">
             <ProductFilter
-              priceRange={priceRange}
-              setPriceRange={setPriceRange}
-              location={location}
-              setLocation={setLocation}
-              selectedColors={selectedColors}
-              setSelectedColors={setSelectedColors}
-              applyFilters={applyFilters}
-              resetFilters={resetFilters}
+              appliedPriceRange={appliedPriceRange}
+              appliedLocation={appliedLocation}
+              appliedSelectedColors={appliedSelectedColors}
+              onApplyFilters={handleApplyFilters}
+              onResetFilters={resetFilters}
             />
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="lg:col-span-3 space-y-14">
-          <FiltersAndSorting
-            category={category}
-            viewType={viewType}
-            setViewType={setViewType}
-            filterOption={filterOption}
-            handleFilterChange={handleFilterChange}
-          />
+        <div className="lg:col-span-3">
+          {/* Filters and Content Container */}
+          <div className="space-y-6">
+            <FiltersAndSorting
+              category={category}
+              viewType={viewType}
+              setViewType={setViewType}
+              filterOption={filterOption}
+              handleFilterChange={handleFilterChange}
+            />
 
-          <div
-            className={`${
-              viewType === 'grid'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                : 'flex flex-col gap-4'
-            }`}
-          >
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <CardLayout
-                  key={product.id}
-                  product={product}
-                  viewType={viewType}
-                  onViewMore={handleViewMore}
-                />
-              ))
-            ) : (
-              <p className="text-center text-gray-500 w-full col-span-full">
-                No products found matching the selected filters.
-              </p>
-            )}
+            <div
+              className={`${
+                viewType === 'grid'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                  : 'flex flex-col gap-4'
+              }`}
+            >
+              {paginatedProducts.length > 0 ? (
+                paginatedProducts.map((product) => (
+                  <CardLayout
+                    key={product.id}
+                    product={product}
+                    viewType={viewType}
+                    onViewMore={handleViewMore}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-gray-500 w-full col-span-full">
+                  No products found matching the selected filters.
+                </p>
+              )}
+            </div>
           </div>
+
+          {/* Pagination with Results Summary */}
+          {filteredProducts.length > 0 && (
+            <div className="border-t border-gray-200 mt-20 pt-6 w-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-sm text-gray-600">{resultsSummary}</div>
+                <div className="w-full">
+                  <CustomPagination
+                    currentPage={currentPage}
+                    totalItems={filteredProducts.length}
+                    itemsPerPage={ITEMS_PER_PAGE}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

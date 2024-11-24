@@ -50,9 +50,9 @@ const Footer = () => {
           links={[
             { href: '/about', label: 'About us' },
             { href: '#', label: 'Contact us' },
-            { href: '#', label: 'Products' },
-            { href: '/account', label: 'Login' },
-            { href: '/account', label: 'Sign Up' },
+            { href: '/cat', label: 'Categories' },
+            { href: '/login', label: 'Login' },
+            { href: '/register', label: 'Sign Up' },
           ]}
         />
 
@@ -60,10 +60,11 @@ const Footer = () => {
         <FooterLinkSection
           title="Customer Area"
           links={[
-            { href: '/account', label: 'My Account' },
-            { href: '#', label: 'Terms' },
-            { href: '#', label: 'Privacy Policy' },
+            { href: '/legal/terms', label: 'Terms' },
+            { href: '/legal/privacy', label: 'Privacy Policy' },
+            { href: '/legal/billing', label: 'Billing Policy' },
             { href: '/faqs', label: 'FAQs' },
+            { href: '/subscriptions', label: 'Subscriptions' },
           ]}
         />
 

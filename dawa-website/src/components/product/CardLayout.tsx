@@ -1,6 +1,6 @@
 'use client';
-import React from 'react';
-import { AiOutlineCheck, AiOutlineHeart } from 'react-icons/ai';
+import React, { useState } from 'react';
+import { AiOutlineCheck, AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import CustomImage from '../common/CustomImage';
 import Button from '@/components/common/Button';
 import StarRating from '@/components/common/StarRating';
@@ -28,6 +28,13 @@ const CardLayout: React.FC<CardLayoutProps> = ({
   viewType,
   onViewMore,
 }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleToggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    // TODO: Add logic to save/remove from wishlist
+  };
+
   return (
     <div
       className={`bg-white rounded-2xl overflow-hidden shadow-md ${
@@ -35,8 +42,18 @@ const CardLayout: React.FC<CardLayoutProps> = ({
       }`}
     >
       {viewType === 'grid'
-        ? renderGridLayout(product, onViewMore)
-        : renderListLayout(product, onViewMore)}
+        ? renderGridLayout(
+            product,
+            onViewMore,
+            isFavorite,
+            handleToggleFavorite,
+          )
+        : renderListLayout(
+            product,
+            onViewMore,
+            isFavorite,
+            handleToggleFavorite,
+          )}
     </div>
   );
 };
@@ -45,23 +62,34 @@ const CardLayout: React.FC<CardLayoutProps> = ({
 const renderGridLayout = (
   product: Product,
   onViewMore: (id: number) => void,
+  isFavorite: boolean,
+  handleToggleFavorite: () => void,
 ) => (
-  <div className="flex flex-col w-full h-[415px] gap-4">
-    <div className="relative w-full h-[370px]">
+  <div className="flex flex-col w-full h-[415px] gap-2">
+    <div className="relative w-full h-56 p-2 flex-shrink-0">
       <CustomImage
         src={product.imageUrl}
         alt={product.name}
         fill
         style={{
           objectFit: 'cover',
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
+          borderRadius: '8px',
         }}
       />
+      <button
+        onClick={handleToggleFavorite}
+        className="absolute bottom-3 right-3 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+      >
+        {isFavorite ? (
+          <AiFillHeart className="text-primary_1" size={20} />
+        ) : (
+          <AiOutlineHeart className="text-gray-500" size={20} />
+        )}
+      </button>
     </div>
     <div className="flex flex-col justify-between gap-2 p-2 h-full">
       <div className="space-y-2">
-        <h3 className="font-semibold text-md sm:text-lg line-clamp-2">
+        <h3 className="font-semibold text-md sm:text-lg truncate">
           {product.name}
         </h3>
         <p className="text-primary_1 font-bold text-base sm:text-lg">
@@ -93,17 +121,18 @@ const renderGridLayout = (
 const renderListLayout = (
   product: Product,
   onViewMore: (id: number) => void,
+  isFavorite: boolean,
+  handleToggleFavorite: () => void,
 ) => (
-  <div className="flex flex-col md:flex-row gap-4">
-    <div className="relative w-full h-48 md:w-48 md:h-auto flex-shrink-0">
+  <div className="flex flex-col md:flex-row gap-2">
+    <div className="relative w-full h-56 md:w-72 p-2 flex-shrink-0">
       <CustomImage
         src={product.imageUrl}
         alt={product.name}
         fill
         style={{
           objectFit: 'cover',
-          borderTopLeftRadius: 16,
-          borderBottomLeftRadius: 16,
+          borderRadius: '8px',
         }}
       />
     </div>
@@ -120,7 +149,9 @@ const renderListLayout = (
           <span className="ml-2 text-primary_1 font-semibold">Laptop</span>
         </div>
 
-        <h3 className="font-semibold text-lg sm:text-xl">{product.name}</h3>
+        <h3 className="font-semibold text-lg sm:text-xl truncate">
+          {product.name}
+        </h3>
 
         {product.sku && (
           <p className="text-xs sm:text-sm text-gray-500">SKU {product.sku}</p>
@@ -156,11 +187,11 @@ const renderListLayout = (
             View more
           </Button>
           <Button
-            className="bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-md"
-            onClick={() => {
-              // TODO: Add to wishlist functionality
-            }}
-            icon={AiOutlineHeart}
+            className={`bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-md ${
+              isFavorite ? 'text-primary_1' : 'text-primary_1'
+            }`}
+            onClick={handleToggleFavorite}
+            icon={isFavorite ? AiFillHeart : AiOutlineHeart}
           />
         </div>
       </div>

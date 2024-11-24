@@ -10,6 +10,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputField from '@/components/account/InputField';
 import { FaUserCircle } from 'react-icons/fa';
+import Link from 'next/link';
 
 // Improved type definitions
 interface ILoginInputs {
@@ -70,7 +71,7 @@ const LoginForm: React.FC = () => {
         Welcome back! Please login to your account.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Field */}
         <InputField
           type="text"
@@ -130,17 +131,20 @@ const LoginForm: React.FC = () => {
                 />
               )}
             />
-            <label htmlFor="rememberMe" className="text-gray-700 text-sm">
+            <label
+              htmlFor="rememberMe"
+              className="text-gray-700 cursor-pointer text-sm"
+            >
               Remember Me
             </label>
           </div>
 
-          <a
-            href="#"
+          <Link
+            href="/forgot-password"
             className="text-primary_1 text-sm font-semibold hover:underline"
           >
             Forgot Password?
-          </a>
+          </Link>
         </div>
 
         {/* Submit Button */}
@@ -154,6 +158,12 @@ const LoginForm: React.FC = () => {
           SIGN IN
         </Button>
 
+        <div className="flex items-center justify-center mt-4">
+          <hr className="flex-grow border-gray-300" />
+          <span className="px-4 text-sm text-gray-500">or</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
         {/* Google Sign-In Button */}
         <Button
           type="button"
@@ -162,6 +172,13 @@ const LoginForm: React.FC = () => {
         >
           Sign in with Google
         </Button>
+
+        <p className="mt-8 text-center text-sm text-gray-600">
+          Don’t have an account?{' '}
+          <a href="/register" className="text-primary_1 hover:underline">
+            Register now
+          </a>
+        </p>
       </form>
     </div>
   );
