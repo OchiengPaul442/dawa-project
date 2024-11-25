@@ -40,11 +40,12 @@ const TermsPage: React.FC = () => {
 
           <TermsSection id="introduction" title="1. Introduction">
             <p>
-              Welcome to Dawa ("we", "our", "us"). These Terms and Conditions
-              ("Terms") govern your use of our website located at
-              [yourwebsite.com] ("Site") and any services we provide through the
-              Site.
+              Welcome to Dawa (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;).
+              These Terms and Conditions (&quot;Terms&quot;) govern your use of
+              our website located at [yourwebsite.com] (&quot;Site&quot;) and
+              any services we provide through the Site.
             </p>
+
             <p>
               By accessing or using our Site, you agree to be bound by these
               Terms. If you do not agree with any part of these Terms, you must
@@ -136,10 +137,11 @@ const TermsPage: React.FC = () => {
 
           <TermsSection id="disclaimers" title="9. Disclaimers">
             <p>
-              The Site is provided "as is" and "as available" without any
-              warranties of any kind. We disclaim all warranties, whether
-              express or implied, including but not limited to merchantability,
-              fitness for a particular purpose, and non-infringement.
+              The Site is provided &quot;as is&quot; and &quot;as
+              available&quot; without any warranties of any kind. We disclaim
+              all warranties, whether express or implied, including but not
+              limited to merchantability, fitness for a particular purpose, and
+              non-infringement.
             </p>
           </TermsSection>
 

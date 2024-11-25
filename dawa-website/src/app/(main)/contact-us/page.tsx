@@ -19,8 +19,8 @@ const ContactPage: React.FC = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900">Contact Us</h1>
           <p className="mt-4 text-lg text-gray-600">
-            We're here to help! Reach out to us with any questions or feedback
-            you may have.
+            We&apos;re here to help! Reach out to us with any questions or
+            feedback you may have.
           </p>
         </div>
 

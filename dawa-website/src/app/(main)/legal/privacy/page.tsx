@@ -33,9 +33,10 @@ const PrivacyPolicyPage: React.FC = () => {
 
           <TermsSection id="introduction" title="1. Introduction">
             <p>
-              Welcome to Dawa ("we", "our", "us"). This Privacy Policy explains
-              how we collect, use, disclose, and safeguard your information when
-              you visit our website [yourwebsite.com] ("Site").
+              Welcome to Dawa (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;).
+              These Terms and Conditions (&quot;Terms&quot;) govern your use of
+              our website located at [yourwebsite.com] (&quot;Site&quot;) and
+              any services we provide through the Site.
             </p>
             <p>
               By accessing or using our Site, you agree to the terms of this
