@@ -132,7 +132,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews, onAddReview }) => {
             <div className="flex justify-start">
               <Button
                 type="submit"
-                className="px-6 py-2 mt-12 lg:mt-6 bg-primary_1 h-10 text-white font-bold rounded-xl hover:bg-primary_1 transition"
+                className="px-6 py-2 mt-12 lg:mt-6 bg-primary_1 h-10 text-white font-bold rounded-lg hover:bg-primary_1 transition"
               >
                 Submit
               </Button>

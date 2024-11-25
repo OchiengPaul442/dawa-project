@@ -37,7 +37,7 @@ const CardLayout: React.FC<CardLayoutProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden shadow-md ${
+      className={`bg-white rounded-2xl overflow-hidden shadow ${
         viewType === 'grid' ? 'w-full sm:max-w-xs' : 'w-full'
       }`}
     >
@@ -78,7 +78,7 @@ const renderGridLayout = (
       />
       <button
         onClick={handleToggleFavorite}
-        className="absolute bottom-3 right-3 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+        className="absolute bottom-3 right-3 bg-white rounded-full p-2 shadow hover:scale-110 transition-transform"
       >
         {isFavorite ? (
           <AiFillHeart className="text-primary_1" size={20} />
@@ -161,7 +161,7 @@ const renderListLayout = (
           <ul className="text-sm sm:text-base text-gray-600 mt-2 space-y-1">
             {product.features.map((feature, index) => (
               <li key={index} className="flex items-center gap-2">
-                <AiOutlineCheck className="text-orange-500" />
+                <AiOutlineCheck className="text-primary_1" />
                 {feature}
               </li>
             ))}

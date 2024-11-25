@@ -49,7 +49,7 @@ const Footer = () => {
           title="Quick Links"
           links={[
             { href: '/about', label: 'About us' },
-            { href: '#', label: 'Contact us' },
+            { href: '/contact-us', label: 'Contact us' },
             { href: '/cat', label: 'Categories' },
             { href: '/login', label: 'Login' },
             { href: '/register', label: 'Sign Up' },
