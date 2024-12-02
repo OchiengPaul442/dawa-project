@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import { Trash2, ExternalLink, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Button from '../common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tooltip,
@@ -90,9 +90,11 @@ const ProductCard: FC<ProductCardProps> = React.memo(
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button size="icon" variant="ghost" className="w-8 h-8">
-                          <Share2 className="w-4 h-4" />
-                        </Button>
+                        <Button
+                          icon={Share2}
+                          variant="ghost"
+                          className="w-8 h-8"
+                        ></Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Share Product</p>
@@ -104,13 +106,11 @@ const ProductCard: FC<ProductCardProps> = React.memo(
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
-                          size="icon"
+                          icon={Trash2}
                           variant="ghost"
                           className="w-8 h-8 text-red-500 hover:text-red-600"
                           onClick={handleRemove}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        ></Button>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Remove from Wishlist</p>
@@ -159,14 +159,13 @@ const ProductCard: FC<ProductCardProps> = React.memo(
               <div className="pt-2 flex items-center justify-between">
                 <Button
                   variant="outline"
-                  size="sm"
+                  icon={ExternalLink}
                   className="flex items-center gap-1 text-xs sm:text-sm"
                   onClick={() => {
                     router.push(`/prod/${product.id}`);
                   }}
                 >
                   View Details
-                  <ExternalLink className="w-3 h-3" />
                 </Button>
               </div>
             </div>

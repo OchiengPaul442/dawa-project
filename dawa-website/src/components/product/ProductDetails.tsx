@@ -29,6 +29,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AuthDialog } from '../dialogs/auth-dialog';
 import useWindowSize from '@/hooks/useWindowSize';
+import { useAuth } from '@/hooks/use-auth';
 
 interface ProductDetailsProps {
   product: {
@@ -45,7 +46,6 @@ interface ProductDetailsProps {
       location: string;
     };
   };
-  isLoggedIn: boolean;
 }
 
 const safetyTips = [
@@ -56,10 +56,8 @@ const safetyTips = [
   'Report suspicious activity immediately.',
 ];
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({
-  product,
-  isLoggedIn,
-}) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
+  const { user } = useAuth();
   const [reportAbuseDetails, setReportAbuseDetails] = useState({
     name: '',
     email: '',
@@ -244,11 +242,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </Button>
             <Dialog open={authDialogOpen} onOpenChange={setAuthDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full" variant="outline">
+                <Button
+                  onClick={() => console.log('clicked')}
+                  className="w-full"
+                  variant="outline"
+                >
                   <FaPlus className="mr-2 h-4 w-4" /> Post an Ad
                 </Button>
               </DialogTrigger>
-              {!isLoggedIn && (
+              {!user && (
                 <AuthDialog
                   open={authDialogOpen}
                   onOpenChange={setAuthDialogOpen}

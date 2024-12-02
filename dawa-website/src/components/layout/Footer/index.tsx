@@ -1,3 +1,4 @@
+'use client';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import Link from 'next/link';
 import React from 'react';
@@ -9,8 +10,11 @@ import {
   FaTwitter,
   FaYoutube,
 } from 'react-icons/fa';
+import { useAuth } from '@/hooks/use-auth';
+import FooterLinkSection from './FooterLinkSection';
 
 const Footer = () => {
+  const { user } = useAuth();
   return (
     <footer className="bg-white text-gray-700">
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 py-12 gap-8">
@@ -54,6 +58,7 @@ const Footer = () => {
             { href: '/login', label: 'Login' },
             { href: '/register', label: 'Sign Up' },
           ]}
+          isAuthenticated={user !== null}
         />
 
         {/* Customer Area */}
@@ -121,23 +126,5 @@ interface FooterLinkSectionProps {
   title: string;
   links: { href: string; label: string }[];
 }
-
-const FooterLinkSection: React.FC<FooterLinkSectionProps> = ({
-  title,
-  links,
-}) => (
-  <div className="text-left">
-    <h3 className="text-lg font-bold mb-3 text-black">{title}</h3>
-    <ul className="space-y-2">
-      {links.map((link, index) => (
-        <li key={index}>
-          <Link href={link.href} className="hover:underline text-gray-600">
-            {link.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
 
 export default Footer;

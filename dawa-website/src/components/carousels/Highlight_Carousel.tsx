@@ -91,7 +91,7 @@ const Highlight_Carousel: React.FC = () => {
                 </h2>
                 <div className="flex flex-col items-start gap-1">
                   <p className="text-xs sm:text-sm">{slide.subtitle}</p>
-                  <p className="text-xl sm:text-2xl font-bold text-orange-400">
+                  <p className="text-xl sm:text-2xl font-bold text-primary_1">
                     {slide.price}
                   </p>
                 </div>
@@ -125,7 +125,7 @@ const Highlight_Carousel: React.FC = () => {
             onClick={() => goToSlide(index)}
             className={`cursor-pointer transition-all duration-300 ${
               currentSlide === index
-                ? 'w-4 h-2 bg-orange-500 rounded-full'
+                ? 'w-4 h-2 bg-primary_1 rounded-full'
                 : 'w-2 h-2 bg-gray-400 rounded-full'
             }`}
           ></div>

@@ -55,10 +55,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     <div className="w-full lg:w-[288px] relative z-50">
       {/* Sidebar Container */}
       <div
-        className={`bg-white rounded-xl border sticky top-[100px] ${
+        className={`bg-white rounded-md border sticky top-[100px] ${
           hoveredCategory
             ? 'rounded-r-none border-r-primary_1'
-            : 'rounded-xl border-gray-200'
+            : 'rounded-md border-gray-200'
         }`}
       >
         <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
                 onClick={handleItemClick}
               >
                 <div
-                  className={`p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${
+                  className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between ${
                     hoveredCategory?.name === category.name
                       ? 'bg-gray-100 text-primary_1'
                       : 'hover:bg-gray-50 hover:text-primary_1'
@@ -137,7 +137,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       {/* Subcategories Panel */}
       {isLargeScreen && hoveredCategory && (
         <div
-          className="absolute bg-white rounded-r-xl border-r border-y min-w-[288px] left-[288px] top-0 z-30"
+          className="absolute bg-white rounded-r-md border-r border-y min-w-[288px] left-[288px] top-0 z-30"
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
@@ -152,7 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
                   passHref
                   onClick={handleItemClick}
                 >
-                  <div className="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between">
+                  <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between">
                     <div className="flex items-center gap-3 justify-between w-full truncate">
                       <div className="flex items-start gap-2">
                         {subcategory.icon}

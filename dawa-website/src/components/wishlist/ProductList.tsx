@@ -1,7 +1,6 @@
-// components/ProductList.tsx
 'use client';
 
-import React, { FC, useCallback } from 'react';
+import React, { FC } from 'react';
 import ProductCard from './ProductCard';
 
 interface Product {

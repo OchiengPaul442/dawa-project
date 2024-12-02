@@ -4,21 +4,7 @@ import { cn } from '@/lib/utils';
 
 import { Button as ShadcnButton } from '../ui/button';
 
-type IconPosition = 'left' | 'right';
-
-interface ButtonProps {
-  type?: 'button' | 'submit' | 'reset';
-  children?: ReactNode;
-  icon?: React.ComponentType<{ className?: string }>;
-  iconPosition?: IconPosition;
-  className?: string;
-
-  disabled?: boolean;
-  loading?: boolean;
-  onClick?: () => void;
-}
-
-const Button: FC<ButtonProps> = ({
+const Button: FC<any> = ({
   children,
   icon: Icon,
   iconPosition = 'left',
@@ -30,7 +16,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <ShadcnButton
       className={cn(
-        'flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors',
+        'flex items-center justify-center gap-2 px-4 py-2 h-10 rounded-md transition-colors',
         isOnlyIcon ? 'p-2' : 'px-4 py-2',
         isOnlyIcon
           ? 'justify-center'

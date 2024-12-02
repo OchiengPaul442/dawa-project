@@ -18,6 +18,7 @@ import Sidebar from '@/components/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { AuthDialog } from '../../dialogs/auth-dialog';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
@@ -31,6 +32,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading, logout, counters } = useAuth();
+  const scrollDirection = useScrollDirection();
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
@@ -72,10 +74,13 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
 
   return (
     <nav className="bg-white relative z-50">
-      <div
+      <motion.div
         className={`${
           isSticky ? 'fixed top-0 left-0 right-0 z-50 bg-white shadow-md' : ''
-        } transition-all duration-300 ease-in-out w-full`}
+        }`}
+        initial={{ y: 0 }}
+        animate={{ y: scrollDirection === 'down' ? '-100%' : 0 }}
+        transition={{ duration: 0.3 }}
       >
         <div
           className={`container mx-auto flex flex-col lg:flex-row ${
@@ -196,7 +201,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="border-b hidden lg:block">
         <div className="container mx-auto px-4">

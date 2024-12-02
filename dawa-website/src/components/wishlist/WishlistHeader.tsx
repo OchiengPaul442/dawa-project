@@ -74,14 +74,22 @@ const WishlistHeader: FC<WishlistHeaderProps> = ({
           )}
 
           <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] h-10">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="date-added">Date Added</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="orders">Most Orders</SelectItem>
+              <SelectItem value="date-added" className="h-10 cursor-pointer">
+                Date Added
+              </SelectItem>
+              <SelectItem value="price-low" className="h-10 cursor-pointer">
+                Price: Low to High
+              </SelectItem>
+              <SelectItem value="price-high" className="h-10 cursor-pointer">
+                Price: High to Low
+              </SelectItem>
+              <SelectItem value="orders" className="h-10 cursor-pointer">
+                Most Orders
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
