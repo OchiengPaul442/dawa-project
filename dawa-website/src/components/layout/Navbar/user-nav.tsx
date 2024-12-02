@@ -108,25 +108,25 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link href="/account">
+              <Link href="/account" className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 <span>Account</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/my-adverts">
+              <Link href="/my-adverts" className="cursor-pointer">
                 <FileText className="mr-2 h-4 w-4" />
                 <span>My Adverts</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/settings">
+              <Link href="/settings" className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/performance">
+              <Link href="/performance" className="cursor-pointer">
                 <BarChart2 className="mr-2 h-4 w-4" />
                 <span>Performance</span>
               </Link>

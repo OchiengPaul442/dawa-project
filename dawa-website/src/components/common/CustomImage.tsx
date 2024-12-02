@@ -1,95 +1,67 @@
+'use client';
+
+import React from 'react';
 import NextImage, { ImageProps } from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 import DefaultImage from '@public/assets/images/default_image.webp';
-import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
-interface CustomImageProps extends ImageProps {
-  className?: string;
+interface CustomImageProps extends Omit<ImageProps, 'src'> {
+  src?: string | null;
   fallbackSrc?: string;
+  className?: string;
 }
 
-const CustomImage = ({
+const CustomImage: React.FC<CustomImageProps> = ({
   className,
   fallbackSrc = DefaultImage.src,
   src,
-  alt,
+  alt = '',
   ...props
-}: CustomImageProps) => {
-  const [imgSrc, setImgSrc] = useState<string>(fallbackSrc);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasError, setHasError] = useState<boolean>(false);
+}) => {
+  const [imgSrc, setImgSrc] = React.useState<string>(src || fallbackSrc);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
-  useEffect(() => {
-    if (!src) {
-      setImgSrc(fallbackSrc);
-      setIsLoading(false);
-      return;
-    }
-
-    const image = new window.Image();
-    image.src = typeof src === 'string' ? src : src.toString();
-    image.onload = () => {
-      setImgSrc(typeof src === 'string' ? src : src.toString());
-      setIsLoading(false);
-    };
-    image.onerror = () => {
-      setImgSrc(fallbackSrc);
-      setHasError(true);
-      setIsLoading(false);
-    };
-
-    // Cleanup to avoid memory leaks
-    return () => {
-      image.onload = null;
-      image.onerror = null;
-    };
+  React.useEffect(() => {
+    setImgSrc(src || fallbackSrc);
+    setIsLoading(true);
   }, [src, fallbackSrc]);
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
+  const handleError = () => {
+    if (imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc);
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
-      className={cn('relative', className)}
-      style={{ position: 'relative', width: '100%', height: '100%' }}
+      className={cn(
+        'relative w-full h-full overflow-hidden rounded-lg',
+        className,
+      )}
     >
-      {/* Fallback or Placeholder Image */}
-      {isLoading && (
-        <NextImage
-          src={fallbackSrc}
-          alt={alt}
-          fill
-          style={{ objectFit: 'cover' }}
-          className="absolute inset-0"
-          priority
-          {...props}
-        />
-      )}
-
-      {/* Main Image */}
-      {!hasError && (
-        <NextImage
-          src={imgSrc}
-          alt={alt}
-          fill
-          style={{ objectFit: 'cover' }}
-          className={cn(
-            'transition-opacity duration-500',
-            isLoading ? 'opacity-0' : 'opacity-100',
-          )}
-          onLoadingComplete={() => setIsLoading(false)}
-          {...props}
-        />
-      )}
-
-      {/* Handle Error by Showing Fallback */}
-      {hasError && !isLoading && (
-        <NextImage
-          src={fallbackSrc}
-          alt={alt}
-          fill
-          style={{ objectFit: 'cover' }}
-          className="absolute inset-0"
-          {...props}
-        />
-      )}
+      {isLoading && <Skeleton className="absolute inset-0 w-full h-full" />}
+      <NextImage
+        src={imgSrc}
+        alt={alt}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        style={{ objectFit: 'cover' }}
+        className={cn(
+          'transition-opacity duration-300 rounded-lg',
+          isLoading ? 'opacity-0' : 'opacity-100',
+        )}
+        onLoadingComplete={handleLoadingComplete}
+        onError={handleError}
+        {...props}
+      />
     </div>
   );
 };

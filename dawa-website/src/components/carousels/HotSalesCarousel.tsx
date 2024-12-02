@@ -268,7 +268,7 @@ const HotSalesCarousel: React.FC = () => {
                       onClick={() => {
                         router.push(`/prod/${product.id}`);
                       }}
-                      className="w-full mt-4 h-12 text-primary_1 bg-transparent hover:bg-transparent border-2 border-primary_1 rounded-lg"
+                      className="w-full mt-4 h-12 text-primary_1 bg-transparent hover:text-white border-2 border-primary_1 rounded-lg"
                     >
                       View more
                     </Button>

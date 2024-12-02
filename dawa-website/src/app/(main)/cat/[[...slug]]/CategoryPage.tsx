@@ -39,7 +39,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   // Filter states
   const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
-    200000000, 800000000,
+    0, 1000000000,
   ]);
   const [appliedLocation, setAppliedLocation] = useState<string>('');
   const [appliedSelectedColors, setAppliedSelectedColors] = useState<string[]>(
@@ -151,7 +151,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   );
 
   const resetFilters = useCallback(() => {
-    setAppliedPriceRange([200000000, 800000000]);
+    setAppliedPriceRange([0, 1000000000]);
     setAppliedLocation('');
     setAppliedSelectedColors([]);
     setFilteredProducts(productsData);
