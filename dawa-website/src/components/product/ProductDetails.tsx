@@ -5,20 +5,30 @@ import {
   FaEnvelope,
   FaShieldAlt,
   FaFlag,
+  FaPlus,
+  FaStore,
+  FaGoogle,
 } from 'react-icons/fa';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import StarRating from '../common/StarRating';
 import CustomImage from '../common/CustomImage';
-import Button from '../common/Button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { AuthDialog } from '../dialogs/auth-dialog';
+import useWindowSize from '@/hooks/useWindowSize';
 
 interface ProductDetailsProps {
   product: {
@@ -35,6 +45,7 @@ interface ProductDetailsProps {
       location: string;
     };
   };
+  isLoggedIn: boolean;
 }
 
 const safetyTips = [
@@ -45,22 +56,33 @@ const safetyTips = [
   'Report suspicious activity immediately.',
 ];
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({
+  product,
+  isLoggedIn,
+}) => {
   const [reportAbuseDetails, setReportAbuseDetails] = useState({
     name: '',
     email: '',
     description: '',
   });
+  const [messageDetails, setMessageDetails] = useState({
+    message: '',
+  });
 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [safetyDialogOpen, setSafetyDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const { width } = useWindowSize();
+  const isBreakPoint = width < 1300;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    stateSetter: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     const { name, value } = e.target;
-    setReportAbuseDetails((prev) => ({
+    stateSetter((prev: any) => ({
       ...prev,
       [name]: value,
     }));
@@ -73,233 +95,277 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     setReportDialogOpen(false);
   };
 
+  const handleSubmitMessage = () => {
+    console.log('Message Sent:', messageDetails);
+    alert('Your message has been sent to the seller.');
+    setMessageDetails({ message: '' });
+    setMessageDialogOpen(false);
+  };
+
   const toggleWishlist = () => {
     setIsWishlisted((prev) => !prev);
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-2">{product.title}</h1>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex flex-wrap items-center text-sm space-x-2 mb-2">
-          <div className="flex items-center text-primary_1 gap-2 font-semibold">
-            <span>{product.rating.toFixed(1)}</span>
-            <StarRating
-              initialRating={product.rating}
-              maxRating={5}
-              starSize={16}
-              readOnly
-            />
-          </div>
-          <span className="text-gray-500">
-            ({product.totalReviews.toLocaleString()} reviews)
-          </span>
-          <span className="text-gray-500">|</span>
-          <span className="text-gray-500">
-            {product.sold.toLocaleString()} Sold
-          </span>
-          <span className="text-gray-500">|</span>
-          <span className="text-gray-500">
-            {product.viewed.toLocaleString()} Viewed
-          </span>
-        </div>
-        <div className="flex items-center">
-          <button
-            className="flex items-center space-x-1"
-            onClick={toggleWishlist}
-          >
-            <FaHeart
-              className={`${
-                isWishlisted ? 'text-primary_1' : 'text-gray-500'
-              } transition duration-200`}
-            />
-            <span
-              className={`${
-                isWishlisted ? 'text-primary_1' : 'text-gray-500'
-              } transition duration-200`}
-            >
-              {isWishlisted ? 'Wishlisted' : 'Add to wishlist'}
+    <div
+      className={`grid ${isBreakPoint ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'} gap-6`}
+    >
+      <div className={isBreakPoint ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+            {product.title}
+          </h1>
+          <div className="flex flex-wrap items-center text-sm space-x-4 mb-6">
+            <div className="flex items-center text-primary_1 gap-2 font-semibold">
+              <span className="text-lg">{product.rating.toFixed(1)}</span>
+              <StarRating
+                initialRating={product.rating}
+                maxRating={5}
+                starSize={18}
+                readOnly
+              />
+            </div>
+            <span className="text-gray-500">
+              {product.totalReviews.toLocaleString()} reviews
             </span>
-          </button>
+            <span className="text-gray-500">
+              {product.sold.toLocaleString()} Sold
+            </span>
+            <span className="text-gray-500">
+              {product.viewed.toLocaleString()} Viewed
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary_1 mb-6">
+            {product.price}
+          </h2>
+          <Badge variant="outline" className="text-green-600 border-green-600">
+            {product.status}
+          </Badge>
         </div>
-      </div>
 
-      <h2 className="text-3xl font-bold text-primary_1 mb-6">
-        {product.price}
-      </h2>
-
-      {/* Seller Info */}
-      <div className="flex items-center bg-gray-100 p-4 rounded-lg space-x-4 mb-6">
-        <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
-          <CustomImage
-            src={product.seller.avatar}
-            alt="Seller"
-            fill
-            style={{
-              objectFit: 'cover',
-            }}
-          />
-        </div>
-        <div>
-          <h3 className="font-bold text-gray-800">{product.seller.name}</h3>
-          <p className="text-sm text-gray-600">{product.seller.location}</p>
-          <a href="#" className="text-primary_1 hover:text-primary_1 text-sm">
-            View Store
-          </a>
-        </div>
-      </div>
-
-      {/* Buttons */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button
-          icon={FaPhoneAlt}
-          className="flex items-center h-10 space-x-2 px-6 py-2 bg-gray-200 rounded-lg text-gray-800 hover:bg-gray-300"
-        >
-          <span>Contact</span>
-        </Button>
-        <Button
-          icon={FaEnvelope}
-          className="flex items-center h-10 space-x-2 px-6 py-2 bg-primary_1 text-white rounded-lg hover:bg-primary_1"
-        >
-          <span>Message</span>
-        </Button>
-        <Button
-          icon={HiOutlineArrowRight}
-          className="flex items-center h-10 space-x-2 px-6 py-2 bg-gray-200 rounded-lg text-gray-800 hover:bg-gray-300"
-        >
-          <span>See Reviews</span>
-        </Button>
-      </div>
-
-      {/* Product Status */}
-      <p className="text-sm text-gray-600 mb-4">
-        <span className="font-bold">Status:</span>{' '}
-        <span className="text-green-600">{product.status}</span>
-      </p>
-
-      {/* Safety Tips and Report Abuse */}
-      <div className="flex space-x-4">
-        {/* Safety Tips Dialog */}
-        <Dialog open={safetyDialogOpen} onOpenChange={setSafetyDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              icon={FaShieldAlt}
-              className="flex items-center h-10 space-x-2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
-            >
-              <span>Safety Tips</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Safety Tips</DialogTitle>
-              <DialogDescription>
-                Follow these safety tips to ensure secure transactions:
-              </DialogDescription>
-            </DialogHeader>
-            <ul className="list-disc pl-5 text-gray-700">
-              {safetyTips.map((tip, index) => (
-                <li key={index} className="mb-2">
-                  {tip}
-                </li>
-              ))}
-            </ul>
-            <DialogFooter>
-              <Button
-                className="px-4 py-2 bg-primary_1 text-white rounded-lg hover:bg-primary_1"
-                onClick={() => setSafetyDialogOpen(false)}
-              >
-                Got It
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl md:text-2xl">
+              Seller Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center space-x-6">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-300 overflow-hidden">
+              <CustomImage
+                src={product.seller.avatar}
+                alt="Seller"
+                fill
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+            <div>
+              <h3 className="text-lg md:text-xl font-bold text-gray-800">
+                {product.seller.name}
+              </h3>
+              <p className="text-gray-600 mb-2">{product.seller.location}</p>
+              <Button variant="link" className="text-primary_1 p-0 h-auto">
+                <FaStore className="mr-2" /> View Store
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Report Abuse Dialog */}
-        <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
-          <DialogTrigger asChild>
+        <div className="flex flex-wrap gap-4">
+          <Button variant="outline" size="lg" className="flex-1">
+            <FaPhoneAlt className="mr-2 h-4 w-4" /> Contact
+          </Button>
+          <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                size="lg"
+                className="flex-1 bg-primary_1 hover:bg-primary_1/90"
+              >
+                <FaEnvelope className="mr-2 h-4 w-4" /> Message
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Send a Message</DialogTitle>
+                <DialogDescription>
+                  Send a message to the seller about this product.
+                </DialogDescription>
+              </DialogHeader>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmitMessage();
+                }}
+                className="space-y-4 mt-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="message">Your Message</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={messageDetails.message}
+                    onChange={(e) => handleInputChange(e, setMessageDetails)}
+                    rows={4}
+                    required
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    className="bg-primary_1 hover:bg-primary_1/90"
+                  >
+                    Send Message
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+          <Button variant="outline" size="lg" className="flex-1">
+            <HiOutlineArrowRight className="mr-2 h-4 w-4" /> See Reviews
+          </Button>
+        </div>
+      </div>
+
+      <div className="col-span-1 space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <Button
-              icon={FaFlag}
-              className="flex items-center h-10 space-x-2 px-4 text-red-600 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+              className="w-full bg-primary_1 hover:bg-primary_1/90"
+              onClick={toggleWishlist}
             >
-              <span className="text-gray-800">Report Abuse</span>
+              <FaHeart
+                className={`mr-2 h-4 w-4 ${isWishlisted ? 'text-red-500' : 'text-white'}`}
+              />
+              {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Report Abuse</DialogTitle>
-              <DialogDescription>
-                Fill out the form below to report any issues with this product:
-              </DialogDescription>
-            </DialogHeader>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmitReport();
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={reportAbuseDetails.name}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary_1"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Your Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={reportAbuseDetails.email}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary_1"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={reportAbuseDetails.description}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary_1"
-                  rows={4}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  className="px-4 py-2 bg-primary_1 text-white rounded-lg hover:bg-primary_1 h-10"
-                >
-                  Submit Report
+            <Dialog open={authDialogOpen} onOpenChange={setAuthDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" variant="outline">
+                  <FaPlus className="mr-2 h-4 w-4" /> Post an Ad
                 </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+              </DialogTrigger>
+              {!isLoggedIn && (
+                <AuthDialog
+                  open={authDialogOpen}
+                  onOpenChange={setAuthDialogOpen}
+                />
+              )}
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Safety & Reporting</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Dialog open={safetyDialogOpen} onOpenChange={setSafetyDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <FaShieldAlt className="mr-2 h-4 w-4" /> Safety Tips
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Safety Tips</DialogTitle>
+                  <DialogDescription>
+                    Follow these safety tips to ensure secure transactions:
+                  </DialogDescription>
+                </DialogHeader>
+                <ul className="list-disc pl-5 text-gray-700 mt-4">
+                  {safetyTips.map((tip, index) => (
+                    <li key={index} className="mb-2">
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+                <DialogFooter>
+                  <Button onClick={() => setSafetyDialogOpen(false)}>
+                    Got It
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full text-red-600 hover:text-red-700"
+                >
+                  <FaFlag className="mr-2 h-4 w-4" /> Report Abuse
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Report Abuse</DialogTitle>
+                  <DialogDescription>
+                    Fill out the form below to report any issues with this
+                    product:
+                  </DialogDescription>
+                </DialogHeader>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmitReport();
+                  }}
+                  className="space-y-4 mt-4"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Your Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={reportAbuseDetails.name}
+                      onChange={(e) =>
+                        handleInputChange(e, setReportAbuseDetails)
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Your Email</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={reportAbuseDetails.email}
+                      onChange={(e) =>
+                        handleInputChange(e, setReportAbuseDetails)
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      value={reportAbuseDetails.description}
+                      onChange={(e) =>
+                        handleInputChange(e, setReportAbuseDetails)
+                      }
+                      rows={4}
+                      required
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      className="bg-primary_1 hover:bg-primary_1/90"
+                    >
+                      Submit Report
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

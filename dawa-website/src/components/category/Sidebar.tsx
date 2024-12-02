@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   };
 
   return (
-    <div className="w-full lg:w-[340px] relative z-50">
+    <div className="w-full lg:w-[288px] relative z-50">
       {/* Sidebar Container */}
       <div
         className={`bg-white rounded-xl border sticky top-[100px] ${
@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             : 'rounded-xl border-gray-200'
         }`}
       >
-        <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-290px)]">
+        <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
           <div className="p-4 space-y-1">
             {/* Link for All Categories */}
             <Link href="/cat" passHref onClick={handleItemClick}>
@@ -117,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{category.icon}</span>
                       <div className="flex flex-col items-start w-full truncate">
-                        <span className="font-sm truncate">
+                        <span className="font-sm truncate whitespace-nowrap max-w-[180px]">
                           {category.name}
                         </span>
                         <span className="text-xs text-gray-500 truncate">{`(${category.count.toLocaleString()})`}</span>
@@ -137,11 +137,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       {/* Subcategories Panel */}
       {isLargeScreen && hoveredCategory && (
         <div
-          className="absolute bg-white rounded-r-xl border-r border-y min-w-[340px] left-[340px] top-0 z-30"
+          className="absolute bg-white rounded-r-xl border-r border-y min-w-[288px] left-[288px] top-0 z-30"
           onMouseEnter={() => setIsSubcategoriesHovered(true)}
           onMouseLeave={() => setIsSubcategoriesHovered(false)}
         >
-          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-290px)]">
+          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
             <div className="p-4 space-y-1">
               {hoveredCategory.subcategories?.map((subcategory) => (
                 <Link
@@ -156,7 +156,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
                     <div className="flex items-center gap-3 justify-between w-full truncate">
                       <div className="flex items-start gap-2">
                         {subcategory.icon}
-                        <span className="font-medium truncate">
+                        <span className="font-medium truncate whitespace-nowrap max-w-[180px]">
                           {subcategory.name}
                         </span>
                       </div>

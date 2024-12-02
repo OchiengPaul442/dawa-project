@@ -39,7 +39,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   // Filter states
   const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
-    0, 80000000,
+    200000000, 800000000,
   ]);
   const [appliedLocation, setAppliedLocation] = useState<string>('');
   const [appliedSelectedColors, setAppliedSelectedColors] = useState<string[]>(
@@ -62,8 +62,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
       ),
     [selectedCategory, category],
   );
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -153,7 +151,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   );
 
   const resetFilters = useCallback(() => {
-    setAppliedPriceRange([0, 80000000]);
+    setAppliedPriceRange([200000000, 800000000]);
     setAppliedLocation('');
     setAppliedSelectedColors([]);
     setFilteredProducts(productsData);

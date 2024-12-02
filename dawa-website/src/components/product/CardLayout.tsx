@@ -109,7 +109,7 @@ const renderGridLayout = (
       </div>
       <Button
         onClick={() => onViewMore(product.id)}
-        className="w-full h-10 sm:h-12 bg-transparent hover:bg-transparent border-2 border-primary_1 text-primary_1 py-2 rounded-md mt-2"
+        className="w-full h-10 sm:h-12 bg-transparent hover:text-white border-2 border-primary_1 text-primary_1 py-2 rounded-md mt-2"
       >
         View more
       </Button>

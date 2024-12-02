@@ -1,11 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { FaCheckCircle, FaMinus, FaPlus } from 'react-icons/fa';
-import { Range } from 'react-range';
-import { formatPrice } from '@/lib/utils';
-
-import { Button } from '../ui/button';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
+import { FiMinus, FiPlus } from 'react-icons/fi';
+import { Range, getTrackBackground } from 'react-range';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 interface ProductFilterProps {
   appliedPriceRange: [number, number];
@@ -20,8 +32,11 @@ interface ProductFilterProps {
 }
 
 const MIN_PRICE = 0;
-const MAX_PRICE = 100_000_000; // 100,000,000 UGX (100 million UGX)
-const STEP = 100_000; // 100,000 UGX
+const MAX_PRICE = 1_000_000_000;
+const STEP = 100_000;
+const DEFAULT_MIN = 20_000_000;
+const DEFAULT_MAX = 80_000_000;
+const CURRENCY = 'UGX';
 
 const allColors = [
   'White',
@@ -33,6 +48,17 @@ const allColors = [
   'Purple',
 ];
 
+const locations = ['Kampala', 'Gulu', 'Mbarara', 'Jinja', 'Fort Portal'];
+
+const formatCurrency = (value: number) => {
+  return value.toLocaleString('en-UG', {
+    style: 'currency',
+    currency: 'UGX',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+};
+
 const ProductFilter: React.FC<ProductFilterProps> = ({
   appliedPriceRange,
   appliedLocation,
@@ -40,202 +66,253 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
   onApplyFilters,
   onResetFilters,
 }) => {
-  // **Temporary Filter States**
   const [tempPriceRange, setTempPriceRange] =
     useState<[number, number]>(appliedPriceRange);
   const [tempLocation, setTempLocation] = useState<string>(appliedLocation);
   const [tempSelectedColors, setTempSelectedColors] = useState<string[]>(
     appliedSelectedColors,
   );
-
   const [showMoreColors, setShowMoreColors] = useState(false);
+  const [minInput, setMinInput] = useState(formatCurrency(tempPriceRange[0]));
+  const [maxInput, setMaxInput] = useState(formatCurrency(tempPriceRange[1]));
+  const [isExpanded, setIsExpanded] = useState(true);
 
-  // Update temporary states when applied filters change
   useEffect(() => {
     setTempPriceRange(appliedPriceRange);
     setTempLocation(appliedLocation);
     setTempSelectedColors(appliedSelectedColors);
+    setMinInput(formatCurrency(appliedPriceRange[0]));
+    setMaxInput(formatCurrency(appliedPriceRange[1]));
   }, [appliedPriceRange, appliedLocation, appliedSelectedColors]);
 
-  const toggleSelectAllColors = () => {
-    if (tempSelectedColors.length === allColors.length) {
-      setTempSelectedColors([]);
+  const handlePriceChange = (values: number[]) => {
+    setTempPriceRange([values[0], values[1]]);
+    setMinInput(formatCurrency(values[0]));
+    setMaxInput(formatCurrency(values[1]));
+  };
+
+  const handleInputChange = (value: string, isMin: boolean) => {
+    const numValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
+
+    if (isMin) {
+      setMinInput(formatCurrency(numValue));
+      if (numValue <= tempPriceRange[1]) {
+        setTempPriceRange([numValue, tempPriceRange[1]]);
+      }
     } else {
-      setTempSelectedColors(allColors);
+      setMaxInput(formatCurrency(numValue));
+      if (numValue >= tempPriceRange[0]) {
+        setTempPriceRange([tempPriceRange[0], numValue]);
+      }
     }
   };
 
-  const displayedColors = showMoreColors ? allColors : allColors.slice(0, 4);
+  const toggleSelectAllColors = () => {
+    setTempSelectedColors(
+      tempSelectedColors.length === allColors.length ? [] : [...allColors],
+    );
+  };
+
+  const toggleColor = (color: string) => {
+    setTempSelectedColors((prev) =>
+      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color],
+    );
+  };
+
+  const displayedColors = useMemo(
+    () => (showMoreColors ? allColors : allColors.slice(0, 4)),
+    [showMoreColors],
+  );
 
   const handleApply = () => {
     onApplyFilters(tempPriceRange, tempLocation, tempSelectedColors);
   };
 
   const handleReset = () => {
-    setTempPriceRange([0, 80000000]);
+    setTempPriceRange([DEFAULT_MIN, DEFAULT_MAX]);
+    setMinInput(formatCurrency(DEFAULT_MIN));
+    setMaxInput(formatCurrency(DEFAULT_MAX));
     setTempLocation('');
     setTempSelectedColors([]);
     onResetFilters();
   };
 
   return (
-    <section className="bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+    <Collapsible
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      className="bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
+    >
+      <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="sm" className="w-9 font-thin p-0">
+            {isExpanded ? <FiMinus /> : <FiPlus />}
+          </Button>
+        </CollapsibleTrigger>
+      </div>
 
-      {/* Price Range Slider */}
-      <div>
-        <label className="text-sm font-medium text-gray-600 mb-2 block">
-          Price Range (UGX)
-        </label>
-        <Range
-          values={tempPriceRange}
-          step={STEP}
-          min={MIN_PRICE}
-          max={MAX_PRICE}
-          onChange={(values) => setTempPriceRange([values[0], values[1]])}
-          renderTrack={({ props, children }) => {
-            const { key, ...otherProps } = props as any;
-            return (
-              <div
-                {...otherProps}
-                key={key}
-                className="w-full h-2 bg-gray-200 rounded-full mt-4 relative"
-                style={{
-                  background: `linear-gradient(to right, #E0E0E0 0%, #E0E0E0 ${
-                    ((tempPriceRange[0] - MIN_PRICE) /
-                      (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, #FFA200 ${
-                    ((tempPriceRange[0] - MIN_PRICE) /
-                      (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, #FFA200 ${
-                    ((tempPriceRange[1] - MIN_PRICE) /
-                      (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, #E0E0E0 ${
-                    ((tempPriceRange[1] - MIN_PRICE) /
-                      (MAX_PRICE - MIN_PRICE)) *
-                    100
-                  }%, #E0E0E0 100%)`,
-                }}
-              >
-                {children}
+      <CollapsibleContent>
+        <div className="p-4 space-y-6">
+          {/* Custom Price Range Inputs */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-600">
+              Price Range ({CURRENCY})
+            </label>
+            <div className="flex gap-3 items-center">
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  value={minInput}
+                  onChange={(e) => handleInputChange(e.target.value, true)}
+                  className="w-full"
+                  placeholder="Min"
+                />
               </div>
-            );
-          }}
-          renderThumb={({ props }) => {
-            const { key, ...otherProps } = props; // Extract `key` from props
-            return (
-              <div
-                {...otherProps}
-                key={key}
-                className="w-4 h-4 bg-[#FFA200] rounded-full shadow outline-none"
-              ></div>
-            );
-          }}
-        />
+              <span className="text-gray-400">-</span>
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  value={maxInput}
+                  onChange={(e) => handleInputChange(e.target.value, false)}
+                  className="w-full"
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+          </div>
 
-        <div className="flex justify-between text-sm text-gray-700 mt-2">
-          <span>{formatPrice(tempPriceRange[0])}</span>
-          <span>{formatPrice(tempPriceRange[1])}</span>
-        </div>
-      </div>
-
-      {/* Location Dropdown */}
-      <div>
-        <label className="text-sm font-medium text-gray-600 mb-2 block">
-          Location
-        </label>
-        <select
-          value={tempLocation}
-          onChange={(e) => setTempLocation(e.target.value)}
-          className="w-full p-2 bg-gray-50 text-gray-800 font-medium border border-gray-300 rounded-md focus:ring-2 focus:ring-[#FFA200] outline-none"
-        >
-          <option value="">Choose Location</option>
-          <option value="Kampala">Kampala</option>
-          <option value="Gulu">Gulu</option>
-          <option value="Mbarara">Mbarara</option>
-          <option value="Jinja">Jinja</option>
-          <option value="Fort Portal">Fort Portal</option>
-        </select>
-      </div>
-
-      {/* Color Selection */}
-      <div>
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-600">Color</label>
-          <button
-            onClick={toggleSelectAllColors}
-            className="text-[#FFA200] text-sm flex items-center"
-          >
-            <FaCheckCircle
-              className={`mr-1 ${
-                tempSelectedColors.length === allColors.length
-                  ? 'text-[#FFA200]'
-                  : 'text-gray-400'
-              }`}
+          {/* Price Range Slider */}
+          <div className="px-2">
+            <Range
+              values={tempPriceRange}
+              step={STEP}
+              min={MIN_PRICE}
+              max={MAX_PRICE}
+              onChange={handlePriceChange}
+              renderTrack={({ props, children }) => {
+                const { key, ...restProps }: any = props;
+                return (
+                  <div
+                    key={key}
+                    {...restProps}
+                    className="w-full h-1 bg-gray-200 rounded-full"
+                    style={{
+                      background: getTrackBackground({
+                        values: tempPriceRange,
+                        colors: ['#E0E0E0', '#FFA200', '#E0E0E0'],
+                        min: MIN_PRICE,
+                        max: MAX_PRICE,
+                      }),
+                    }}
+                  >
+                    {children}
+                  </div>
+                );
+              }}
+              renderThumb={({ props }) => {
+                const { key, ...restProps } = props;
+                return (
+                  <div
+                    key={key}
+                    {...restProps}
+                    className="w-5 h-5 bg-[#FFA200] rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-[#FFA200] focus:ring-opacity-50"
+                  />
+                );
+              }}
             />
-            Select All
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-2 py-2">
-          {displayedColors.map((color) => (
-            <button
-              key={color}
-              onClick={() =>
-                setTempSelectedColors((prevColors) =>
-                  prevColors.includes(color)
-                    ? prevColors.filter((c) => c !== color)
-                    : [...prevColors, color],
-                )
-              }
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                tempSelectedColors.includes(color)
-                  ? 'bg-[#FFF4E0] border-[#FFA200] text-[#FFA200]'
-                  : 'bg-gray-50 border-gray-300 text-gray-800 hover:bg-gray-100'
-              } border`}
-            >
-              {color}
-            </button>
-          ))}
-        </div>
-        {allColors.length > 4 && (
-          <button
-            onClick={() => setShowMoreColors(!showMoreColors)}
-            className="text-[#FFA200] text-sm mt-2 flex items-center"
-          >
-            {showMoreColors ? (
-              <>
-                <FaMinus className="mr-1" />
-                Show Less
-              </>
-            ) : (
-              <>
-                <FaPlus className="mr-1" />
-                Show More
-              </>
-            )}
-          </button>
-        )}
-      </div>
+          </div>
 
-      {/* Filter and Reset Buttons */}
-      <div className="space-y-2">
-        <Button
-          onClick={handleApply}
-          className="w-full bg-[#FFA200] text-white py-2 rounded-md shadow hover:bg-[#FF8C00] transition-all duration-200"
-        >
-          Apply Filters
-        </Button>
-        <Button
-          onClick={handleReset}
-          className="w-full bg-transparent text-[#FFA200] border border-[#FFA200] py-2 rounded-md hover:bg-[#FFF4E0] transition-all duration-200"
-        >
-          Reset Filters
-        </Button>
-      </div>
-    </section>
+          {/* Location Dropdown */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-600">
+              Location
+            </label>
+            <Select value={tempLocation} onValueChange={setTempLocation}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose Location" />
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((location) => (
+                  <SelectItem key={location} value={location}>
+                    {location}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Color Selection */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium text-gray-600">Color</h4>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleSelectAllColors}
+                className="text-[#FFA200] hover:text-[#FF8C00] transition-colors h-auto py-1"
+              >
+                <FaCheckCircle
+                  className={`mr-2 ${tempSelectedColors.length === allColors.length ? 'text-[#FFA200]' : 'text-gray-400'}`}
+                />
+                Select All
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {displayedColors.map((color) => (
+                <Button
+                  key={color}
+                  onClick={() => toggleColor(color)}
+                  variant={
+                    tempSelectedColors.includes(color) ? 'secondary' : 'outline'
+                  }
+                  size="sm"
+                  className={`transition-all duration-200 ${
+                    tempSelectedColors.includes(color)
+                      ? 'bg-[#FFF4E0] text-[#FFA200] hover:bg-[#FFE0B2]'
+                      : 'hover:bg-gray-100'
+                  }`}
+                >
+                  {color}
+                </Button>
+              ))}
+            </div>
+            {allColors.length > 4 && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => setShowMoreColors(!showMoreColors)}
+                className="text-[#FFA200] hover:text-[#FF8C00] transition-colors p-0 h-auto"
+              >
+                {showMoreColors ? (
+                  <FiMinus className="mr-2" />
+                ) : (
+                  <FiPlus className="mr-2" />
+                )}
+                {showMoreColors ? 'Show Less' : 'Show More'}
+              </Button>
+            )}
+          </div>
+
+          {/* Filter and Reset Buttons */}
+          <div className="space-y-3 pt-2">
+            <Button
+              onClick={handleApply}
+              className="w-full bg-[#FFA200] text-white hover:bg-[#FF8C00] transition-all duration-200"
+            >
+              Apply Filters
+            </Button>
+            <Button
+              onClick={handleReset}
+              variant="outline"
+              className="w-full border-[#FFA200] text-[#FFA200] hover:bg-[#FFF4E0] transition-all duration-200"
+            >
+              Reset Filters
+            </Button>
+          </div>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 
