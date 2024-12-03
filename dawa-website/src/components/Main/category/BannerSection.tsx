@@ -1,6 +1,5 @@
 'use client';
-import CustomImage from '../common/CustomImage';
-import Image from 'next/image';
+import CustomImage from '../../common/CustomImage';
 import React from 'react';
 
 const BannerSection = () => {

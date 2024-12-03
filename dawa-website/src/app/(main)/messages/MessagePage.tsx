@@ -21,9 +21,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCard } from '@/components/messages/MessageCard';
-import { MessageDialog } from '@/components/messages/MessageDialog';
-import { MessageListSkeleton } from '@/components/messages/MessageSkeleton';
+import { MessageCard } from '@/components/Main/messages/MessageCard';
+import { MessageDialog } from '@/components/Main/messages/MessageDialog';
+import { MessageListSkeleton } from '@/components/Main/messages/MessageSkeleton';
 import {
   Message,
   FetchMessagesFunction,

@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback, useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { PopularSearchProductCard } from '../ProductCards/PopularSearchProductCard';
+import { PopularSearchProductCard } from '../../ProductCards/PopularSearchProductCard';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useLikeableItems } from '@/hooks/useLikeableItems';
 import { Product } from '@/types/product';

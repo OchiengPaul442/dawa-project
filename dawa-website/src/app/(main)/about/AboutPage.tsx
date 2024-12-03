@@ -1,5 +1,5 @@
 'use client';
-import VideoSection from '@/components/about/VideoSection';
+import VideoSection from '@/components/Main/about/VideoSection';
 import CustomImage from '@/components/common/CustomImage';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import {

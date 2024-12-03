@@ -8,7 +8,7 @@ import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import InputField from '@/components/account/InputField';
+import InputField from '@/components/Main/account/InputField';
 import { FaUserCircle } from 'react-icons/fa';
 import Link from 'next/link';
 

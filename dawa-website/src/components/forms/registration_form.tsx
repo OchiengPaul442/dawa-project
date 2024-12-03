@@ -16,7 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
-import InputField from '@/components/account/InputField';
+import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
 
 // Define the shape of form data

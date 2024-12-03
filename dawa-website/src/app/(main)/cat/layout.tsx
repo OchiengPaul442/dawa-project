@@ -1,6 +1,6 @@
 import Layout from '@/components/layout';
-import HotSalesCarousel from '@/components/carousels/HotSalesCarousel';
-import RecentlyViewedCarousel from '@/components/carousels/RecentlyViewedCarousel';
+import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
+import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
 
 export default function CategoryLayout({
   children,

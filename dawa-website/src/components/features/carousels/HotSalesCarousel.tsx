@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import FireIcon from '@public/assets/svgs/fireIcon.svg';
-import { HotSaleProductCard } from '../ProductCards/HotSaleProductCard';
+import { HotSaleProductCard } from '../../ProductCards/HotSaleProductCard';
 import { useLikeableItems } from '@/hooks/useLikeableItems';
 import { Product } from '@/types/product';
 

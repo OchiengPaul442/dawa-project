@@ -8,9 +8,9 @@ import {
   FaWifi,
 } from 'react-icons/fa';
 
-import BestDealsCarousel from '@/components/carousels/BestDealsCarousel';
-import BannerSection from '@/components/category/BannerSection';
-import Sidebar from '@/components/category/Sidebar';
+import BestDealsCarousel from '@/components/features/carousels/BestDealsCarousel';
+import BannerSection from '@/components/Main/category/BannerSection';
+import Sidebar from '@/components/Main/category/Sidebar';
 
 const CategoriesPage = () => {
   const subCategories = [

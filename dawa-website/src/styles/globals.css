@@ -114,3 +114,27 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #ffa200 lightgray;
 }
+
+/* Add a wavy effect to the pulses */
+.wavyPulse::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #ffa200;
+  border-bottom-color: #ffa200;
+  animation: wavyRotate 2s linear infinite;
+}
+
+@keyframes wavyRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

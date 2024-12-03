@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
 
-import Highlight_Carousel from '@/components/carousels/Highlight_Carousel';
-import HotSalesCarousel from '@/components/carousels/HotSalesCarousel';
-import PopularSearchCarousel from '@/components/carousels/PopularSearchCarousel';
-import RecentlyViewedCarousel from '@/components/carousels/RecentlyViewedCarousel';
-import Top10ProductCarousel from '@/components/carousels/Top10ProductCarousel';
+import Highlight_Carousel from '@/components/features/carousels/Highlight_Carousel';
+import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
+import PopularSearchCarousel from '@/components/features/carousels/PopularSearchCarousel';
+import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
+import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
 import BestDeals from '@/components/product/BestDeals';
 import FlashSale from '@/components/product/FlashSale';
 

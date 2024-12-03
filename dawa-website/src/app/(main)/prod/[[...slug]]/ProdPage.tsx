@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import ImageCarousel from '@/components/carousels/ImageCarousel';
+import ImageCarousel from '@/components/features/carousels/ImageCarousel';
 import ProductTabs from '@/components/product/ProductTabs';
 import ShareSection from '@/components/product/ShareSection';
 import ProductDetails from '@/components/product/ProductDetails';

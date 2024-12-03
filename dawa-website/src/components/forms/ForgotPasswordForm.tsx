@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import InputField from '@/components/account/InputField';
+import InputField from '@/components/Main/account/InputField';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';

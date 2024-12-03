@@ -1,7 +1,7 @@
 'use client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { Top10ProductCard } from '../ProductCards/Top10ProductCard';
+import { Top10ProductCard } from '../../ProductCards/Top10ProductCard';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useLikeableItems } from '@/hooks/useLikeableItems';
 import { Product } from '@/types/product';
@@ -24,7 +24,7 @@ const initialProducts: Product[] = [
     price: 'UGX1,200,000',
     originalPrice: 'UGX1,400,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 5,
     sold: '1.2m',
     liked: true,
@@ -35,7 +35,7 @@ const initialProducts: Product[] = [
     price: 'UGX1,000,000',
     originalPrice: 'UGX1,200,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 4.5,
     sold: '2.3m',
     liked: false,
@@ -46,7 +46,7 @@ const initialProducts: Product[] = [
     price: 'UGX500,000',
     originalPrice: 'UGX600,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 4,
     sold: '3.4m',
     liked: true,
@@ -57,7 +57,7 @@ const initialProducts: Product[] = [
     price: 'UGX200,000',
     originalPrice: 'UGX300,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 3.5,
     sold: '1.5m',
     liked: false,
@@ -68,7 +68,7 @@ const initialProducts: Product[] = [
     price: 'UGX500,000',
     originalPrice: 'UGX600,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 4,
     sold: '2.3m',
     liked: true,
@@ -90,7 +90,7 @@ const initialProducts: Product[] = [
     price: 'UGX1,200,000',
     originalPrice: 'UGX1,400,000',
     imageUrl:
-      'https://images.unsplash.com/photo-1519681393143-a447a781427b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHNwb3J0JTIwZ29sZSUyMG1hbnxlbnwwfHwwfHw%3D&h=200',
+      'https://images.unsplash.com/photo-1461141346587-763ab02bced9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8U21hcnQlMjBXYXRjaHxlbnwwfHwwfHx8MA%3D%3D',
     rating: 5,
     sold: '1.2m',
     liked: true,

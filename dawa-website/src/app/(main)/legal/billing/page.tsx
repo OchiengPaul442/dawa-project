@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Head from 'next/head';
-import Sidebar from '@/components/legal/Sidebar';
-import TermsSection from '@/components/legal/TermsSection';
+import Sidebar from '@/components/Main/legal/Sidebar';
+import TermsSection from '@/components/Main/legal/TermsSection';
 
 const billingSections = [
   { id: 'introduction', title: '1. Introduction' },

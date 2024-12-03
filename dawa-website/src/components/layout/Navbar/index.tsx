@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '../../common/Button';
 import { Input } from '@/components/ui/input';
-import Sidebar from '@/components/category/Sidebar';
+import Sidebar from '@/components/Main/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
