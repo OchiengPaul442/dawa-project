@@ -105,7 +105,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
 
             <Link href="/" className="flex-shrink-0">
               <Logo
-                className={`w-auto transition-all duration-300 ease-in-out ${
+                className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
                   isSticky ? 'h-20 -my-4' : 'h-24 -my-8'
                 }`}
               />
