@@ -70,7 +70,7 @@ export function AuthDialog() {
             Sign In
           </Button>
           <div className="text-sm text-center">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-primary_1 hover:underline">
               Register here
             </Link>

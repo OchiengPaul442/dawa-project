@@ -7,6 +7,7 @@ import ProductDetails from '@/components/product/ProductDetails';
 import Link from 'next/link';
 
 const product = {
+  id: '123456789',
   title: 'LED Monitor With High Quality In The World',
   price: 'UGX1,250,000',
   rating: 4.5,
