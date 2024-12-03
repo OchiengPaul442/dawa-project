@@ -4,6 +4,10 @@ import { AiOutlineCheck, AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import CustomImage from '../common/CustomImage';
 import Button from '@/components/common/Button';
 import StarRating from '@/components/common/StarRating';
+import { useDispatch } from '@/lib/hooks';
+import { useAuth } from '@/hooks/use-auth';
+import { LikeButton } from '../common/LikeButton';
+import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 interface Product {
   id: number;
@@ -28,9 +32,16 @@ const CardLayout: React.FC<CardLayoutProps> = ({
   viewType,
   onViewMore,
 }) => {
+  const dispatch = useDispatch();
   const [isFavorite, setIsFavorite] = useState(false);
+  const { user } = useAuth();
 
   const handleToggleFavorite = () => {
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
+
     setIsFavorite(!isFavorite);
     // TODO: Add logic to save/remove from wishlist
   };

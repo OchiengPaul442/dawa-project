@@ -17,18 +17,19 @@ import { Input } from '@/components/ui/input';
 import Sidebar from '@/components/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
-import { AuthDialog } from '../../dialogs/auth-dialog';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useDispatch } from '@/lib/hooks';
+import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
+  const dispatch = useDispatch();
   const [isSticky, setIsSticky] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading, logout, counters } = useAuth();
@@ -65,7 +66,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
 
   const handleSellClick = () => {
     if (!user) {
-      setAuthDialogOpen(true);
+      dispatch(openAuthDialog());
     } else {
       // Navigate to sell page or open sell dialog
       console.log('Navigate to sell page');
@@ -167,17 +168,17 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               ) : (
                 <div className="flex items-center gap-3">
                   <Link href="/login" passHref>
-                    <Button className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 font-bold h-10 text-xs shadow-none">
+                    <Button className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 font-bold h-12 text-xs shadow-none">
                       LOGIN
                     </Button>
                   </Link>
                   <Link href="/register" passHref>
-                    <Button className="bg-primary_1 text-white px-4 py-2 font-bold h-10 text-xs">
+                    <Button className="bg-primary_1 text-white px-4 py-2 font-bold h-12 text-xs">
                       SIGN UP
                     </Button>
                   </Link>
                   <Button
-                    className="bg-gray-700 text-white px-4 py-2 font-bold h-10 text-xs"
+                    className="bg-gray-700 text-white px-4 py-2 font-bold h-12 w-[100px] text-xs"
                     onClick={handleSellClick}
                   >
                     SELL
@@ -211,8 +212,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           />
         </div>
       </div>
-
-      <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
     </nav>
   );
 };

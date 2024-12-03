@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import CardLayout from '@/components/product/CardLayout';
+import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
 import FiltersAndSorting from '@/components/category/FiltersAndSorting';
 import CategoriesAndSubcategories from '@/components/category/CategoriesAndSubcategories';

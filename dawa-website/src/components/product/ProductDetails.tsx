@@ -7,9 +7,9 @@ import {
   FaFlag,
   FaPlus,
   FaStore,
-  FaGoogle,
 } from 'react-icons/fa';
 import { HiOutlineArrowRight } from 'react-icons/hi';
+import { useRouter } from 'next/navigation';
 import StarRating from '../common/StarRating';
 import CustomImage from '../common/CustomImage';
 import { Button } from '@/components/ui/button';
@@ -27,12 +27,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { AuthDialog } from '../dialogs/auth-dialog';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useAuth } from '@/hooks/use-auth';
+import { useDispatch } from '@/lib/hooks';
+import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 interface ProductDetailsProps {
   product: {
+    id: string;
     title: string;
     rating: number;
     totalReviews: number;
@@ -57,7 +59,9 @@ const safetyTips = [
 ];
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
+  const router = useRouter();
   const { user } = useAuth();
+  const dispatch = useDispatch();
   const [reportAbuseDetails, setReportAbuseDetails] = useState({
     name: '',
     email: '',
@@ -71,7 +75,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [safetyDialogOpen, setSafetyDialogOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const { width } = useWindowSize();
   const isBreakPoint = width < 1300;
 
@@ -101,7 +105,27 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   };
 
   const toggleWishlist = () => {
-    setIsWishlisted((prev) => !prev);
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
+    setIsWishlisted(!isWishlisted);
+  };
+
+  const handlePostAd = () => {
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
+    console.log('Post Ad');
+  };
+
+  const handleAction = (action: () => void) => {
+    if (!user) {
+      dispatch(openAuthDialog());
+    } else {
+      action();
+    }
   };
 
   return (
@@ -171,55 +195,36 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         </Card>
 
         <div className="flex flex-wrap gap-4">
-          <Button variant="outline" size="lg" className="flex-1">
+          <Button
+            variant="outline"
+            size="lg"
+            className="flex-1"
+            onClick={() => handleAction(() => setContactDialogOpen(true))}
+          >
             <FaPhoneAlt className="mr-2 h-4 w-4" /> Contact
           </Button>
-          <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                size="lg"
-                className="flex-1 bg-primary_1 hover:bg-primary_1/90"
-              >
-                <FaEnvelope className="mr-2 h-4 w-4" /> Message
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Send a Message</DialogTitle>
-                <DialogDescription>
-                  Send a message to the seller about this product.
-                </DialogDescription>
-              </DialogHeader>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmitMessage();
-                }}
-                className="space-y-4 mt-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="message">Your Message</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={messageDetails.message}
-                    onChange={(e) => handleInputChange(e, setMessageDetails)}
-                    rows={4}
-                    required
-                  />
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-primary_1 hover:bg-primary_1/90"
-                  >
-                    Send Message
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-          <Button variant="outline" size="lg" className="flex-1">
+
+          <Button
+            size="lg"
+            className="flex-1 bg-primary_1 hover:bg-primary_1/90"
+            onClick={() => handleAction(() => setMessageDialogOpen(true))}
+          >
+            <FaEnvelope className="mr-2 h-4 w-4" /> Message
+          </Button>
+
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => {
+              if (!user) {
+                dispatch(openAuthDialog());
+                return;
+              } else {
+                router.push(`/reviews/${product.id}`);
+              }
+            }}
+            className="flex-1"
+          >
             <HiOutlineArrowRight className="mr-2 h-4 w-4" /> See Reviews
           </Button>
         </div>
@@ -240,23 +245,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               />
               {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
             </Button>
-            <Dialog open={authDialogOpen} onOpenChange={setAuthDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  onClick={() => console.log('clicked')}
-                  className="w-full"
-                  variant="outline"
-                >
-                  <FaPlus className="mr-2 h-4 w-4" /> Post an Ad
-                </Button>
-              </DialogTrigger>
-              {!user && (
-                <AuthDialog
-                  open={authDialogOpen}
-                  onOpenChange={setAuthDialogOpen}
-                />
-              )}
-            </Dialog>
+
+            <Button onClick={handlePostAd} className="w-full" variant="outline">
+              <FaPlus className="mr-2 h-4 w-4" /> Post an Ad
+            </Button>
           </CardContent>
         </Card>
 
@@ -293,82 +285,139 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full text-red-600 hover:text-red-700"
-                >
-                  <FaFlag className="mr-2 h-4 w-4" /> Report Abuse
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Report Abuse</DialogTitle>
-                  <DialogDescription>
-                    Fill out the form below to report any issues with this
-                    product:
-                  </DialogDescription>
-                </DialogHeader>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSubmitReport();
-                  }}
-                  className="space-y-4 mt-4"
-                >
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Your Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={reportAbuseDetails.name}
-                      onChange={(e) =>
-                        handleInputChange(e, setReportAbuseDetails)
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Your Email</Label>
-                    <Input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={reportAbuseDetails.email}
-                      onChange={(e) =>
-                        handleInputChange(e, setReportAbuseDetails)
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={reportAbuseDetails.description}
-                      onChange={(e) =>
-                        handleInputChange(e, setReportAbuseDetails)
-                      }
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      className="bg-primary_1 hover:bg-primary_1/90"
-                    >
-                      Submit Report
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="outline"
+              className="w-full text-red-600 hover:text-red-700"
+              onClick={() => handleAction(() => setReportDialogOpen(true))}
+            >
+              <FaFlag className="mr-2 h-4 w-4" /> Report Abuse
+            </Button>
           </CardContent>
         </Card>
       </div>
+
+      {user && (
+        <>
+          <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Report Abuse</DialogTitle>
+                <DialogDescription>
+                  Fill out the form below to report any issues with this
+                  product:
+                </DialogDescription>
+              </DialogHeader>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmitReport();
+                }}
+                className="space-y-4 mt-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="name">Your Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={reportAbuseDetails.name}
+                    onChange={(e) =>
+                      handleInputChange(e, setReportAbuseDetails)
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Your Email</Label>
+                  <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={reportAbuseDetails.email}
+                    onChange={(e) =>
+                      handleInputChange(e, setReportAbuseDetails)
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={reportAbuseDetails.description}
+                    onChange={(e) =>
+                      handleInputChange(e, setReportAbuseDetails)
+                    }
+                    rows={4}
+                    required
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    className="bg-primary_1 hover:bg-primary_1/90"
+                  >
+                    Submit Report
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Send a Message</DialogTitle>
+                <DialogDescription>
+                  Send a message to the seller about this product.
+                </DialogDescription>
+              </DialogHeader>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmitMessage();
+                }}
+                className="space-y-4 mt-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="message">Your Message</Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={messageDetails.message}
+                    onChange={(e) => handleInputChange(e, setMessageDetails)}
+                    rows={4}
+                    required
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="submit"
+                    className="bg-primary_1 hover:bg-primary_1/90"
+                  >
+                    Send Message
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Contact Seller</DialogTitle>
+                <DialogDescription>
+                  Here are the contact details for the seller.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4">
+                <p>Phone: +1234567890</p>
+                <p>Email: seller@example.com</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   );
 };

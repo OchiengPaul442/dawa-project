@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,15 +12,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import GoogleIcon from '@public/assets/svgs/google.svg';
+import { useDispatch, useSelector } from '@/lib/hooks';
+import { closeAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import type { RootState } from '@/lib/store';
 
-interface AuthDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export function AuthDialog() {
+  const dispatch = useDispatch();
+  const isOpen = useSelector(
+    (state: RootState) => state.authDialog.isOpen,
+  ) as boolean;
 
-export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      dispatch(closeAuthDialog());
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
