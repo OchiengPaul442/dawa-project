@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useDispatch, useSelector } from '@/lib/hooks';
 import { closeAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
@@ -18,6 +18,7 @@ import type { RootState } from '@/lib/store';
 
 export function AuthDialog() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const isOpen = useSelector(
     (state: RootState) => state.authDialog.isOpen,
   ) as boolean;
@@ -26,6 +27,11 @@ export function AuthDialog() {
     if (!open) {
       dispatch(closeAuthDialog());
     }
+  };
+
+  const handleLinkClick = (path: string) => {
+    dispatch(closeAuthDialog());
+    router.push(path);
   };
 
   return (
@@ -71,19 +77,31 @@ export function AuthDialog() {
           </Button>
           <div className="text-sm text-center">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-primary_1 hover:underline">
+            <Button
+              variant="link"
+              className="p-0 h-auto font-normal text-primary_1"
+              onClick={() => handleLinkClick('/register')}
+            >
               Register here
-            </Link>
+            </Button>
           </div>
           <div className="text-xs text-center text-muted-foreground">
             By continuing, you agree to our{' '}
-            <Link href="/terms" className="text-primary_1 hover:underline">
+            <Button
+              variant="link"
+              className="p-0 h-auto text-xs font-normal text-primary_1"
+              onClick={() => handleLinkClick('/legal/terms')}
+            >
               Terms of Service
-            </Link>{' '}
+            </Button>{' '}
             and{' '}
-            <Link href="/privacy" className="text-primary_1 hover:underline">
+            <Button
+              variant="link"
+              className="p-0 h-auto text-xs font-normal text-primary_1"
+              onClick={() => handleLinkClick('/legal/privacy')}
+            >
               Privacy Policy
-            </Link>
+            </Button>
           </div>
         </div>
       </DialogContent>
