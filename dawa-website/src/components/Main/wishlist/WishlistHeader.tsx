@@ -2,7 +2,7 @@
 import { FaRegTrashCan } from 'react-icons/fa6';
 import React, { FC, useCallback } from 'react';
 import { Heart } from 'lucide-react';
-import Button from '../common/Button';
+import Button from '../../common/Button';
 import {
   Select,
   SelectContent,

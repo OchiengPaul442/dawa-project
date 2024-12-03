@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
-import WishlistHeader from '@/components/wishlist/WishlistHeader';
-import ProductList from '@/components/wishlist/ProductList';
+import WishlistHeader from '@/components/Main/wishlist/WishlistHeader';
+import ProductList from '@/components/Main/wishlist/ProductList';
 import Button from '@/components/common/Button';
 
 // Sample product data

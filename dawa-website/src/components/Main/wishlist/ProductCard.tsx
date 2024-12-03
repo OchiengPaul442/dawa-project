@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import { Trash2, ExternalLink, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import Button from '../common/Button';
+import Button from '../../common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tooltip,
@@ -9,8 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import CustomImage from '../common/CustomImage';
-import StarRating from '../common/StarRating';
+import CustomImage from '../../common/CustomImage';
+import StarRating from '../../common/StarRating';
 import { useRouter } from 'next/navigation';
 
 interface Product {

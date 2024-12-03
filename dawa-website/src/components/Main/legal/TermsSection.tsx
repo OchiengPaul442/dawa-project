@@ -1,5 +1,3 @@
-// components/legal/TermsSection.tsx
-
 'use client';
 
 import { ReactNode } from 'react';
