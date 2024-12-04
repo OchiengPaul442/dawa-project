@@ -30,7 +30,8 @@
       "@/types/*": ["./src/types/*"],
       "@/hooks/*": ["./src/hooks/*"],
       "@public/*": ["./public/*"]
-    }
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": [
     "next-env.d.ts",

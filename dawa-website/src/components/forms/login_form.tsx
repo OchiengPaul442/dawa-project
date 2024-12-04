@@ -1,29 +1,29 @@
 'use client';
 
-import React, { useState } from 'react';
-import { FaUnlock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaUnlock, FaEye, FaEyeSlash, FaUserCircle } from 'react-icons/fa';
 import Button from '@/components/common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
+
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputField from '@/components/Main/account/InputField';
-import { FaUserCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
-// Improved type definitions
 interface ILoginInputs {
   emailOrUsername: string;
   password: string;
   rememberMe: boolean;
 }
 
-// Enhanced validation schema
 const schema = yup.object().shape({
   emailOrUsername: yup
     .string()
-    .required('Username/Email is required')
+    .required('Username or Email is required')
     .test('is-valid', 'Please enter a valid email or username', (value) => {
       if (!value) return false;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,6 +39,9 @@ const schema = yup.object().shape({
 
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -56,13 +59,43 @@ const LoginForm: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<ILoginInputs> = async (data) => {
+    setErrorMessage(null);
+    setIsLoading(true);
     try {
-      console.log('Login Data:', data);
-      // Add your login logic here
+      const res = await signIn('credentials', {
+        redirect: false,
+        emailOrUsername: data.emailOrUsername,
+        password: data.password,
+        callbackUrl: '/',
+      });
+
+      if (res?.error) {
+        // Display error message to the user
+        setErrorMessage(res.error);
+      }
+
+      if (res?.ok && res.url) {
+        // Redirect to the callback URL
+        router.push(res.url);
+      }
     } catch (error) {
       console.error('Login error:', error);
+      setErrorMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // Auto-hide error message after 5 seconds
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (errorMessage) {
+      timer = setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000); // 5000ms = 5 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [errorMessage]);
 
   return (
     <div className="flex-1 p-8 lg:rounded-l-2xl w-full">
@@ -71,11 +104,16 @@ const LoginForm: React.FC = () => {
         Welcome back! Please login to your account.
       </p>
 
+      {/* Display authentication errors */}
+      {errorMessage && (
+        <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Email Field */}
+        {/* Email/Username Field */}
         <InputField
           type="text"
-          label="Username/Email Address"
+          label="Username or Email Address"
           placeholder="Enter your username or email"
           icon={FaUserCircle}
           {...register('emailOrUsername')}
@@ -140,7 +178,7 @@ const LoginForm: React.FC = () => {
           </div>
 
           <Link
-            href="/forgot-password"
+            href="/auth/forgot-password"
             className="text-primary_1 text-sm font-semibold hover:underline"
           >
             Forgot Password?
@@ -150,12 +188,12 @@ const LoginForm: React.FC = () => {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
           className={`w-full mt-6 h-12 bg-primary_1 text-white py-3 rounded-md font-bold hover:bg-primary_1-dark transition-colors ${
-            !isValid ? 'opacity-50 cursor-not-allowed' : ''
+            !isValid || isLoading ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          SIGN IN
+          {isLoading ? 'Signing In...' : 'SIGN IN'}
         </Button>
 
         <div className="flex items-center justify-center mt-4">
@@ -168,6 +206,7 @@ const LoginForm: React.FC = () => {
         <Button
           type="button"
           icon={GoogleIcon}
+          onClick={() => signIn('google', { callbackUrl: '/' })}
           className="w-full mt-4 h-12 shadow-none flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition-colors"
         >
           Sign in with Google
@@ -175,9 +214,12 @@ const LoginForm: React.FC = () => {
 
         <p className="mt-8 text-center text-sm text-gray-600">
           Don’t have an account?{' '}
-          <a href="/register" className="text-primary_1 hover:underline">
+          <Link
+            href="/auth/register"
+            className="text-primary_1 hover:underline"
+          >
             Register now
-          </a>
+          </Link>
         </p>
       </form>
     </div>
