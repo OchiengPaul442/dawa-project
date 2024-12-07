@@ -13,96 +13,98 @@ import {
   FcBriefcase,
   FcCustomerSupport,
 } from 'react-icons/fc';
+import { ProductCarouselItem } from '@/types/category';
+import { Category } from '@/types/category';
 
-export const categories: any[] = [
+export const categories: Category[] = [
   {
     name: 'Vehicles',
     count: 30141,
-    icon: <FcAutomotive />,
+    icon: FcAutomotive,
     subcategories: [
-      { name: 'Cars', count: 22863, icon: <FcAutomotive /> },
-      { name: 'Buses & Microbuses', count: 898, icon: <FcAutomotive /> },
-      { name: 'Heavy Equipment', count: 338, icon: <FcBusiness /> },
-      { name: 'Motorbikes & Scooters', count: 2539, icon: <FcSportsMode /> },
-      { name: 'Trucks & Trailers', count: 1308, icon: <FcAutomotive /> },
+      { name: 'Cars', count: 22863, icon: FcAutomotive },
+      { name: 'Buses & Microbuses', count: 898, icon: FcAutomotive },
+      { name: 'Heavy Equipment', count: 338, icon: FcBusiness },
+      { name: 'Motorbikes & Scooters', count: 2539, icon: FcSportsMode },
+      { name: 'Trucks & Trailers', count: 1308, icon: FcAutomotive },
       {
         name: 'Vehicle Parts & Accessories',
         count: 2161,
-        icon: <FcCollaboration />,
+        icon: FcCollaboration,
       },
-      { name: 'Watercraft & Boats', count: 34, icon: <FcFinePrint /> },
+      { name: 'Watercraft & Boats', count: 34, icon: FcFinePrint },
     ],
   },
   {
     name: 'Property',
     count: 29771,
-    icon: <FcHome />,
+    icon: FcHome,
     subcategories: [
-      { name: 'Houses & Apartments', count: 15000, icon: <FcHome /> },
-      { name: 'Land & Plots', count: 8000, icon: <FcLandscape /> },
-      { name: 'Commercial Property', count: 6771, icon: <FcBriefcase /> },
+      { name: 'Houses & Apartments', count: 15000, icon: FcHome },
+      { name: 'Land & Plots', count: 8000, icon: FcLandscape },
+      { name: 'Commercial Property', count: 6771, icon: FcBriefcase },
     ],
   },
   {
     name: 'Phones & Tablets',
     count: 27766,
-    icon: <FcPhoneAndroid />,
+    icon: FcPhoneAndroid,
     subcategories: [
-      { name: 'Mobile Phones', count: 20000, icon: <FcPhoneAndroid /> },
-      { name: 'Tablets', count: 5000, icon: <FcElectronics /> },
-      { name: 'Accessories', count: 2766, icon: <FcCollaboration /> },
+      { name: 'Mobile Phones', count: 20000, icon: FcPhoneAndroid },
+      { name: 'Tablets', count: 5000, icon: FcElectronics },
+      { name: 'Accessories', count: 2766, icon: FcCollaboration },
     ],
   },
   {
     name: 'Electronics',
     count: 40091,
-    icon: <FcElectronics />,
+    icon: FcElectronics,
     subcategories: [
-      { name: 'Computers', count: 15000, icon: <FcElectronics /> },
-      { name: 'TV & Audio', count: 12000, icon: <FcCamcorderPro /> },
-      { name: 'Cameras', count: 8000, icon: <FcCamcorderPro /> },
-      { name: 'Gaming', count: 5091, icon: <FcShop /> },
+      { name: 'Computers', count: 15000, icon: FcElectronics },
+      { name: 'TV & Audio', count: 12000, icon: FcCamcorderPro },
+      { name: 'Cameras', count: 8000, icon: FcCamcorderPro },
+      { name: 'Gaming', count: 5091, icon: FcShop },
     ],
   },
   {
     name: 'Home, Appliances & Furniture',
     count: 51021,
-    icon: <FcShop />,
+    icon: FcShop,
     subcategories: [
-      { name: 'Furniture', count: 20000, icon: <FcShop /> },
-      { name: 'Kitchen Appliances', count: 15000, icon: <FcCollaboration /> },
-      { name: 'Home Decor', count: 16021, icon: <FcFinePrint /> },
+      { name: 'Furniture', count: 20000, icon: FcShop },
+      { name: 'Kitchen Appliances', count: 15000, icon: FcCollaboration },
+      { name: 'Home Decor', count: 16021, icon: FcFinePrint },
     ],
   },
   {
     name: 'Health & Beauty',
     count: 6737,
-    icon: <FcCustomerSupport />,
+    icon: FcCustomerSupport,
     subcategories: [
-      { name: 'Skincare', count: 2000, icon: <FcCustomerSupport /> },
-      { name: 'Haircare', count: 1500, icon: <FcCustomerSupport /> },
-      { name: 'Makeup', count: 2237, icon: <FcCustomerSupport /> },
-      { name: 'Medical Equipment', count: 1000, icon: <FcBusiness /> },
+      { name: 'Skincare', count: 2000, icon: FcCustomerSupport },
+      { name: 'Haircare', count: 1500, icon: FcCustomerSupport },
+      { name: 'Makeup', count: 2237, icon: FcCustomerSupport },
+      { name: 'Medical Equipment', count: 1000, icon: FcBusiness },
     ],
   },
   {
     name: 'Fashion',
     count: 24914,
-    icon: <FcShop />,
+    icon: FcShop,
     subcategories: [
-      { name: 'Clothing', count: 15000, icon: <FcShop /> },
-      { name: 'Shoes', count: 5000, icon: <FcShop /> },
-      { name: 'Accessories', count: 4914, icon: <FcCollaboration /> },
+      { name: 'Clothing', count: 15000, icon: FcShop },
+      { name: 'Shoes', count: 5000, icon: FcShop },
+      { name: 'Accessories', count: 4914, icon: FcCollaboration },
     ],
   },
   {
     name: 'Sports, Arts & Outdoors',
     count: 3355,
-    icon: <FcSportsMode />,
+    icon: FcSportsMode,
     subcategories: [
-      { name: 'Sports Equipment', count: 2000, icon: <FcSportsMode /> },
-      { name: 'Art Supplies', count: 855, icon: <FcFinePrint /> },
-      { name: 'Outdoor Gear', count: 500, icon: <FcLandscape /> },
+      { name: 'Sports Equipment', count: 2000, icon: FcSportsMode },
+      { name: 'Art Supplies', count: 855, icon: FcFinePrint },
+      { name: 'Outdoor Gear', count: 500, icon: FcLandscape },
     ],
   },
 ];
@@ -873,5 +875,43 @@ export const productsData: any[] = [
     color: 'White/Black',
     features: ['Ultra HD', 'Ray Tracing', '3D Audio', 'SSD Storage'],
     category: 'Gaming',
+  },
+];
+
+export const productCarouselItems: ProductCarouselItem[] = [
+  {
+    id: 1,
+    title: 'Sony WH-1000XM4 Wireless Headphones',
+    description:
+      'Industry-leading noise cancellation with exceptional sound quality',
+    imageUrl:
+      'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+    price: 349.99,
+    discountPercentage: 20,
+    ctaText: 'Shop Now',
+    ctaUrl: '/products/headphones',
+  },
+  {
+    id: 2,
+    title: 'LG OLED C1 Series 65" 4K Smart TV',
+    description:
+      'Immersive viewing with infinite contrast and 120Hz refresh rate',
+    imageUrl:
+      'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+    price: 1799.99,
+    ctaText: 'Learn More',
+    ctaUrl: '/products/tvs',
+  },
+  {
+    id: 3,
+    title: 'Canon EOS R5 Mirrorless Camera',
+    description:
+      'Revolutionary 45MP full-frame mirrorless with 8K video capability',
+    imageUrl:
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+    price: 3899.99,
+    discountPercentage: 10,
+    ctaText: 'Buy Now',
+    ctaUrl: '/products/cameras',
   },
 ];

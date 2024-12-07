@@ -2,14 +2,15 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/product/ProductFilter';
-import FiltersAndSorting from '@/components/Main/category/FiltersAndSorting';
+import FiltersAndSorting from '@/components/features/categories/FiltersAndSorting';
 import CategoriesAndSubcategories from '@/components/Main/category/CategoriesAndSubcategories';
 import { productsData, categories } from '@/lib/mock_data';
 import CategoriesPage from './CategoriesPage';
-import Link from 'next/link';
 import CustomPagination from '@/components/common/CustomPagination';
+import { slugify } from '@/utils/slugify';
 
 // Types
 interface CategoryPageProps {
@@ -50,7 +51,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const selectedCategory = useMemo(
     () =>
       categories.find(
-        (cat) => cat.name.toLowerCase() === category[0]?.toLowerCase(),
+        (cat) => slugify(cat.name) === slugify(category[0] || ''),
       ),
     [category],
   );
@@ -58,7 +59,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const selectedSubcategory = useMemo(
     () =>
       selectedCategory?.subcategories?.find(
-        (sub: any) => sub.name.toLowerCase() === category[1]?.toLowerCase(),
+        (sub: any) => slugify(sub.name) === slugify(category[1] || ''),
       ),
     [selectedCategory, category],
   );
@@ -75,29 +76,30 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     return `Showing ${start}-${end} of ${filteredProducts.length} results`;
   }, [currentPage, filteredProducts.length]);
 
-  const breadcrumbItems: BreadcrumbItem[] = useMemo(
-    () => [
+  const breadcrumbItems: BreadcrumbItem[] = useMemo(() => {
+    const items: BreadcrumbItem[] = [
       { name: 'Home', href: '/' },
       { name: 'Categories', href: '/cat' },
-      ...(selectedCategory
-        ? [
-            {
-              name: `${selectedCategory.name} (${selectedCategory.count})`,
-              href: `/cat/${selectedCategory.name.toLowerCase()}`,
-            },
-          ]
-        : []),
-      ...(selectedSubcategory
-        ? [
-            {
-              name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
-              href: `/cat/${selectedCategory?.name.toLowerCase()}/${selectedSubcategory.name.toLowerCase()}`,
-            },
-          ]
-        : []),
-    ],
-    [selectedCategory, selectedSubcategory],
-  );
+    ];
+
+    if (selectedCategory) {
+      items.push({
+        name: `${selectedCategory.name} (${selectedCategory.count})`,
+        href: `/cat/${slugify(selectedCategory.name)}`,
+      });
+    }
+
+    if (selectedSubcategory) {
+      items.push({
+        name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
+        href: `/cat/${slugify(selectedCategory?.name || '')}/${slugify(
+          selectedSubcategory.name,
+        )}`,
+      });
+    }
+
+    return items;
+  }, [selectedCategory, selectedSubcategory]);
 
   // Handlers
   const handleViewMore = useCallback(

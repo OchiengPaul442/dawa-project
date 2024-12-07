@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { slugify } from '@/utils/slugify';
 
 interface Subcategory {
   name: string;
@@ -22,14 +24,30 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
   parentCategory,
 }) => {
   const router = useRouter();
-  const pathname = decodeURIComponent(usePathname());
+  const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
   };
 
-  const isActive = (path: string) => pathname === path;
+  const slugifiedCategoryName = useMemo(
+    () => slugify(categoryName),
+    [categoryName],
+  );
+
+  const isActive = (path: string) => {
+    const decodedPathname = decodeURIComponent(pathname);
+    return decodedPathname === path;
+  };
+
+  const isCategoryActive = useMemo(() => {
+    const decodedPathname = decodeURIComponent(pathname);
+    return (
+      decodedPathname === `/cat/${slugifiedCategoryName}` ||
+      decodedPathname.startsWith(`/cat/${slugifiedCategoryName}/`)
+    );
+  }, [pathname, slugifiedCategoryName]);
 
   const themeColors = {
     primary: '#FFA200', // Yellow
@@ -42,19 +60,20 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
     <div className="space-y-4 bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md lg:max-w-sm">
       {/* Main Category */}
       <div>
-        <h2
-          onClick={() => router.push(`/cat/${parentCategory}`)}
-          className={`text-lg font-semibold cursor-pointer ${
-            isActive(`/cat/${parentCategory}`)
-              ? `text-[${themeColors.primary}]`
-              : 'text-gray-800'
-          } hover:text-[${themeColors.primary}] transition-colors duration-200`}
-        >
-          {categoryName}{' '}
-          <span className="text-sm font-normal text-[${themeColors.textGray}]">
-            ({categoryCount})
-          </span>
-        </h2>
+        <Link href={`/cat/${slugifiedCategoryName}`}>
+          <h2
+            className={`text-lg font-semibold cursor-pointer ${
+              isCategoryActive
+                ? `text-[${themeColors.primary}]`
+                : 'text-gray-800'
+            } hover:text-[${themeColors.primary}] transition-colors duration-200`}
+          >
+            {categoryName}{' '}
+            <span className="text-sm font-normal text-gray-500">
+              ({categoryCount})
+            </span>
+          </h2>
+        </Link>
         <p className="text-sm text-gray-500 mt-1">
           Discover subcategories in {categoryName}.
         </p>
@@ -63,22 +82,23 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
       {/* Subcategories */}
       <div className="flex flex-col space-y-2">
         {subcategories.slice(0, showMore ? undefined : 4).map((subcat) => {
-          const subcatPath = `/cat/${parentCategory}/${subcat.name}`;
+          const slugifiedSubcat = slugify(subcat.name);
+          const subcatPath = `/cat/${slugifiedCategoryName}/${slugifiedSubcat}`;
           return (
-            <button
-              key={subcat.name}
-              onClick={() => router.push(subcatPath)}
-              className={`flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium border transition-all duration-200 ${
-                isActive(subcatPath)
-                  ? `border-[${themeColors.primary}] bg-[${themeColors.primary}] text-white`
-                  : 'border-gray-300 bg-gray-50 text-gray-800 hover:bg-[${themeColors.hoverGray}]'
-              }`}
-            >
-              <span>{subcat.name}</span>
-              <span className="text-xs font-light text-[${themeColors.textGray}]">
-                {subcat.count} items
-              </span>
-            </button>
+            <Link key={subcat.name} href={subcatPath}>
+              <button
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium border transition-all duration-200 ${
+                  isActive(subcatPath)
+                    ? `border-[${themeColors.primary}] bg-[${themeColors.primary}] text-white`
+                    : `border-gray-300 bg-gray-50 text-gray-800 hover:bg-[${themeColors.hoverGray}]`
+                }`}
+              >
+                <span>{subcat.name}</span>
+                <span className="text-xs font-light text-gray-500">
+                  {subcat.count} items
+                </span>
+              </button>
+            </Link>
           );
         })}
       </div>

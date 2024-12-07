@@ -22,7 +22,7 @@ export const Top10ProductCard: React.FC<Top10ProductCardProps> = ({
 
   return (
     <div
-      className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col h-full cursor-pointer"
+      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full cursor-pointer"
       onClick={handleCardClick}
     >
       <div className="relative w-full h-3/4">
@@ -32,8 +32,8 @@ export const Top10ProductCard: React.FC<Top10ProductCardProps> = ({
           fill
           style={{
             objectFit: 'cover',
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
           }}
         />
         <LikeButton

@@ -18,7 +18,7 @@ export const HotSaleProductCard: React.FC<HotSaleProductCardProps> = ({
   const router = useRouter();
 
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden h-full flex flex-col justify-between">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col justify-between">
       <div className="relative w-full h-[266px] mb-2">
         <CustomImage
           src={product.imageUrl}
@@ -26,8 +26,8 @@ export const HotSaleProductCard: React.FC<HotSaleProductCardProps> = ({
           fill
           style={{
             objectFit: 'cover',
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
           }}
         />
         <div className="absolute top-2 right-2 h-12 w-12 flex justify-center items-center bg-primary_1 text-white text-xs font-bold px-2 py-1 rounded-full">

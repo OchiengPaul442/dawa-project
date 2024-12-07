@@ -48,7 +48,7 @@ const CardLayout: React.FC<CardLayoutProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden shadow ${
+      className={`bg-white rounded-lg overflow-hidden shadow ${
         viewType === 'grid' ? 'w-full sm:max-w-xs' : 'w-full'
       }`}
     >
@@ -84,7 +84,7 @@ const renderGridLayout = (
         fill
         style={{
           objectFit: 'cover',
-          borderRadius: '8px',
+          borderRadius: 10,
         }}
       />
       <button
@@ -120,7 +120,7 @@ const renderGridLayout = (
       </div>
       <Button
         onClick={() => onViewMore(product.id)}
-        className="w-full h-10 sm:h-12 bg-transparent hover:text-white border-2 border-primary_1 text-primary_1 py-2 rounded-md mt-2"
+        className="w-full h-10 sm:h-12 bg-transparent hover:text-white border-2 border-primary_1 text-primary_1 py-2 rounded-lg mt-2"
       >
         View more
       </Button>
@@ -143,7 +143,7 @@ const renderListLayout = (
         fill
         style={{
           objectFit: 'cover',
-          borderRadius: '8px',
+          borderRadius: 10,
         }}
       />
     </div>
@@ -193,12 +193,12 @@ const renderListLayout = (
         <div className="flex items-center gap-3 mt-4">
           <Button
             onClick={() => onViewMore(product.id)}
-            className="bg-primary_1 text-white py-2 px-4 sm:px-6 h-10 rounded-md"
+            className="bg-primary_1 text-white py-2 px-4 sm:px-6 h-10 rounded-lg"
           >
             View more
           </Button>
           <Button
-            className={`bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-md ${
+            className={`bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-lg ${
               isFavorite ? 'text-primary_1' : 'text-primary_1'
             }`}
             onClick={handleToggleFavorite}

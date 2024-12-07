@@ -1,7 +1,5 @@
 import React, { ReactNode } from 'react';
 
-import TopBar from '@/components/layout/TopBar';
-
 import ScrollToTopButton from '../common/ScrollToTopButton';
 import Footer from './Footer';
 import NavBar from './Navbar';
@@ -18,9 +16,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, newsletterProps }) => {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Contact Information Banner */}
-      <TopBar />
-
       {/* Navigation Bar */}
       <NavBar />
 

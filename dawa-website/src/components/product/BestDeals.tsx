@@ -114,7 +114,7 @@ const BestDeals: React.FC = () => {
                 src={product.imageUrl}
                 alt={product.name}
                 fill
-                style={{ objectFit: 'cover', borderRadius: '10%' }}
+                style={{ objectFit: 'cover', borderRadius: 10 }}
               />
             </div>
 
