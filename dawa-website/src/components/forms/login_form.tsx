@@ -7,12 +7,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { authSchema } from '@/validations/authValidation';
+import { useAuth } from '@/hooks/use-auth';
 
 interface ILoginInputs {
   emailOrUsername: string;
@@ -20,28 +21,20 @@ interface ILoginInputs {
   rememberMe: boolean;
 }
 
-const schema = yup.object().shape({
-  emailOrUsername: yup
-    .string()
-    .required('Username or Email is required')
-    .test('is-valid', 'Please enter a valid email or username', (value) => {
-      if (!value) return false;
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const usernameRegex = /^[a-zA-Z0-9._-]{3,}$/;
-      return emailRegex.test(value) || usernameRegex.test(value);
-    }),
-  password: yup
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-  rememberMe: yup.boolean().default(false),
-});
-
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const { user } = useAuth();
+
+  // if user is authenticated, redirect to dashboard
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user]);
 
   const {
     register,
@@ -50,7 +43,7 @@ const LoginForm: React.FC = () => {
     formState: { errors, isValid },
   } = useForm<ILoginInputs>({
     mode: 'onChange',
-    resolver: yupResolver(schema),
+    resolver: yupResolver(authSchema),
     defaultValues: {
       emailOrUsername: '',
       password: '',
@@ -58,25 +51,35 @@ const LoginForm: React.FC = () => {
     },
   });
 
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+
+    // Initiate Google sign-in via NextAuth
+    const result = await signIn('google', { redirect: false });
+
+    if (result?.error) {
+      return;
+    } else if (result?.ok) {
+      router.push('/');
+    }
+
+    setIsLoading(false);
+  };
+
   const onSubmit: SubmitHandler<ILoginInputs> = async (data) => {
     setErrorMessage(null);
     setIsLoading(true);
     try {
       const res = await signIn('credentials', {
         redirect: false,
-        emailOrUsername: data.emailOrUsername,
+        username: data.emailOrUsername,
         password: data.password,
-        callbackUrl: '/',
       });
 
       if (res?.error) {
-        // Display error message to the user
         setErrorMessage(res.error);
-      }
-
-      if (res?.ok && res.url) {
-        // Redirect to the callback URL
-        router.push(res.url);
+      } else if (res?.ok) {
+        router.push('/');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -178,7 +181,7 @@ const LoginForm: React.FC = () => {
           </div>
 
           <Link
-            href="/auth/forgot-password"
+            href="/forgot-password"
             className="text-primary_1 text-sm font-semibold hover:underline"
           >
             Forgot Password?
@@ -206,7 +209,7 @@ const LoginForm: React.FC = () => {
         <Button
           type="button"
           icon={GoogleIcon}
-          onClick={() => signIn('google', { callbackUrl: '/' })}
+          onClick={handleGoogleSignIn}
           className="w-full mt-4 h-12 shadow-none flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition-colors"
         >
           Sign in with Google
@@ -214,10 +217,7 @@ const LoginForm: React.FC = () => {
 
         <p className="mt-8 text-center text-sm text-gray-600">
           Don’t have an account?{' '}
-          <Link
-            href="/auth/register"
-            className="text-primary_1 hover:underline"
-          >
+          <Link href="/register" className="text-primary_1 hover:underline">
             Register now
           </Link>
         </p>

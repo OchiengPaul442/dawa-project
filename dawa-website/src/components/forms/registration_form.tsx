@@ -8,6 +8,7 @@ import {
   FaEye,
   FaEyeSlash,
 } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
@@ -18,6 +19,8 @@ import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
+import { registerUser } from '@/lib/api/auth/api';
+import { schema } from '@/validations/authValidation';
 
 // Define the shape of form data
 interface IFormInputs {
@@ -29,36 +32,10 @@ interface IFormInputs {
   terms: boolean;
 }
 
-// Improved validation schema
-const schema = yup.object({
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup
-    .string()
-    .min(6, 'Minimum 6 characters')
-    .required('Password is required'),
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  phone: yup
-    .string()
-    .required('Phone number is required')
-    .test('isValidPhone', 'Phone number is invalid', function (value) {
-      if (!value) return false;
-
-      // The phone input component removes the + and spaces automatically
-      // We just need to verify we have the right number of digits
-      const digitOnly = value.replace(/\D/g, '');
-
-      // Allow phone numbers between 10 and 15 digits (including country code)
-      return digitOnly.length >= 10 && digitOnly.length <= 15;
-    }),
-  terms: yup
-    .boolean()
-    .oneOf([true], 'You must accept the terms and policies')
-    .required(),
-});
-
 const RegistrationForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // To handle loading state
+  const router = useRouter(); // For navigation
 
   const {
     register,
@@ -78,13 +55,38 @@ const RegistrationForm: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+    setLoading(true);
+
     // Format the phone number with country code before submission
     const formattedData = {
-      ...data,
-      phone: `+${data.phone}`,
+      email: data.email,
+      password: data.password,
+      password2: data.password,
+      firstname: data.firstName,
+      lastname: data.lastName,
+      user_role: 'Client',
+      contact: `+${data.phone}`,
     };
-    console.log('Form Data:', formattedData);
+
+    try {
+      // Call the registration API
+      // await registerUser(formattedData);
+      console.log('Registration successful!', formattedData);
+
+      // Save the email in session storage for use on the activation page
+      sessionStorage.setItem('registeredEmail', formattedData.email);
+
+      // Redirect to the activation page
+      router.push('/activate');
+    } catch (error: any) {
+      console.error(
+        'Registration failed:',
+        error.response?.data?.message || error.message,
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -215,12 +217,12 @@ const RegistrationForm: React.FC = () => {
 
         <Button
           type="submit"
-          disabled={!isValid}
+          disabled={!isValid || loading}
           className={`w-full mt-6 h-12 bg-primary_1 text-white py-3 rounded-md font-bold hover:bg-primary_1-dark transition-colors ${
-            !isValid ? 'opacity-50 cursor-not-allowed' : ''
+            !isValid || loading ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          REGISTER
+          {loading ? 'Registering...' : 'REGISTER'}
         </Button>
 
         <div className="flex items-center justify-center mt-4">
