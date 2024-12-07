@@ -1,13 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import { AiOutlineCheck, AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { AiOutlineCheck } from 'react-icons/ai';
 import CustomImage from '../common/CustomImage';
 import Button from '@/components/common/Button';
 import StarRating from '@/components/common/StarRating';
-import { useDispatch } from '@/lib/hooks';
-import { useAuth } from '@/hooks/use-auth';
 import { LikeButton } from '../common/LikeButton';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 interface Product {
   id: number;
@@ -32,16 +29,10 @@ const CardLayout: React.FC<CardLayoutProps> = ({
   viewType,
   onViewMore,
 }) => {
-  const dispatch = useDispatch();
   const [isFavorite, setIsFavorite] = useState(false);
-  const { user } = useAuth();
 
-  const handleToggleFavorite = () => {
-    if (!user) {
-      dispatch(openAuthDialog());
-      return;
-    }
-
+  const handleToggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setIsFavorite(!isFavorite);
     // TODO: Add logic to save/remove from wishlist
   };
@@ -73,8 +64,8 @@ const CardLayout: React.FC<CardLayoutProps> = ({
 const renderGridLayout = (
   product: Product,
   onViewMore: (id: number) => void,
-  isFavorite: boolean,
-  handleToggleFavorite: () => void,
+  isLiked: boolean,
+  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void,
 ) => (
   <div className="flex flex-col w-full h-[415px] gap-2">
     <div className="relative w-full h-56 p-2 flex-shrink-0">
@@ -87,16 +78,11 @@ const renderGridLayout = (
           borderRadius: 10,
         }}
       />
-      <button
-        onClick={handleToggleFavorite}
-        className="absolute bottom-3 right-3 bg-white rounded-full p-2 shadow hover:scale-110 transition-transform"
-      >
-        {isFavorite ? (
-          <AiFillHeart className="text-primary_1" size={20} />
-        ) : (
-          <AiOutlineHeart className="text-gray-500" size={20} />
-        )}
-      </button>
+      <LikeButton
+        isLiked={isLiked}
+        onLike={onLike}
+        className="absolute bottom-3 right-3 hover:scale-110 transition-transform"
+      />
     </div>
     <div className="flex flex-col justify-between gap-2 p-2 h-full">
       <div className="space-y-2">
@@ -132,8 +118,8 @@ const renderGridLayout = (
 const renderListLayout = (
   product: Product,
   onViewMore: (id: number) => void,
-  isFavorite: boolean,
-  handleToggleFavorite: () => void,
+  isLiked: boolean,
+  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void,
 ) => (
   <div className="flex flex-col md:flex-row gap-2">
     <div className="relative w-full h-56 md:w-72 p-2 flex-shrink-0">
@@ -197,12 +183,10 @@ const renderListLayout = (
           >
             View more
           </Button>
-          <Button
-            className={`bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-lg ${
-              isFavorite ? 'text-primary_1' : 'text-primary_1'
-            }`}
-            onClick={handleToggleFavorite}
-            icon={isFavorite ? AiFillHeart : AiOutlineHeart}
+          <LikeButton
+            isLiked={isLiked}
+            onLike={onLike}
+            className="bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-lg"
           />
         </div>
       </div>

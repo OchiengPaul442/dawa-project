@@ -12,10 +12,10 @@ import { CategoriesMenu } from '@/components/features/categories/categories-menu
 const HomePage = () => {
   return (
     <div className="flex flex-col gap-12">
-      <section className="container mx-auto px-4 mt-6">
+      <section>
         <CategoriesMenu />
       </section>
-      <section className="container mx-auto px-4">
+      <section>
         <BestDeals />
       </section>
       <section>

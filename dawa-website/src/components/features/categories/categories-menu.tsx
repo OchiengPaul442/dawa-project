@@ -36,7 +36,7 @@ export function CategoriesMenu() {
   const displayCategories = showAllCategories ? categories : visibleCategories;
 
   return (
-    <div className="w-full">
+    <div className="w-full container mx-auto px-4 mt-12">
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Categories and Carousel Section */}
         <div

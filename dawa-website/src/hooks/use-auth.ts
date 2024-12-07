@@ -25,13 +25,13 @@ export function useAuth() {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Mock authenticated user - in real app, this would be an API call
-        setUser({
-          id: '1',
-          name: 'John Doe',
-          email: 'john@example.com',
-          image: '/placeholder.svg?height=32&width=32',
-        });
-        // setUser(null);
+        // setUser({
+        //   id: '1',
+        //   name: 'John Doe',
+        //   email: 'john@example.com',
+        //   image: '/placeholder.svg?height=32&width=32',
+        // });
+        setUser(null);
       } catch (error) {
         setUser(null);
       } finally {
