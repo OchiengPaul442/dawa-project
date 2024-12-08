@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 
@@ -40,7 +40,7 @@ export function CategoriesMenu() {
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Categories and Carousel Section */}
         <div
-          className="flex flex-col sm:flex-row h-[310px] flex-1 rounded-lg border bg-background shadow-sm"
+          className="flex flex-col sm:flex-row h-auto sm:h-[310px] flex-1 rounded-lg border bg-background shadow-sm"
           onMouseLeave={handleMouseLeave}
         >
           {/* Categories */}
@@ -55,22 +55,24 @@ export function CategoriesMenu() {
                       key={category.name}
                       href={`/cat/${categorySlug}`}
                       className={cn(
-                        'group flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-xs transition-colors hover:bg-accent',
+                        'group flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-xs sm:text-sm transition-colors hover:bg-accent',
                         activeCategory?.name === category.name &&
                           isHovering &&
                           'bg-accent',
                       )}
                       onMouseEnter={() => handleMouseEnter(category)}
                     >
-                      <div className="flex items-center text-[10px] md:text-sm gap-2 overflow-hidden">
-                        <Icon className="h-3 w-3 flex-shrink-0" />
-                        <span className="truncate">{category.name}</span>
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <Icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                        <span className="truncate font-medium">
+                          {category.name}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 text-muted-foreground">
-                        <span className="text-[10px]">
+                        <span className="text-[10px] sm:text-xs">
                           ({category.count.toLocaleString()})
                         </span>
-                        <ChevronRight className="h-2 w-2 flex-shrink-0 transition-transform group-hover:translate-x-0.5" />
+                        <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5" />
                       </div>
                     </Link>
                   );
@@ -82,13 +84,13 @@ export function CategoriesMenu() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-between rounded-lg text-[10px]"
+                  className="w-full justify-between rounded-lg text-[10px] sm:text-xs"
                   onClick={() => setShowAllCategories(!showAllCategories)}
                 >
                   <span className="flex items-center gap-1">
                     <ChevronDown
                       className={cn(
-                        'h-2 w-2 transition-transform duration-200',
+                        'h-3 w-3 sm:h-4 sm:w-4 transition-transform duration-200',
                         showAllCategories && 'rotate-180',
                       )}
                     />
@@ -103,29 +105,34 @@ export function CategoriesMenu() {
 
           {/* Subcategories and Product Carousel */}
           <div className="relative flex-1 overflow-hidden">
+            {/* Product Carousel */}
             <div
-              className="absolute inset-0 transition-opacity duration-300 ease-in-out"
-              style={{ opacity: isHovering ? 0 : 1 }}
+              className={cn(
+                'absolute inset-0 transition-opacity duration-300 ease-in-out',
+                isHovering ? 'opacity-0' : 'opacity-100',
+              )}
             >
               <ProductCarousel items={productCarouselItems} />
             </div>
+            {/* Subcategories */}
             <div
-              className="absolute inset-0 overflow-auto bg-background p-4 transition-opacity rounded-r-lg duration-300 ease-in-out"
-              style={{
-                opacity: isHovering ? 1 : 0,
-                pointerEvents: isHovering ? 'auto' : 'none',
-              }}
+              className={cn(
+                'absolute inset-0 overflow-auto bg-background p-4 transition-opacity rounded-r-lg duration-300 ease-in-out',
+                isHovering
+                  ? 'opacity-100 pointer-events-auto'
+                  : 'opacity-0 pointer-events-none',
+              )}
             >
               {activeCategory && (
                 <div className="grid gap-4">
                   <div>
-                    <h2 className="flex items-center gap-2 text-[10px] md:text-sm font-semibold">
+                    <h2 className="flex items-center gap-2 text-[10px] sm:text-sm font-semibold">
                       {React.createElement(activeCategory.icon, {
-                        className: 'h-3 w-3',
+                        className: 'h-4 w-4 sm:h-5 sm:w-5',
                       })}
                       {activeCategory.name}
                     </h2>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">
                       {activeCategory.count.toLocaleString()} items
                     </p>
                   </div>
@@ -138,14 +145,14 @@ export function CategoriesMenu() {
                         <Link
                           key={subcategory.name}
                           href={`/cat/${categorySlug}/${subcategorySlug}`}
-                          className="flex items-start gap-2 rounded-lg border p-1.5 transition-colors hover:bg-accent text-[10px] md:text-sm"
+                          className="flex items-start gap-2 rounded-lg border p-2 sm:p-3 transition-colors hover:bg-accent text-[10px] sm:text-sm"
                         >
-                          <Icon className="h-3 w-3 shrink-0" />
+                          <Icon className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                           <div className="grid gap-0.5 overflow-hidden">
-                            <span className="font-medium text-xs truncate">
+                            <span className="font-medium truncate">
                               {subcategory.name}
                             </span>
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-[10px] sm:text-xs text-muted-foreground">
                               {subcategory.count.toLocaleString()} items
                             </span>
                           </div>

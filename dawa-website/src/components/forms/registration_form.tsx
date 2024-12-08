@@ -133,7 +133,10 @@ const RegistrationForm: React.FC = () => {
         {/* Phone Number */}
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
-            Phone Number
+            Phone Number{' '}
+            <span className="text-gray-300 text-sm font-normal">
+              (e.g. +256 077 788 2393)
+            </span>
           </label>
           <Controller
             name="phone"
