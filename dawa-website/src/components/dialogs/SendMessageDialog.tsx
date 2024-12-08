@@ -1,5 +1,3 @@
-// components/dialogs/SendMessageDialog.tsx
-
 import React from 'react';
 import {
   Dialog,

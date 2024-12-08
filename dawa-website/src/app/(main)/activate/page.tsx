@@ -119,8 +119,6 @@ export default function ActivationForm() {
     try {
       const response = await resendActivationEmail({ email });
 
-      console.log('Resend response:', response);
-
       if (response.status === 200) {
         toast.success(
           response.message ||
@@ -142,7 +140,7 @@ export default function ActivationForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary_2/30">
+    <div className="min-h-screen flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -155,7 +153,7 @@ export default function ActivationForm() {
               Verify Your Email
             </CardTitle>
             <CardDescription className="text-center text-primary_1 dark:text-orange-400">
-              Enter the 6-digit code sent to your email.
+              Enter the 6-digit code sent to ({email}).
             </CardDescription>
           </CardHeader>
           <CardContent>

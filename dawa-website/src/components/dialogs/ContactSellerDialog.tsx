@@ -1,5 +1,3 @@
-// components/dialogs/ContactSellerDialog.tsx
-
 import React from 'react';
 import {
   Dialog,

@@ -1,25 +1,23 @@
-// pages/api/auth/[...nextauth].ts
-import NextAuth, { NextAuthOptions } from 'next-auth';
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
-export const authOptions: NextAuthOptions = {
+// Define authOptions locally without exporting
+const authOptions: AuthOptions = {
   providers: [
-    // Google OAuth Provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       authorization: {
         params: {
-          // Request the access token
           scope: 'openid email profile',
           access_type: 'offline',
           prompt: 'consent',
         },
       },
     }),
-    // Credentials Provider for custom username/password authentication
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -27,14 +25,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        // Ensure both username and password are provided
         if (!credentials?.username || !credentials?.password) {
           console.error('Missing username or password in credentials.');
           return null;
         }
 
         try {
-          // Send login request to your custom API endpoint
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/api/login/`,
             {
@@ -42,16 +38,12 @@ export const authOptions: NextAuthOptions = {
               password: credentials.password,
             },
             {
-              validateStatus: (status) => {
-                // Only accept 200 and 202 as valid responses
-                return status === 200 || status === 202;
-              },
+              validateStatus: (status) => status === 200 || status === 202,
             },
           );
 
-          const { user_data, message, status } = response.data;
+          const { user_data, status } = response.data;
 
-          // Validate the response structure and status
           if (status !== 202 || !user_data || !user_data.user_data) {
             console.error('Invalid login response:', response.data);
             return null;
@@ -59,7 +51,6 @@ export const authOptions: NextAuthOptions = {
 
           const user = user_data.user_data;
 
-          // Ensure critical user fields are present
           if (!user.id || !user.email) {
             console.error(
               'Incomplete user data returned from login API:',
@@ -68,7 +59,6 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          // Return user object with custom fields
           return {
             id: user.id.toString(),
             name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
@@ -85,30 +75,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    /**
-     * JWT Callback
-     * This is called whenever a JSON Web Token is created or updated.
-     */
     async jwt({ token, user, account }) {
-      // Initial sign in
       if (account && user) {
         token.accessToken = account.access_token || '';
 
         if (account.provider === 'google') {
           try {
-            // Send the Google access token and user_role to your custom API
             const response = await axios.post(
               `${process.env.NEXT_PUBLIC_API_URL}/api/googlelogin/`,
               {
                 google_token: account.access_token,
-                user_role: 'Client', // Change as needed or make dynamic
+                user_role: 'Client',
               },
             );
 
             const { user_data } = response.data;
             const userInfo = user_data.user_data;
 
-            // Populate the token with user data from your API
             token.id = userInfo.id.toString();
             token.name = `${userInfo.first_name} ${userInfo.last_name}`.trim();
             token.email = userInfo.email;
@@ -117,21 +100,12 @@ export const authOptions: NextAuthOptions = {
             token.accessToken = user_data.token;
           } catch (error) {
             console.error('Error during Google login:', error);
-            // Optionally, handle errors (e.g., set a flag in the token)
           }
         }
       }
-
       return token;
     },
-
-    /**
-     * Session Callback
-     * This is called whenever a session is checked.
-     * It ensures that the session object includes the necessary custom fields.
-     */
     async session({ session, token }) {
-      // Attach custom fields to the session
       if (token) {
         session.user.id = token.id;
         session.user.name = token.name;
@@ -140,21 +114,19 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.accessToken = token.accessToken;
       }
-
       return session;
     },
   },
   pages: {
-    signIn: '/login', // Custom sign-in page
+    signIn: '/login',
   },
   session: {
-    strategy: 'jwt', // Use JWT for session management
+    strategy: 'jwt',
   },
-  secret: process.env.NEXTAUTH_SECRET, // Ensure this is set in your environment variables
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Initialize NextAuth with the defined options
 const handler = NextAuth(authOptions);
 
-// Export the handler for both GET and POST requests
+// Export only the route handlers
 export { handler as GET, handler as POST };

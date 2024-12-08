@@ -14,7 +14,7 @@ import {
 
 export default function ActivationFailurePage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
+    <div className="min-h-screen flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -33,7 +33,7 @@ export default function ActivationFailurePage() {
               Activation Failed
             </CardTitle>
             <CardDescription>
-              We couldn't activate your account. Please try again.
+              We couldn&#39;t activate your account. Please try again.
             </CardDescription>
           </CardHeader>
           <CardContent>

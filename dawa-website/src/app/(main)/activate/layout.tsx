@@ -15,7 +15,7 @@ export default function ActivateLayout({
       {/* Back Button */}
       <button
         onClick={() => router.back()}
-        className="absolute top-4 left-4 flex items-center px-3 py-2 bg-gray-200 text-black rounded-lg shadow-sm"
+        className="absolute top-4 left-4 flex items-center px-3 py-2 bg-gray-700 text-primary_1 rounded-lg shadow-sm"
         aria-label="Go back"
       >
         <FaArrowLeft className="mr-2 text-xl" />

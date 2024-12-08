@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
     if (user) {
       router.push('/');
     }
-  }, [user]);
+  }, [user, router]);
 
   const {
     register,
