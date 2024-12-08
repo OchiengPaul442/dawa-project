@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 /**
  * Regular expression for validating usernames.
@@ -40,16 +41,16 @@ export const schema = yup.object({
   phone: yup
     .string()
     .required('Phone number is required')
-    .test('isValidPhone', 'Phone number is invalid', function (value) {
-      if (!value) return false;
+    .test(
+      'is-valid-phone',
+      'Invalid phone number for the selected country',
+      function (value) {
+        if (!value) return false;
 
-      // The phone input component removes the + and spaces automatically
-      // We just need to verify we have the right number of digits
-      const digitOnly = value.replace(/\D/g, '');
-
-      // Allow phone numbers between 10 and 15 digits (including country code)
-      return digitOnly.length >= 10 && digitOnly.length <= 15;
-    }),
+        const phoneNumber = parsePhoneNumberFromString(value);
+        return phoneNumber ? phoneNumber.isValid() : false;
+      },
+    ),
   terms: yup
     .boolean()
     .oneOf([true], 'You must accept the terms and policies')

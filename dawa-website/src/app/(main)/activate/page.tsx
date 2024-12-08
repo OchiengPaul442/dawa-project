@@ -25,13 +25,19 @@ export default function ActivationForm() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
+  // Retrieve the registered email from sessionStorage
   useEffect(() => {
     const storedEmail = sessionStorage.getItem('registeredEmail');
     if (storedEmail) {
       setEmail(storedEmail);
+    } else {
+      // If no email is found, redirect to registration
+      toast.error('No email found. Please register first.');
+      router.push('/register');
     }
-  }, []);
+  }, [router]);
 
+  // Handle the resend timer countdown
   useEffect(() => {
     if (resendTimer > 0) {
       const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
@@ -39,19 +45,25 @@ export default function ActivationForm() {
     }
   }, [resendTimer]);
 
+  // Handle input changes in the verification code fields
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return;
+    if (!/^\d?$/.test(value)) return; // Allow only digits
+
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
+
     if (value !== '' && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
+
     if (index === 5 && value !== '') {
       handleSubmit(newCode.join(''));
     }
   };
 
+  // Handle keyboard navigation (e.g., Backspace)
   const handleKeyDown = (
     index: number,
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -61,6 +73,7 @@ export default function ActivationForm() {
     }
   };
 
+  // Handle form submission for activation
   const handleSubmit = async (fullCode: string) => {
     if (!email) {
       toast.error('Email not found. Please try registering again.');
@@ -74,18 +87,28 @@ export default function ActivationForm() {
         activation_code: fullCode,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
+        toast.success(response.message || 'Account activated successfully.');
         sessionStorage.removeItem('registeredEmail');
         router.push('/activate/success');
       } else {
-        throw new Error('Activation failed');
+        toast.error(response.message || 'Activation failed. Please try again.');
+        sessionStorage.removeItem('registeredEmail');
+        router.push('/activate/failure');
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Activation error:', error);
+      toast.error(
+        error.response?.data?.message || 'Activation failed. Please try again.',
+      );
       sessionStorage.removeItem('registeredEmail');
       router.push('/activate/failure');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Handle resending the activation code
   const handleResendCode = async () => {
     if (!email) {
       toast.error('Email not found. Please try registering again.');
@@ -96,13 +119,22 @@ export default function ActivationForm() {
     try {
       const response = await resendActivationEmail({ email });
 
-      if (response.ok) {
-        toast.success('Activation code resent. Please check your email.');
+      console.log('Resend response:', response);
+
+      if (response.status === 200) {
+        toast.success(
+          response.message ||
+            'Activation code resent. Please check your email.',
+        );
         setResendTimer(30); // Set a 30-second cooldown
       } else {
-        throw new Error('Failed to resend activation code');
+        toast.error(
+          response.message ||
+            'Failed to resend activation code. Please try again.',
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Resend activation error:', error);
       toast.error('Failed to resend activation code. Please try again.');
     } finally {
       setLoading(false);
@@ -138,7 +170,7 @@ export default function ActivationForm() {
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-14 text-center text-2xl font-semibold bg-orange-50 border-orange-300 focus:border-primary_1 focus:ring-primary_1 dark:bg-orange-900 dark:border-primary_1 dark:text-orange-100 dark:focus:border-primary_1 dark:focus:ring-primary_1"
+                  className={`w-12 h-14 text-center text-2xl font-semibold bg-orange-50 border-orange-300 focus:border-primary_1 focus:ring-primary_1 dark:bg-orange-900 dark:border-primary_1 dark:text-orange-100 dark:focus:border-primary_1 dark:focus:ring-primary_1`}
                   disabled={loading}
                   aria-label={`Digit ${index + 1}`}
                 />
