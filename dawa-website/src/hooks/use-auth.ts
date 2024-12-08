@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import axios from 'axios';
 
 interface User {
   id: string;
@@ -7,45 +9,90 @@ interface User {
   image: string;
 }
 
+interface Counters {
+  favorites: number;
+  messages: number;
+  notifications: number;
+}
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+});
+
 export function useAuth() {
+  const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const counters = {
-    favorites: 12,
-    messages: 1200,
-    notifications: 5,
-  };
+  const [counters, setCounters] = useState<Counters>({
+    favorites: 0,
+    messages: 0,
+    notifications: 0,
+  });
 
   useEffect(() => {
-    // Mock API call to check authentication
-    const checkAuth = async () => {
-      try {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+    const source = axios.CancelToken.source();
 
-        // Mock authenticated user - in real app, this would be an API call
-        // setUser({
-        //   id: '1',
-        //   name: 'John Doe',
-        //   email: 'john@example.com',
-        //   image: '/placeholder.svg?height=32&width=32',
-        // });
-        setUser(null);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
+    // Add interceptor to attach token on each request, if present
+    api.interceptors.request.use((config) => {
+      if (session?.accessToken) {
+        config.headers['Authorization'] = `Token ${session.accessToken}`;
       }
+      return config;
+    });
+
+    const fetchUserData = async () => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id as string,
+          name: session.user.name || '',
+          email: session.user.email || '',
+          image: session.user.image || '',
+        });
+
+        // Here you could fetch additional user data/counters if needed.
+        // Make sure your API endpoint handles authorization and returns valid data
+        // try {
+        //   const { data } = await api.get('/api/getuserprofile', {
+        //     cancelToken: source.token,
+        //   });
+        //   if (data && data.counters) {
+        //     setCounters(data.counters);
+        //   }
+        // } catch (error) {
+        //   if (axios.isCancel(error)) {
+        //     console.log('Request canceled:', error.message);
+        //   } else {
+        //     console.error('Failed to fetch user counters:', error);
+        //   }
+        // }
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
     };
 
-    checkAuth();
-  }, []);
+    if (status !== 'loading') {
+      fetchUserData();
+    }
+
+    return () => {
+      source.cancel('useAuth hook unmounted');
+    };
+  }, [session, status]);
 
   const logout = async () => {
-    // Mock logout
-    setUser(null);
+    try {
+      await signOut({ redirect: false });
+      setUser(null);
+      setCounters({
+        favorites: 0,
+        messages: 0,
+        notifications: 0,
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
-  return { user, loading, logout, counters };
+  return { user, loading: status === 'loading' || loading, logout, counters };
 }

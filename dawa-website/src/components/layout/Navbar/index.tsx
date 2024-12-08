@@ -8,7 +8,6 @@ import { FiGrid } from 'react-icons/fi';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
-import { CategoriesNav } from './categories-nav';
 import { UserNav } from './user-nav';
 import { useAuth } from '@/hooks/use-auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -111,7 +110,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               />
             </Link>
 
-            {pathname !== '/cat' && (
+            {pathname !== '/' && pathname !== '/cat' && (
               <div className="relative hidden lg:block" ref={dropdownRef}>
                 <Button
                   icon={FiGrid}
@@ -197,15 +196,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </div>
         </div>
       </motion.div>
-
-      <div className="border-b hidden lg:block">
-        <div className="container mx-auto px-4">
-          <CategoriesNav
-            className="flex items-center gap-8 h-12"
-            itemClassName="text-sm hover:text-primary_1 transition-colors"
-          />
-        </div>
-      </div>
 
       <div className="lg:hidden">
         <div className="container mx-auto px-4 py-2">

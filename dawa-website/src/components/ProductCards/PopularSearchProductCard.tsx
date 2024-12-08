@@ -17,7 +17,7 @@ export const PopularSearchProductCard: React.FC<
   return (
     <div
       onClick={() => router.push(`/prod/${product.id}`)}
-      className="bg-white rounded-2xl shadow-md overflow-hidden h-full cursor-pointer"
+      className="bg-white rounded-lg shadow-md overflow-hidden h-full cursor-pointer"
     >
       <div className="relative w-full h-56">
         <CustomImage
@@ -26,8 +26,8 @@ export const PopularSearchProductCard: React.FC<
           fill
           style={{
             objectFit: 'cover',
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
           }}
         />
         <LikeButton

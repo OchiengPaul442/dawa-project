@@ -1,13 +1,7 @@
+// components/ProductDetails.tsx
+
 import React, { useState } from 'react';
-import {
-  FaHeart,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaShieldAlt,
-  FaFlag,
-  FaPlus,
-  FaStore,
-} from 'react-icons/fa';
+import { FaHeart, FaShieldAlt, FaPlus, FaStore } from 'react-icons/fa';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
 import StarRating from '../common/StarRating';
@@ -23,14 +17,18 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import useWindowSize from '@/hooks/useWindowSize';
 import { useAuth } from '@/hooks/use-auth';
 import { useDispatch } from '@/lib/hooks';
 import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import { FaFlag, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
+
+// Importing the new components
+import ReportAbuseDialog from '@/components/dialogs/ReportAbuseDialog';
+import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
+import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
+import SafetyTipsDialog from '../dialogs/SafetyTipsDialog';
 
 interface ProductDetailsProps {
   product: {
@@ -46,6 +44,8 @@ interface ProductDetailsProps {
       avatar: string;
       name: string;
       location: string;
+      phone?: string;
+      email?: string;
     };
   };
 }
@@ -62,6 +62,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const router = useRouter();
   const { user } = useAuth();
   const dispatch = useDispatch();
+
+  // State management
   const [reportAbuseDetails, setReportAbuseDetails] = useState({
     name: '',
     email: '',
@@ -79,6 +81,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const { width } = useWindowSize();
   const isBreakPoint = width < 1300;
 
+  // Handlers
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     stateSetter: React.Dispatch<React.SetStateAction<any>>,
@@ -132,6 +135,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     <div
       className={`grid ${isBreakPoint ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'} gap-6`}
     >
+      {/* Main Content */}
       <div className={isBreakPoint ? 'space-y-6' : 'lg:col-span-2 space-y-6'}>
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
@@ -165,6 +169,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </Badge>
         </div>
 
+        {/* Seller Information */}
         <Card>
           <CardHeader>
             <CardTitle className="text-xl md:text-2xl">
@@ -194,12 +199,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </CardContent>
         </Card>
 
+        {/* Action Buttons */}
         <div className="flex flex-wrap gap-4">
           <Button
             variant="outline"
             size="lg"
             className="flex-1"
-            onClick={() => handleAction(() => setContactDialogOpen(true))}
+            onClick={() => setContactDialogOpen(true)}
           >
             <FaPhoneAlt className="mr-2 h-4 w-4" /> Contact
           </Button>
@@ -230,6 +236,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         </div>
       </div>
 
+      {/* Sidebar */}
       <div className="col-span-1 space-y-6">
         <Card>
           <CardHeader>
@@ -257,34 +264,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             <CardTitle>Safety & Reporting</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Dialog open={safetyDialogOpen} onOpenChange={setSafetyDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full">
-                  <FaShieldAlt className="mr-2 h-4 w-4" /> Safety Tips
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Safety Tips</DialogTitle>
-                  <DialogDescription>
-                    Follow these safety tips to ensure secure transactions:
-                  </DialogDescription>
-                </DialogHeader>
-                <ul className="list-disc pl-5 text-gray-700 mt-4">
-                  {safetyTips.map((tip, index) => (
-                    <li key={index} className="mb-2">
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-                <DialogFooter>
-                  <Button onClick={() => setSafetyDialogOpen(false)}>
-                    Got It
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            {/* Safety Tips Dialog */}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setSafetyDialogOpen(true)}
+            >
+              <FaShieldAlt className="mr-2 h-4 w-4" /> Safety Tips
+            </Button>
 
+            {/* Report Abuse Button */}
             <Button
               variant="outline"
               className="w-full text-red-600 hover:text-red-700"
@@ -296,128 +285,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         </Card>
       </div>
 
-      {user && (
-        <>
-          <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Report Abuse</DialogTitle>
-                <DialogDescription>
-                  Fill out the form below to report any issues with this
-                  product:
-                </DialogDescription>
-              </DialogHeader>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmitReport();
-                }}
-                className="space-y-4 mt-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="name">Your Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={reportAbuseDetails.name}
-                    onChange={(e) =>
-                      handleInputChange(e, setReportAbuseDetails)
-                    }
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Your Email</Label>
-                  <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={reportAbuseDetails.email}
-                    onChange={(e) =>
-                      handleInputChange(e, setReportAbuseDetails)
-                    }
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={reportAbuseDetails.description}
-                    onChange={(e) =>
-                      handleInputChange(e, setReportAbuseDetails)
-                    }
-                    rows={4}
-                    required
-                  />
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-primary_1 hover:bg-primary_1/90"
-                  >
-                    Submit Report
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+      {/* Dialog Components */}
+      <ReportAbuseDialog
+        open={reportDialogOpen}
+        onOpenChange={setReportDialogOpen}
+        reportAbuseDetails={reportAbuseDetails}
+        handleInputChange={(e) => handleInputChange(e, setReportAbuseDetails)}
+        handleSubmitReport={handleSubmitReport}
+      />
 
-          <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Send a Message</DialogTitle>
-                <DialogDescription>
-                  Send a message to the seller about this product.
-                </DialogDescription>
-              </DialogHeader>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmitMessage();
-                }}
-                className="space-y-4 mt-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="message">Your Message</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={messageDetails.message}
-                    onChange={(e) => handleInputChange(e, setMessageDetails)}
-                    rows={4}
-                    required
-                  />
-                </div>
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-primary_1 hover:bg-primary_1/90"
-                  >
-                    Send Message
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+      <SendMessageDialog
+        open={messageDialogOpen}
+        onOpenChange={setMessageDialogOpen}
+        messageDetails={messageDetails}
+        handleInputChange={(e) => handleInputChange(e, setMessageDetails)}
+        handleSubmitMessage={handleSubmitMessage}
+      />
 
-          <Dialog open={contactDialogOpen} onOpenChange={setContactDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Contact Seller</DialogTitle>
-                <DialogDescription>
-                  Here are the contact details for the seller.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="mt-4">
-                <p>Phone: +1234567890</p>
-                <p>Email: seller@example.com</p>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </>
-      )}
+      <ContactSellerDialog
+        open={contactDialogOpen}
+        onOpenChange={setContactDialogOpen}
+        sellerContact={{
+          phone: product.seller.phone || '+1234567890',
+          email: product.seller.email || 'seller@example.com',
+        }}
+      />
+
+      <SafetyTipsDialog
+        open={safetyDialogOpen}
+        onOpenChange={setSafetyDialogOpen}
+        safetyTips={safetyTips}
+      />
     </div>
   );
 };

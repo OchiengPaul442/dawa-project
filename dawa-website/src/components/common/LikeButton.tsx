@@ -27,7 +27,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
         }
         onLike(e);
       }}
-      className={`p-2 bg-white rounded-full shadow-md ${className}`}
+      className={`p-2 bg-white rounded-full ${className}`}
     >
       <FaHeart
         className={`text-xl ${isLiked ? 'text-red-500' : 'text-gray-400'}`}

@@ -1,13 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import { AiOutlineCheck, AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { AiOutlineCheck } from 'react-icons/ai';
 import CustomImage from '../common/CustomImage';
 import Button from '@/components/common/Button';
 import StarRating from '@/components/common/StarRating';
-import { useDispatch } from '@/lib/hooks';
-import { useAuth } from '@/hooks/use-auth';
 import { LikeButton } from '../common/LikeButton';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 interface Product {
   id: number;
@@ -32,23 +29,17 @@ const CardLayout: React.FC<CardLayoutProps> = ({
   viewType,
   onViewMore,
 }) => {
-  const dispatch = useDispatch();
   const [isFavorite, setIsFavorite] = useState(false);
-  const { user } = useAuth();
 
-  const handleToggleFavorite = () => {
-    if (!user) {
-      dispatch(openAuthDialog());
-      return;
-    }
-
+  const handleToggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     setIsFavorite(!isFavorite);
     // TODO: Add logic to save/remove from wishlist
   };
 
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden shadow ${
+      className={`bg-white rounded-lg overflow-hidden shadow ${
         viewType === 'grid' ? 'w-full sm:max-w-xs' : 'w-full'
       }`}
     >
@@ -73,8 +64,8 @@ const CardLayout: React.FC<CardLayoutProps> = ({
 const renderGridLayout = (
   product: Product,
   onViewMore: (id: number) => void,
-  isFavorite: boolean,
-  handleToggleFavorite: () => void,
+  isLiked: boolean,
+  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void,
 ) => (
   <div className="flex flex-col w-full h-[415px] gap-2">
     <div className="relative w-full h-56 p-2 flex-shrink-0">
@@ -84,19 +75,14 @@ const renderGridLayout = (
         fill
         style={{
           objectFit: 'cover',
-          borderRadius: '8px',
+          borderRadius: 10,
         }}
       />
-      <button
-        onClick={handleToggleFavorite}
-        className="absolute bottom-3 right-3 bg-white rounded-full p-2 shadow hover:scale-110 transition-transform"
-      >
-        {isFavorite ? (
-          <AiFillHeart className="text-primary_1" size={20} />
-        ) : (
-          <AiOutlineHeart className="text-gray-500" size={20} />
-        )}
-      </button>
+      <LikeButton
+        isLiked={isLiked}
+        onLike={onLike}
+        className="absolute bottom-3 right-3 hover:scale-110 transition-transform"
+      />
     </div>
     <div className="flex flex-col justify-between gap-2 p-2 h-full">
       <div className="space-y-2">
@@ -120,7 +106,7 @@ const renderGridLayout = (
       </div>
       <Button
         onClick={() => onViewMore(product.id)}
-        className="w-full h-10 sm:h-12 bg-transparent hover:text-white border-2 border-primary_1 text-primary_1 py-2 rounded-md mt-2"
+        className="w-full h-10 sm:h-12 bg-transparent hover:text-white border-2 border-primary_1 text-primary_1 py-2 rounded-lg mt-2"
       >
         View more
       </Button>
@@ -132,8 +118,8 @@ const renderGridLayout = (
 const renderListLayout = (
   product: Product,
   onViewMore: (id: number) => void,
-  isFavorite: boolean,
-  handleToggleFavorite: () => void,
+  isLiked: boolean,
+  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void,
 ) => (
   <div className="flex flex-col md:flex-row gap-2">
     <div className="relative w-full h-56 md:w-72 p-2 flex-shrink-0">
@@ -143,7 +129,7 @@ const renderListLayout = (
         fill
         style={{
           objectFit: 'cover',
-          borderRadius: '8px',
+          borderRadius: 10,
         }}
       />
     </div>
@@ -193,16 +179,14 @@ const renderListLayout = (
         <div className="flex items-center gap-3 mt-4">
           <Button
             onClick={() => onViewMore(product.id)}
-            className="bg-primary_1 text-white py-2 px-4 sm:px-6 h-10 rounded-md"
+            className="bg-primary_1 text-white py-2 px-4 sm:px-6 h-10 rounded-lg"
           >
             View more
           </Button>
-          <Button
-            className={`bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-md ${
-              isFavorite ? 'text-primary_1' : 'text-primary_1'
-            }`}
-            onClick={handleToggleFavorite}
-            icon={isFavorite ? AiFillHeart : AiOutlineHeart}
+          <LikeButton
+            isLiked={isLiked}
+            onLike={onLike}
+            className="bg-transparent hover:bg-transparent border border-primary_1 text-primary_1 py-2 px-4 sm:px-6 h-10 rounded-lg"
           />
         </div>
       </div>

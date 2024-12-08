@@ -211,7 +211,7 @@ const FlashSale: React.FC = () => {
                       src={product.imageUrl}
                       alt={product.name}
                       fill
-                      style={{ objectFit: 'cover', borderRadius: '12px' }}
+                      style={{ objectFit: 'cover', borderRadius: 10 }}
                     />
                   </div>
                   <div className="flex flex-col justify-center h-full items-start">
