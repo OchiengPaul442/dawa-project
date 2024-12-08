@@ -1,4 +1,3 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -84,13 +83,13 @@ const authOptions: AuthOptions = {
             const response = await axios.post(
               `${process.env.NEXT_PUBLIC_API_URL}/api/googlelogin/`,
               {
-                google_token: account.access_token,
+                google_token: account.id_token,
                 user_role: 'Client',
               },
             );
 
             const { user_data } = response.data;
-            const userInfo = user_data.user_data;
+            const userInfo = user_data?.user_data;
 
             token.id = userInfo.id.toString();
             token.name = `${userInfo.first_name} ${userInfo.last_name}`.trim();

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FaUnlock,
   FaUserCircle,
@@ -20,6 +20,8 @@ import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
 import { registerUser } from '@/lib/api/auth/api';
 import { schema } from '@/validations/authValidation';
+import { signIn } from 'next-auth/react';
+import { useAuth } from '@/hooks/use-auth';
 
 interface IFormInputs {
   email: string;
@@ -53,6 +55,30 @@ const RegistrationForm: React.FC = () => {
       terms: false,
     },
   });
+
+  const { user } = useAuth();
+
+  // if user is authenticated, redirect to dashboard
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+
+    // Initiate Google sign-in via NextAuth
+    const result = await signIn('google', { redirect: false });
+
+    if (result?.error) {
+      return;
+    } else if (result?.ok) {
+      router.push('/');
+    }
+
+    setLoading(false);
+  };
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     setLoading(true);
@@ -271,6 +297,7 @@ const RegistrationForm: React.FC = () => {
         <Button
           type="button"
           icon={GoogleIcon}
+          onClick={handleGoogleSignIn}
           className="w-full mt-4 h-12 shadow-none flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition-colors"
         >
           Register with Google
