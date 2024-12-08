@@ -62,7 +62,7 @@ export function ProductCarousel({ items }: ProductCarouselProps) {
             </p>
             <div className="flex items-baseline mb-4">
               <span className="text-md md:text-lg lg:text-xl font-bold">
-                ${currentItem.price.toFixed(2)}
+                UGX{currentItem.price.toLocaleString()}
               </span>
               {currentItem.discountPercentage && (
                 <span className="ml-2 text-sm md:text-base lg:text-lg text-green-600 font-semibold">

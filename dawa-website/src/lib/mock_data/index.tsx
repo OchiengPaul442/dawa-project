@@ -886,7 +886,7 @@ export const productCarouselItems: ProductCarouselItem[] = [
       'Industry-leading noise cancellation with exceptional sound quality',
     imageUrl:
       'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    price: 349.99,
+    price: 34999,
     discountPercentage: 20,
     ctaText: 'Shop Now',
     ctaUrl: '/products/headphones',
@@ -898,7 +898,7 @@ export const productCarouselItems: ProductCarouselItem[] = [
       'Immersive viewing with infinite contrast and 120Hz refresh rate',
     imageUrl:
       'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    price: 1799.99,
+    price: 179999,
     ctaText: 'Learn More',
     ctaUrl: '/products/tvs',
   },
@@ -909,7 +909,7 @@ export const productCarouselItems: ProductCarouselItem[] = [
       'Revolutionary 45MP full-frame mirrorless with 8K video capability',
     imageUrl:
       'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-    price: 3899.99,
+    price: 389999,
     discountPercentage: 10,
     ctaText: 'Buy Now',
     ctaUrl: '/products/cameras',
