@@ -35,8 +35,8 @@ export default function NoAccessPage() {
           transition={{ delay: 0.4 }}
           className="text-gray-600 mb-8"
         >
-          Sorry, you don't have permission to access this page. Please contact
-          your administrator if you believe this is an error.
+          Sorry, you don&#39;t have permission to access this page. Please
+          contact your administrator if you believe this is an error.
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }}
