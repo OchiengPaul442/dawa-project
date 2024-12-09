@@ -46,7 +46,7 @@ export function CategoriesMenu() {
           {/* Categories */}
           <div className="w-full sm:w-56 lg:w-64 flex flex-col border-b sm:border-b-0 sm:border-r">
             <div className="flex-1 overflow-auto px-2 pt-2">
-              <nav className="flex flex-col gap-1">
+              <nav className="flex flex-col gap-2">
                 {displayCategories.map((category) => {
                   const Icon = category.icon;
                   const categorySlug = slugify(category.name);

@@ -9,10 +9,6 @@ export default function WishListLayout({
   children: React.ReactNode;
 }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Layout newsletterProps={{ container: false, hide: true }}>
-        {children}
-      </Layout>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }

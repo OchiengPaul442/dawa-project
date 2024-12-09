@@ -8,6 +8,7 @@ import { FiGrid } from 'react-icons/fi';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
+import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
 import { UserNav } from './user-nav';
 import { useAuth } from '@/hooks/use-auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -87,21 +88,31 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             isSticky ? 'py-2' : 'py-4'
           } px-4 transition-all duration-300 ease-in-out`}
         >
-          <div className="flex items-center gap-6">
-            <div className="lg:hidden">
-              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    icon={Menu}
-                    className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 h-10 w-10"
-                  />
-                </SheetTrigger>
-                <SheetContent side="left" className="w-80">
-                  <MobileSheetContent onClose={() => setIsSheetOpen(false)} />
-                </SheetContent>
-              </Sheet>
-            </div>
+          <div className="lg:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  icon={Menu}
+                  className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 h-10 w-10"
+                />
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80">
+                <MobileSheetContent onClose={() => setIsSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+          </div>
 
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 lg:hidden">
+            <Logo2
+              className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
+                isSticky ? 'h-24 -my-4' : 'h-28 -my-9'
+              }`}
+            />
+          </Link>
+
+          {/* logo category search*/}
+          <div className="hidden lg:flex items-center gap-6">
             <Link href="/" className="flex-shrink-0">
               <Logo
                 className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
@@ -111,7 +122,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             </Link>
 
             {pathname !== '/' && pathname !== '/cat' && (
-              <div className="relative hidden lg:block" ref={dropdownRef}>
+              <div className="relative" ref={dropdownRef}>
                 <Button
                   icon={FiGrid}
                   className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
@@ -136,6 +147,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             )}
           </div>
 
+          {/* search */}
           <div className="hidden lg:flex items-center flex-grow mx-8">
             <div className="relative w-full max-w-2xl">
               <Input
@@ -150,6 +162,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             </div>
           </div>
 
+          {/* Right side menu and user menu */}
           <div className="flex items-center gap-4">
             {loading ? (
               <UserNavSkeleton />

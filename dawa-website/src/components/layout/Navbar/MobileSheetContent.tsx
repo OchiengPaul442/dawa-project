@@ -2,20 +2,49 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FaHeart, FaBell, FaEnvelope } from 'react-icons/fa';
-import { CategoriesNav } from './categories-nav';
-import { Button } from '@/components/ui/button';
-import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import {
+  Settings,
+  Users,
+  MessageSquare,
+  HelpCircle,
+  FileText,
+  LogOut,
+  Heart,
+  Bell,
+  Mail,
+  BarChart2,
+} from 'lucide-react';
+import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
+import { categories } from '@/lib/mock_data';
 
 interface MobileSheetContentProps {
   onClose: () => void;
 }
 
+const menuItems = [
+  { href: '/account/adverts', icon: FileText, label: 'My Adverts' },
+  { href: '/account/followers', icon: Users, label: 'Followers' },
+  { href: '/account/feedback', icon: MessageSquare, label: 'Feedback' },
+  { href: '/account/performance', icon: BarChart2, label: 'Performance' },
+  { href: '/account/settings', icon: Settings, label: 'Settings' },
+  { href: '/faqs', icon: HelpCircle, label: 'FAQ' },
+];
+
 const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleNavigation = (href: string) => {
     onClose();
@@ -23,81 +52,144 @@ const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 mt-4">
-      {/* Logo */}
-      <Link
-        href="/"
-        onClick={onClose}
-        className="flex items-center justify-center"
-      >
-        <Logo className="w-auto h-20" />
-      </Link>
+    <ScrollArea className="h-full">
+      <div className="flex flex-col gap-6 p-6">
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={onClose}
+          className="flex items-center justify-center"
+        >
+          <Logo className="w-auto h-16" />
+        </Link>
 
-      {/* All Categories Link */}
-      <Button
-        variant="ghost"
-        onClick={() => {
-          handleNavigation('/cat');
-        }}
-        className="flex justify-start items-center gap-2 py-2 hover:bg-gray-50 rounded-xl px-2"
-      >
-        <span className="text-lg">📂</span>
-        <span className="ml-2">All Categories</span>
-      </Button>
-
-      {/* Categories Navigation */}
-      <CategoriesNav
-        className="flex flex-col gap-4"
-        itemClassName="py-2 hover:bg-gray-50 rounded-xl px-2"
-        isSheet={true}
-      />
-
-      {user && (
-        <>
-          {/* Favorites Link */}
-          <div className="relative flex items-center bg-gray-100 p-2 rounded-xl">
-            <button
-              onClick={() => handleNavigation('/wishlist')}
-              className="flex items-center gap-2 w-full"
-            >
-              <FaHeart className="text-xl text-gray-700" />
-              <span>Favorites</span>
-            </button>
-            <span className="bg-primary_1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-              12
-            </span>
+        {user && (
+          <div className="flex items-center space-x-4">
+            <Avatar>
+              <AvatarImage src={user.image} alt={user.name} />
+              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="text-sm font-medium">{user.name}</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
           </div>
+        )}
 
-          {/* Notifications Link */}
-          <div className="relative flex items-center bg-gray-100 p-2 rounded-xl">
-            <button
-              onClick={() => handleNavigation('/notifications')}
-              className="flex items-center gap-2 w-full"
-            >
-              <FaBell className="text-xl text-gray-700" />
-              <span>Notifications</span>
-            </button>
-            <span className="bg-primary_1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-              5
-            </span>
-          </div>
+        <Separator />
 
-          {/* Messages Link */}
-          <div className="relative flex items-center bg-gray-100 p-2 rounded-xl">
-            <button
-              onClick={() => handleNavigation('/messages')}
-              className="flex items-center gap-2 w-full"
+        {/* Categories Accordion */}
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="categories" className="border-none">
+            <AccordionTrigger className="py-3 hover:no-underline">
+              <span className="text-lg font-semibold">Browse Categories</span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="grid grid-cols-1 gap-2 pt-2">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  return (
+                    <Button
+                      key={category.href}
+                      variant="ghost"
+                      className="w-full justify-start h-auto py-3 px-4 text-sm hover:bg-gray-100"
+                      onClick={() => handleNavigation(category.href)}
+                    >
+                      <Icon className="mr-3 h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">{category.name}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Separator />
+
+        {/* Navigation Items */}
+        <nav className="space-y-1">
+          {menuItems.map((item) => (
+            <Button
+              key={item.href}
+              variant="ghost"
+              className="w-full justify-start py-3 px-4"
+              onClick={() => handleNavigation(item.href)}
             >
-              <FaEnvelope className="text-xl text-gray-700" />
-              <span>Messages</span>
-            </button>
-            <span className="bg-primary_1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-              3
-            </span>
-          </div>
-        </>
-      )}
-    </div>
+              <item.icon className="mr-3 h-4 w-4" />
+              {item.label}
+            </Button>
+          ))}
+        </nav>
+
+        {user && (
+          <>
+            <Separator />
+            <div className="space-y-1">
+              <Button
+                variant="ghost"
+                className="w-full justify-start py-3 px-4"
+                onClick={() => handleNavigation('/wishlist')}
+              >
+                <Heart className="mr-3 h-4 w-4" />
+                Favorites
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start py-3 px-4"
+                onClick={() => handleNavigation('/notifications')}
+              >
+                <Bell className="mr-3 h-4 w-4" />
+                Notifications
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start py-3 px-4"
+                onClick={() => handleNavigation('/messages')}
+              >
+                <Mail className="mr-3 h-4 w-4" />
+                Messages
+              </Button>
+            </div>
+
+            <Separator />
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start py-3 px-4 text-red-500 hover:text-red-600 hover:bg-red-50"
+              onClick={() => {
+                logout();
+                onClose();
+              }}
+            >
+              <LogOut className="mr-3 h-4 w-4" />
+              Log out
+            </Button>
+          </>
+        )}
+
+        {!user && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <Button
+                className="w-full"
+                onClick={() => handleNavigation('/login')}
+              >
+                Log In
+              </Button>
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => handleNavigation('/signup')}
+              >
+                Sign Up
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+    </ScrollArea>
   );
 };
 
