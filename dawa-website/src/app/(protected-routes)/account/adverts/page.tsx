@@ -51,7 +51,7 @@ export default function AdvertsPage() {
             <DollarSign className="h-4 w-4 text-primary_1" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$3,254</div>
+            <div className="text-2xl font-bold">UGX300,254</div>
             <p className="text-xs text-gray-500">+8% from last month</p>
           </CardContent>
         </Card>
