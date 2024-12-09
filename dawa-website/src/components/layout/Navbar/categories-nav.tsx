@@ -94,14 +94,14 @@ export const CategoriesNav: React.FC<CategoriesNavProps> = ({
           isSheet ? 'flex-col' : 'flex-row',
         )}
       >
-        {visibleCategories.map((category) => (
+        {/* {visibleCategories.map((category) => (
           <li
             key={category.name}
             className={cn(itemClassName, isSheet ? 'w-full text-left' : '')}
           >
             <CategoryLink category={category} isSheet={isSheet} />
           </li>
-        ))}
+        ))} */}
 
         {hasOverflow && (
           <li>
@@ -122,11 +122,11 @@ export const CategoriesNav: React.FC<CategoriesNavProps> = ({
               <DropdownMenuContent align="start">
                 <DropdownMenuLabel>More Categories</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {overflowCategories.map((category) => (
+                {/* {overflowCategories.map((category) => (
                   <DropdownMenuItem key={category.name}>
                     <CategoryLink category={category} isSheet={false} />
                   </DropdownMenuItem>
-                ))}
+                ))} */}
               </DropdownMenuContent>
             </DropdownMenu>
           </li>

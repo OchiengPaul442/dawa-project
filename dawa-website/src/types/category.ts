@@ -1,15 +1,15 @@
-import { IconType } from 'react-icons';
-
 export interface Subcategory {
   name: string;
   count: number;
-  icon: IconType;
+  icon: React.ElementType;
+  href: string;
 }
 
 export interface Category {
   name: string;
   count: number;
-  icon: IconType;
+  icon: React.ElementType;
+  href: string;
   subcategories: Subcategory[];
 }
 

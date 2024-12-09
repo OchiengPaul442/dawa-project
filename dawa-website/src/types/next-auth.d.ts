@@ -12,7 +12,7 @@ declare module 'next-auth' {
       id: string;
       email: string;
       name: string;
-      image: string;
+      image: string | null;
       role: 'Client' | 'Vendor'; // Restricting to two roles
     };
     accessToken: string;
@@ -22,7 +22,7 @@ declare module 'next-auth' {
     id: string;
     email: string;
     name: string;
-    image: string;
+    image: string | null;
     role: 'Client' | 'Vendor'; // Restricting to two roles
     token: string;
   }
@@ -36,7 +36,7 @@ declare module 'next-auth/jwt' {
     id: string;
     email: string;
     name: string;
-    picture: string;
+    picture: string | null;
     role: 'Client' | 'Vendor'; // Restricting to two roles
     accessToken: string;
   }

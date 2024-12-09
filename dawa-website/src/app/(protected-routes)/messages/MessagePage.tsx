@@ -10,6 +10,7 @@ import {
   Plus,
   Search,
   PlusCircle,
+  MoreVertical,
 } from 'lucide-react';
 import Button from '@/components/common/Button';
 import { Input } from '@/components/ui/input';
@@ -21,14 +22,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MessageCard } from '@/components/Main/messages/MessageCard';
 import { MessageDialog } from '@/components/Main/messages/MessageDialog';
-import { MessageListSkeleton } from '@/components/Main/messages/MessageSkeleton';
 import {
   Message,
   FetchMessagesFunction,
   UpdateMessageFunction,
 } from '@/types/message';
+import { MessageList } from '@/components/Main/messages/MessageList';
 
 const fetchMessages: FetchMessagesFunction = async () => {
   // Simulate API delay
@@ -136,39 +136,68 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 min-h-screen">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <MessageSquare className="h-8 w-8 text-primary_1" />
           Messages
         </h1>
-        <div className="flex gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button icon={Archive} variant="outline" className="h-10">
-                Actions
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={handleArchive}
-                className="h-10 cursor-pointer"
-              >
-                <Archive className="h-4 w-4 mr-2" />
-                Archive selected
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={handleMarkAsSpam}
-                className="h-10 cursor-pointer"
-              >
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Mark as spam
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Link href="/post-ad">
-            <Button icon={PlusCircle}>Post an Ad</Button>
+        <div className="flex gap-4 w-full sm:w-auto">
+          <div className="hidden sm:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button icon={Archive} variant="outline" className="h-10">
+                  Actions
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={handleArchive}
+                  className="h-10 cursor-pointer"
+                >
+                  <Archive className="h-4 w-4 mr-2" />
+                  Archive selected
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleMarkAsSpam}
+                  className="h-10 cursor-pointer"
+                >
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  Mark as spam
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <Link href="/post-ad" className="w-full sm:w-auto">
+            <Button icon={PlusCircle} className="w-full sm:w-auto">
+              Post an Ad
+            </Button>
           </Link>
+          <div className="sm:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-10 px-2">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={handleArchive}
+                  className="h-10 cursor-pointer"
+                >
+                  <Archive className="h-4 w-4 mr-2" />
+                  Archive selected
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleMarkAsSpam}
+                  className="h-10 cursor-pointer"
+                >
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                  Mark as spam
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -232,70 +261,6 @@ export default function MessagesPage() {
         message={activeMessage}
         onClose={() => setActiveMessage(null)}
       />
-    </div>
-  );
-}
-
-function MessageList({
-  messages,
-  loading,
-  selectedMessages,
-  onSelect,
-  onMessageClick,
-}: {
-  messages: Message[];
-  loading: boolean;
-  selectedMessages: string[];
-  onSelect: (id: string) => void;
-  onMessageClick: (message: Message) => void;
-}) {
-  if (loading) {
-    return <MessageListSkeleton count={5} />;
-  }
-
-  if (messages.length === 0) {
-    return (
-      <EmptyState
-        title="No messages yet"
-        description="Start a conversation about items you're interested in"
-        icon={<MessageSquare className="h-16 w-16 text-gray-400" />}
-      />
-    );
-  }
-
-  return (
-    <ul className="space-y-4">
-      {messages.map((message) => (
-        <li key={message.id}>
-          <MessageCard
-            message={message}
-            isSelected={selectedMessages.includes(message.id)}
-            onSelect={onSelect}
-            onClick={onMessageClick}
-          />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function EmptyState({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="text-center flex justify-center items-center flex-col py-12 bg-gray-50 rounded-lg">
-      <div className="inline-block mb-4">{icon}</div>
-      <h2 className="text-2xl font-semibold mb-2">{title}</h2>
-      <p className="text-gray-600 mb-6">{description}</p>
-      <Link href="/browse">
-        <Button icon={Plus}>Find Things to Discuss</Button>
-      </Link>
     </div>
   );
 }

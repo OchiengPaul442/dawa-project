@@ -48,23 +48,6 @@ export function useAuth() {
           email: session.user.email || '',
           image: session.user.image || '',
         });
-
-        // Here you could fetch additional user data/counters if needed.
-        // Make sure your API endpoint handles authorization and returns valid data
-        // try {
-        //   const { data } = await api.get('/api/getuserprofile', {
-        //     cancelToken: source.token,
-        //   });
-        //   if (data && data.counters) {
-        //     setCounters(data.counters);
-        //   }
-        // } catch (error) {
-        //   if (axios.isCancel(error)) {
-        //     console.log('Request canceled:', error.message);
-        //   } else {
-        //     console.error('Failed to fetch user counters:', error);
-        //   }
-        // }
       } else {
         setUser(null);
       }

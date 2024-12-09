@@ -1,3 +1,5 @@
+// src/pages/api/auth/[...nextauth].ts
+
 import NextAuth, { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -58,7 +60,7 @@ const authOptions: AuthOptions = {
             return null;
           }
 
-          return {
+          const data = {
             id: user.id.toString(),
             name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
             email: user.email,
@@ -66,6 +68,7 @@ const authOptions: AuthOptions = {
             role: user.user_role,
             token: user_data.token,
           };
+          return data;
         } catch (error) {
           console.error('Login error:', error);
           return null;
@@ -75,9 +78,8 @@ const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, account }) {
+      // Initial sign in
       if (account && user) {
-        token.accessToken = account.access_token || '';
-
         if (account.provider === 'google') {
           try {
             const response = await axios.post(
@@ -100,8 +102,17 @@ const authOptions: AuthOptions = {
           } catch (error) {
             console.error('Error during Google login:', error);
           }
+        } else if (account.provider === 'credentials') {
+          // Handle Credentials Provider
+          token.id = user.id;
+          token.name = user.name;
+          token.email = user.email;
+          token.picture = user.image;
+          token.role = user.role;
+          token.accessToken = user.token;
         }
       }
+
       return token;
     },
     async session({ session, token }) {

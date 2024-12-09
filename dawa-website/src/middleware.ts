@@ -4,7 +4,12 @@ import { withAuth, type NextRequestWithAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 
 // Define routes that require authentication
-const PROTECTED_ROUTES = ['/messages', '/wishlist'];
+const PROTECTED_ROUTES = [
+  '/messages',
+  '/wishlist',
+  '/account',
+  '/notifications',
+];
 
 // Define role-based protected routes
 const ROLE_PROTECTED_ROUTES: Record<string, string[]> = {
@@ -74,6 +79,8 @@ export const config = {
     '/login',
     '/messages/:path*',
     '/wishlist/:path*',
+    '/account/:path*',
+    '/notifications/:path*',
     '/vendor/:path*',
     '/client/:path*',
   ],

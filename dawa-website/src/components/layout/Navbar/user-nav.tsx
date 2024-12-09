@@ -88,7 +88,7 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="relative rounded-full h-12 w-12 p-1"
+            className="relative rounded-full h-12 w-12 p-1 hidden lg:block"
           >
             <Avatar className="h-full w-full">
               <AvatarImage src={user.image} alt={user.name} />
@@ -108,27 +108,27 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link href="/account" className="cursor-pointer">
+              <Link href="/account/adverts" className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 <span>Account</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/my-adverts" className="cursor-pointer">
+              <Link href="/account/adverts" className="cursor-pointer">
                 <FileText className="mr-2 h-4 w-4" />
                 <span>My Adverts</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/settings" className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+              <Link href="/account/performance" className="cursor-pointer">
+                <BarChart2 className="mr-2 h-4 w-4" />
+                <span>Performance</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/performance" className="cursor-pointer">
-                <BarChart2 className="mr-2 h-4 w-4" />
-                <span>Performance</span>
+              <Link href="/account/settings" className="cursor-pointer">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
