@@ -106,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   };
 
   return (
-    <div className="w-full lg:w-[288px] relative z-50">
+    <div className="w-full lg:w-[288px] relative z-30">
       <div
         className={`bg-white rounded-md border sticky top-[100px] ${
           hoveredCategory
