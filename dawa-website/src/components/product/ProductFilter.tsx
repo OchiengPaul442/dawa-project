@@ -18,6 +18,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { LocationDialog } from '../dialogs/location-dialog';
 
 interface ProductFilterProps {
   appliedPriceRange: [number, number];
@@ -47,8 +48,42 @@ const allColors = [
   'Yellow',
   'Purple',
 ];
-
-const locations = ['Kampala', 'Gulu', 'Mbarara', 'Jinja', 'Fort Portal'];
+const locations = [
+  { name: 'Kampala', count: 5382 },
+  { name: 'Wakiso', count: 1146 },
+  { name: 'Mukono', count: 413 },
+  { name: 'Jinja', count: 287 },
+  { name: 'Gulu', count: 256 },
+  { name: 'Mbarara', count: 234 },
+  { name: 'Lira', count: 198 },
+  { name: 'Mbale', count: 176 },
+  { name: 'Masaka', count: 165 },
+  { name: 'Entebbe', count: 154 },
+  { name: 'Arua', count: 143 },
+  { name: 'Fort Portal', count: 132 },
+  { name: 'Hoima', count: 121 },
+  { name: 'Kabale', count: 110 },
+  { name: 'Tororo', count: 98 },
+  { name: 'Soroti', count: 87 },
+  { name: 'Mityana', count: 76 },
+  { name: 'Kasese', count: 65 },
+  { name: 'Iganga', count: 54 },
+  { name: 'Kitgum', count: 43 },
+  { name: 'Koboko', count: 32 },
+  { name: 'Masindi', count: 21 },
+  { name: 'Mubende', count: 19 },
+  { name: 'Busia', count: 17 },
+  { name: 'Ntungamo', count: 15 },
+  { name: 'Adjumani', count: 13 },
+  { name: 'Moyo', count: 11 },
+  { name: 'Nebbi', count: 9 },
+  { name: 'Kayunga', count: 7 },
+  { name: 'Rukungiri', count: 5 },
+  { name: 'Bushenyi', count: 4 },
+  { name: 'Bugiri', count: 3 },
+  { name: 'Kamuli', count: 2 },
+  { name: 'Pader', count: 1 },
+];
 
 const formatCurrency = (value: number) => {
   return value.toLocaleString('en-UG', {
@@ -228,18 +263,11 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
             <label className="text-sm font-medium text-gray-600">
               Location
             </label>
-            <Select value={tempLocation} onValueChange={setTempLocation}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose Location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((location) => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <LocationDialog
+              locations={locations}
+              selectedLocation={tempLocation}
+              onLocationSelect={setTempLocation}
+            />
           </div>
 
           {/* Color Selection */}
