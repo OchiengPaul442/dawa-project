@@ -23,7 +23,7 @@ export function BottomNav() {
   const { user } = useAuth();
 
   const handleSelect = (url: string) => {
-    if (!user) {
+    if (!user && url !== '/') {
       dispatch(openAuthDialog());
       return;
     }
