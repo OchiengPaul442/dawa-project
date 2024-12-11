@@ -107,7 +107,7 @@ export default function FAQPage() {
               variant="outline"
               className="w-full mb-6 h-10 border-orange-200 hover:bg-orange-50 text-primary_1"
             >
-              <span className="flex-1 text-left">Categories</span>
+              <span className="flex-1 text-left">Browse categories</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </SheetTrigger>
@@ -154,7 +154,7 @@ export default function FAQPage() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                   >
-                    <h2 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6 text-orange-600">
+                    <h2 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6 text-primary_1">
                       {selectedQuestion.title}
                     </h2>
                     <div className="prose prose-sm lg:prose-base prose-slate max-w-none">

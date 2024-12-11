@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
@@ -26,6 +26,7 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [isSticky, setIsSticky] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -68,8 +69,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     if (!user) {
       dispatch(openAuthDialog());
     } else {
-      // Navigate to sell page or open sell dialog
-      console.log('Navigate to sell page');
+      router.push('/post-ad');
     }
   };
 
@@ -193,11 +193,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
                     Sign up
                   </Link>
                 </div>
-                <Button
-                  icon={FaUserCircle}
-                  className="md:hidden bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-full h-10 w-10"
-                  onClick={() => dispatch(openAuthDialog())}
-                />
+
                 <Button
                   className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
                   onClick={handleSellClick}

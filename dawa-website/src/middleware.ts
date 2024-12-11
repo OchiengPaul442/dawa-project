@@ -9,6 +9,8 @@ const PROTECTED_ROUTES = [
   '/wishlist',
   '/account',
   '/notifications',
+  '/my-shop',
+  '/post-ad',
 ];
 
 // Define role-based protected routes
@@ -81,6 +83,8 @@ export const config = {
     '/wishlist/:path*',
     '/account/:path*',
     '/notifications/:path*',
+    '/my-shop/:path*',
+    '/post-ad/:path*',
     '/vendor/:path*',
     '/client/:path*',
   ],

@@ -53,7 +53,7 @@ const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
 
   return (
     <ScrollArea className="h-full">
-      <div className="flex flex-col gap-6 p-6">
+      <div className="flex flex-col gap-6 p-4">
         {/* Logo */}
         <Link
           href="/"
@@ -173,7 +173,7 @@ const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
             <Separator />
             <div className="space-y-2">
               <Button
-                className="w-full"
+                className="w-full bg-gray-700"
                 onClick={() => handleNavigation('/login')}
               >
                 Log In

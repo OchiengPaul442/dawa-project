@@ -1,10 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronRight, ChevronDown } from 'lucide-react';
-
+import { ChevronRight, ChevronDown, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { slugify } from '@/utils/slugify';
 import { Category } from '@/types/category';
@@ -36,11 +35,42 @@ export function CategoriesMenu() {
   const displayCategories = showAllCategories ? categories : visibleCategories;
 
   return (
-    <div className="w-full container mx-auto px-4 mt-12">
+    <div className="w-full container mx-auto px-4 mt-8">
       <div className="flex flex-col lg:flex-row gap-4">
-        {/* Categories and Carousel Section */}
+        {/* Mobile Categories Grid */}
+        <div className="lg:hidden grid grid-cols-3 sm:grid-cols-4">
+          <Link
+            href="/post-ad"
+            className="flex flex-col items-center justify-center p-4 bg-primary_1 text-white aspect-square"
+          >
+            <div className="rounded-full bg-white/20 p-3 mb-2">
+              <Plus className="h-5 w-5" />
+            </div>
+            <span className="text-xs text-center truncate w-full">Post ad</span>
+          </Link>
+          {categories.map((category) => {
+            const Icon = category.icon;
+            const categorySlug = slugify(category.name);
+            return (
+              <Link
+                key={category.name}
+                href={`/cat/${categorySlug}`}
+                className="flex flex-col items-center justify-center p-4 border-r border-b bg-background aspect-square"
+              >
+                <div className="rounded-full bg-muted p-3 mb-2">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-xs text-center truncate w-full">
+                  {category.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop Categories and Carousel Section */}
         <div
-          className="flex flex-col sm:flex-row h-auto sm:h-[310px] flex-1 rounded-lg border bg-background shadow-sm"
+          className="hidden lg:flex flex-col sm:flex-row h-auto sm:h-[310px] flex-1 rounded-lg border bg-background shadow-sm"
           onMouseLeave={handleMouseLeave}
         >
           {/* Categories */}
@@ -167,7 +197,7 @@ export function CategoriesMenu() {
         </div>
 
         {/* Right Side Section */}
-        <div className="flex flex-col sm:flex-row lg:flex-col w-full lg:w-[200px] gap-4">
+        <div className="hidden lg:flex flex-col sm:flex-row lg:flex-col w-full lg:w-[200px] gap-4">
           <PostAdvertCTA />
           <SafetyTips />
         </div>

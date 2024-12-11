@@ -129,8 +129,8 @@ const WishlistPage = () => {
   }, [displayedProducts, selectedItems]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto px-4 py-6 max-w-6xl">
+    <>
+      <div className="my-8">
         {/* Header Section */}
         <WishlistHeader
           totalItems={sortedProducts.length}
@@ -166,7 +166,7 @@ const WishlistPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

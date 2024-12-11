@@ -6,7 +6,7 @@ export default function WishListLayout({
 }) {
   return (
     <Layout newsletterProps={{ container: false, hide: true }}>
-      {children}
+      <main className="max-w-7xl mx-auto min-h-screen px-4">{children}</main>
     </Layout>
   );
 }
