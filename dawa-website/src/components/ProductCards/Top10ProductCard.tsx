@@ -1,8 +1,12 @@
-import React from 'react';
+'use client';
+
+import React, { useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
-import CustomImage from '../common/CustomImage';
-import StarRating from '../common/StarRating';
-import { LikeButton } from '../common/LikeButton';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { LikeButton } from '@/components/common/LikeButton';
+import StarRating from '@/components/common/StarRating';
+import CustomImage from '@/components/common/CustomImage';
 import { Product } from '@/types/product';
 
 interface Top10ProductCardProps {
@@ -10,63 +14,68 @@ interface Top10ProductCardProps {
   onLike: (id: number) => void;
 }
 
-export const Top10ProductCard: React.FC<Top10ProductCardProps> = ({
+const Top10ProductCard = memo(function Top10ProductCard({
   product,
   onLike,
-}) => {
+}: Top10ProductCardProps) {
   const router = useRouter();
 
-  const handleCardClick = () => {
+  const handleCardClick = useCallback(() => {
     router.push(`/prod/${product.id}`);
-  };
+  }, [router, product.id]);
+
+  const handleLike = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onLike(product.id);
+    },
+    [onLike, product.id],
+  );
 
   return (
-    <div
-      className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full cursor-pointer"
+    <Card
       onClick={handleCardClick}
+      className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg h-full"
     >
-      <div className="relative w-full h-3/4">
-        <CustomImage
-          src={product.imageUrl}
-          alt={product.name}
-          fill
-          style={{
-            objectFit: 'cover',
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
-          }}
-        />
-        <LikeButton
-          isLiked={product.liked || false}
-          onLike={(e) => {
-            e.stopPropagation();
-            onLike(product.id);
-          }}
-          className="absolute bottom-2 right-2"
-        />
-      </div>
-      <div className="p-4 flex flex-col justify-between flex-grow">
-        <div>
-          <h3 className="text-lg font-semibold truncate">{product.name}</h3>
-          <p className="text-sm text-gray-500">{product.sold} sold</p>
-        </div>
-        <div className="flex flex-col items-start mt-4">
-          <p className="text-primary_1 font-bold text-lg mt-2">
-            {product.price}
-            {product.originalPrice && (
-              <span className="text-gray-400 line-through text-sm ml-2">
-                {product.originalPrice}
-              </span>
-            )}
-          </p>
-          <StarRating
-            initialRating={product.rating}
-            maxRating={4}
-            starSize={16}
-            readOnly
+      <CardContent className="p-0">
+        <AspectRatio ratio={4 / 3} className="bg-muted">
+          <CustomImage
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            className="object-cover rounded-t-lg"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
           />
-        </div>
-      </div>
-    </div>
+          <LikeButton
+            isLiked={product.liked || false}
+            onLike={handleLike}
+            className="absolute bottom-2 right-2 z-10"
+          />
+        </AspectRatio>
+      </CardContent>
+      <CardContent className="p-4">
+        <h3 className="text-lg font-semibold truncate">{product.name}</h3>
+        <p className="text-sm text-muted-foreground">{product.sold} sold</p>
+      </CardContent>
+      <CardFooter className="flex flex-col items-start p-4 pt-0">
+        <p className="text-primary_1 font-bold text-lg">
+          {product.price}
+          {product.originalPrice && (
+            <span className="text-muted-foreground font-normal line-through text-sm ml-2">
+              {product.originalPrice}
+            </span>
+          )}
+        </p>
+        <StarRating
+          initialRating={product.rating}
+          maxRating={4}
+          starSize={16}
+          readOnly
+        />
+      </CardFooter>
+    </Card>
   );
-};
+});
+
+export default Top10ProductCard;

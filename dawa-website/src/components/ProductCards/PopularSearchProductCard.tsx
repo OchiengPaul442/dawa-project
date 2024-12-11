@@ -1,52 +1,69 @@
-import React from 'react';
+'use client';
+
+import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import CustomImage from '../common/CustomImage';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { LikeButton } from '@/components/common/LikeButton';
+import CustomImage from '@/components/common/CustomImage';
 import { Product } from '@/types/product';
-import { LikeButton } from '../common/LikeButton';
 
 interface PopularSearchProductCardProps {
   product: Product;
   onLike: (id: number) => void;
 }
 
-export const PopularSearchProductCard: React.FC<
-  PopularSearchProductCardProps
-> = ({ product, onLike }) => {
-  const router = useRouter();
+export const PopularSearchProductCard: React.FC<PopularSearchProductCardProps> =
+  React.memo(({ product, onLike }) => {
+    const router = useRouter();
 
-  return (
-    <div
-      onClick={() => router.push(`/prod/${product.id}`)}
-      className="bg-white rounded-lg shadow-md overflow-hidden h-full cursor-pointer"
-    >
-      <div className="relative w-full h-56">
-        <CustomImage
-          src={product.imageUrl}
-          alt={product.name}
-          fill
-          style={{
-            objectFit: 'cover',
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
-          }}
-        />
-        <LikeButton
-          isLiked={product.liked || false}
-          onLike={() => onLike(product.id)}
-          className="absolute bottom-2 right-2"
-        />
-      </div>
-      <div className="p-4 text-center">
-        <p className="text-primary_1 font-bold text-lg">{product.price}</p>
-        {product.originalPrice && (
-          <p className="text-gray-400 line-through text-sm">
-            {product.originalPrice}
-          </p>
-        )}
-        <h3 className="text-black font-bold text-md mt-2 truncate">
-          {product.name}
-        </h3>
-      </div>
-    </div>
-  );
-};
+    const handleClick = useCallback(() => {
+      router.push(`/prod/${product.id}`);
+    }, [router, product.id]);
+
+    const handleLike = useCallback(
+      (event: React.MouseEvent) => {
+        event.stopPropagation();
+        onLike(product.id);
+      },
+      [onLike, product.id],
+    );
+
+    return (
+      <Card
+        onClick={handleClick}
+        className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg h-full"
+      >
+        <CardContent className="p-0">
+          <div className="relative aspect-square w-full">
+            <CustomImage
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+            />
+            <LikeButton
+              isLiked={product.liked || false}
+              onLike={handleLike}
+              className="absolute bottom-2 right-2 z-10"
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col items-center p-4">
+          <div className="flex items-center gap-2">
+            <p className="text-primary_1 font-bold text-lg">{product.price}</p>
+            {product.originalPrice && (
+              <p className="text-gray-400 font-normal line-through text-sm">
+                {product.originalPrice}
+              </p>
+            )}
+          </div>
+          <h3 className="text-foreground font-bold text-md mt-2 truncate w-full text-center">
+            {product.name}
+          </h3>
+        </CardFooter>
+      </Card>
+    );
+  });
+
+PopularSearchProductCard.displayName = 'PopularSearchProductCard';

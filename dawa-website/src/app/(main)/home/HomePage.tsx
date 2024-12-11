@@ -6,7 +6,7 @@ import PopularSearchCarousel from '@/components/features/carousels/PopularSearch
 import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
 import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
 import BestDeals from '@/components/product/BestDeals';
-import FlashSale from '@/components/product/FlashSale';
+import FlashSale from '@/components/features/carousels/FlashSale';
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
 
 const HomePage = () => {

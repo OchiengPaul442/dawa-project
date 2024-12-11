@@ -1,8 +1,8 @@
 'use client';
+
 import React from 'react';
-import CustomImage from '../common/CustomImage';
-import StarRating from '../common/StarRating';
 import { useRouter } from 'next/navigation';
+import RecentlyViewedCard from '../ProductCards/RecentlyViewedCard';
 
 // Define the structure of each product item
 interface Product {
@@ -91,7 +91,7 @@ const products: Product[] = [
 
 const BestDeals: React.FC = () => {
   const router = useRouter();
-  // Handler to handle clicks and log product ID
+
   const handleClick = (productId: number) => {
     router.push(`/prod/${productId}`);
   };
@@ -101,44 +101,13 @@ const BestDeals: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-6 text-center sm:text-left">
         Best Deals
       </h2>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 justify-items-center">
         {products.map((product) => (
-          <div
+          <RecentlyViewedCard
             key={product.id}
+            product={product}
             onClick={() => handleClick(product.id)}
-            className="hover:bg-white :hover:shadow-md hover:scale-105 rounded-lg flex items-center px-2 py-2 w-full sm:max-w-[273px] mx-auto sm:mx-0 cursor-pointer hover:shadow-lg transform transition duration-300 ease-in-out"
-          >
-            {/* Product Image */}
-            <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-30 md:h-30 lg:w-28 lg:h-35 relative flex-shrink-0">
-              <CustomImage
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                style={{ objectFit: 'cover', borderRadius: 10 }}
-              />
-            </div>
-
-            {/* Product Details */}
-            <div className="ml-4 flex flex-col h-full py-1 justify-between text-left">
-              <h3 className="text-sm font-semibold leading-tight">
-                {product.name}
-              </h3>
-              <div>
-                <p className="text-primary_1 font-bold">{product.price}</p>
-                <div className="flex items-center mt-1">
-                  <StarRating
-                    initialRating={product.rating}
-                    maxRating={4}
-                    starSize={16}
-                    readOnly
-                  />
-                  <span className="ml-2 text-xs text-gray-500">
-                    ({product.reviews})
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          />
         ))}
       </div>
     </div>

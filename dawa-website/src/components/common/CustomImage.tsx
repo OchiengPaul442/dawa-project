@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NextImage, { ImageProps } from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 import DefaultImage from '@public/assets/images/default_image.webp';
@@ -19,26 +19,42 @@ const CustomImage: React.FC<CustomImageProps> = ({
   alt = '',
   ...props
 }) => {
-  const [imgSrc, setImgSrc] = React.useState<string>(src || fallbackSrc);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [imgSrc, setImgSrc] = useState<string>(src || fallbackSrc);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const mountedRef = useRef(false);
+  const prevSrcRef = useRef<string | null | undefined>(src);
 
-  React.useEffect(() => {
-    setImgSrc(src || fallbackSrc);
-    setIsLoading(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (src !== prevSrcRef.current) {
+      prevSrcRef.current = src;
+      setImgSrc(src || fallbackSrc);
+      setIsLoading(true);
+    }
   }, [src, fallbackSrc]);
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-  };
-
-  const handleError = () => {
-    if (imgSrc !== fallbackSrc) {
-      setImgSrc(fallbackSrc);
-      setIsLoading(true);
-    } else {
+  const handleLoadingComplete = useCallback(() => {
+    if (mountedRef.current) {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  const handleError = useCallback(() => {
+    if (mountedRef.current) {
+      if (imgSrc !== fallbackSrc) {
+        setImgSrc(fallbackSrc);
+        setIsLoading(true);
+      } else {
+        setIsLoading(false);
+      }
+    }
+  }, [fallbackSrc, imgSrc]);
 
   return (
     <div

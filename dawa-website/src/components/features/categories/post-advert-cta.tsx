@@ -2,7 +2,7 @@
 
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/lib/hooks';
@@ -22,28 +22,28 @@ export function PostAdvertCTA() {
   };
 
   return (
-    <Card className="bg-primary_1 text-white hover:bg-primary_1/90 transition-colors cursor-pointer border-0 flex-1 lg:flex-none h-[145px] sm:h-auto lg:h-[145px]">
-      <CardContent className="p-3 flex flex-col justify-between h-full">
-        <div className="flex items-center mb-2">
-          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2">
-            <Plus className="h-3 w-3" />
+    <Card className="bg-gray-700 text-white border-0 h-[180px] rounded-xl overflow-hidden">
+      <div className="p-6 flex flex-col h-full">
+        <div className="flex items-start gap-4 mb-auto">
+          <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+            <Plus className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-xs">Got something to sell?</h3>
-            <p className="text-white/90 text-[10px] md:text-sm mt-0.5">
+            <h3 className="text-lg font-semibold">Got something to sell?</h3>
+            <p className="text-gray-300 text-sm mt-1">
               Post an advert for free!
             </p>
           </div>
         </div>
         <Button
           onClick={handlePostAd}
+          size="lg"
           variant="secondary"
-          size="sm"
-          className="w-full mt-2 bg-white text-primary_1 hover:bg-white/90 text-[10px] md:text-sm"
+          className="w-full bg-white text-[#0F172A] hover:bg-white/90 mt-4"
         >
           Post Now
         </Button>
-      </CardContent>
+      </div>
     </Card>
   );
 }

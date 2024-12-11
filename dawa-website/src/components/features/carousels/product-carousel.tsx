@@ -1,110 +1,94 @@
 'use client';
 
 import * as React from 'react';
-import { ProductCarouselItem } from '@/types/category';
-import { cn } from '@/lib/utils';
+import useEmblaCarousel from 'embla-carousel-react';
+import AutoplayPlugin from 'embla-carousel-autoplay';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ProductCarouselItem } from '@/types/category';
 import CustomImage from '@/components/common/CustomImage';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface ProductCarouselProps {
   items: ProductCarouselItem[];
 }
 
 export function ProductCarousel({ items }: ProductCarouselProps) {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const totalItems = items.length;
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, skipSnaps: false },
+    [AutoplayPlugin({ delay: 5000, stopOnInteraction: false })],
+  );
 
-  // Auto-slide interval setup
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === totalItems - 1 ? 0 : prevIndex + 1,
-      );
-    }, 5000); // Slide every 5 seconds
+  const scrollPrev = React.useCallback(
+    () => emblaApi && emblaApi.scrollPrev(),
+    [emblaApi],
+  );
+  const scrollNext = React.useCallback(
+    () => emblaApi && emblaApi.scrollNext(),
+    [emblaApi],
+  );
 
-    return () => clearInterval(interval);
-  }, [totalItems]);
-
-  // Handle dot navigation
-  const handleDotClick = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  // Extract the current item based on currentIndex
-  const currentItem = items[currentIndex];
-
-  // Prevent rendering if items array is empty
-  if (totalItems === 0) {
-    return null;
-  }
+  if (!items.length) return null;
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-gray-100">
-      <AnimatePresence>
-        <motion.div
-          key={currentItem.id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 flex"
-        >
-          {/* Text Content */}
-          <div className="w-1/2 p-6 flex flex-col justify-center">
-            <h3 className="font-bold mb-2 text-lg md:text-xl lg:text-2xl leading-snug">
-              {currentItem.title}
-            </h3>
-            <p className="text-sm md:text-base lg:text-lg text-gray-600 mb-4 leading-relaxed">
-              {currentItem.description}
-            </p>
-            <div className="flex items-baseline mb-4">
-              <span className="text-md md:text-lg lg:text-xl font-bold">
-                UGX{currentItem.price.toLocaleString()}
-              </span>
-              {currentItem.discountPercentage && (
-                <span className="ml-2 text-sm md:text-base lg:text-lg text-green-600 font-semibold">
-                  {currentItem.discountPercentage}% OFF
-                </span>
-              )}
+    <div className="relative h-full overflow-hidden">
+      <div className="absolute inset-0" ref={emblaRef}>
+        <div className="flex h-full">
+          {items.map((item) => (
+            <div key={item.id} className="relative flex-[0_0_100%] h-full">
+              <div className="absolute inset-0 flex flex-col md:flex-row">
+                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 mb-4 text-sm md:text-base line-clamp-2">
+                    {item.description}
+                  </p>
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-lg md:text-xl font-bold text-primary">
+                      UGX{item.price.toLocaleString()}
+                    </span>
+                    {item.discountPercentage && (
+                      <span className="text-sm font-semibold text-green-600">
+                        {item.discountPercentage}% OFF
+                      </span>
+                    )}
+                  </div>
+                  <Button asChild className="w-fit">
+                    <Link href={`/prod/${item.id}`}>View Details</Link>
+                  </Button>
+                </div>
+                <div className="w-full md:w-1/2 relative">
+                  <CustomImage
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
             </div>
-            <Button size="sm" asChild className="max-w-[150px]">
-              <Link
-                href={`/prod/${currentItem.id}`}
-                className="text-sm md:text-base lg:text-md"
-              >
-                View Details
-              </Link>
-            </Button>
-          </div>
-          {/* Image Content */}
-          <div className="w-1/2 h-full">
-            <CustomImage
-              src={currentItem.imageUrl}
-              alt={currentItem.title}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Navigation Dots */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {items.map((_, index) => (
-          <button
-            key={index}
-            className={cn(
-              'w-3 h-3 rounded-full transition-colors duration-300',
-              index === currentIndex ? 'bg-primary_1' : 'bg-gray-300',
-            )}
-            onClick={() => handleDotClick(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
+          ))}
+        </div>
       </div>
+
+      <Button
+        variant="outline"
+        size="icon"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full h-8 w-8"
+        onClick={scrollPrev}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+
+      <Button
+        variant="outline"
+        size="icon"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full h-8 w-8"
+        onClick={scrollNext}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

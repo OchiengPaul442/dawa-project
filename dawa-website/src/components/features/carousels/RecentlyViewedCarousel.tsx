@@ -1,9 +1,11 @@
 'use client';
-import CustomImage from '../../common/CustomImage';
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import StarRating from '../../common/StarRating';
+import useEmblaCarousel from 'embla-carousel-react';
+import AutoplayPlugin from 'embla-carousel-autoplay';
+import RecentlyViewedCard from '../../ProductCards/RecentlyViewedCard';
 
 interface Product {
   id: number;
@@ -91,41 +93,47 @@ const products: Product[] = [
 
 const RecentlyViewedCarousel: React.FC = () => {
   const router = useRouter();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(3);
-  const cardWidth = 273;
-  const cardMargin = 36;
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: false,
+      align: 'start',
+      slidesToScroll: 1,
+      containScroll: 'trimSnaps',
+    },
+    [AutoplayPlugin({ delay: 5000, stopOnInteraction: false })],
+  );
 
-  // Update items per view based on screen size
+  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+  const [nextBtnEnabled, setNextBtnEnabled] = useState(true);
+
+  const scrollPrev = useCallback(
+    () => emblaApi && emblaApi.scrollPrev(),
+    [emblaApi],
+  );
+  const scrollNext = useCallback(
+    () => emblaApi && emblaApi.scrollNext(),
+    [emblaApi],
+  );
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setPrevBtnEnabled(emblaApi.canScrollPrev());
+    setNextBtnEnabled(emblaApi.canScrollNext());
+  }, [emblaApi]);
+
   useEffect(() => {
-    const updateItemsPerView = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1);
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(2);
-      } else {
-        setItemsPerView(3);
-      }
-    };
-    updateItemsPerView();
-    window.addEventListener('resize', updateItemsPerView);
-    return () => window.removeEventListener('resize', updateItemsPerView);
-  }, []);
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+  }, [emblaApi, onSelect]);
 
-  const maxIndex = products.length - itemsPerView;
-
-  // Navigation handlers
-  const handleNext = useCallback(() => {
-    if (currentIndex < maxIndex) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    }
-  }, [currentIndex, maxIndex]);
-
-  const handlePrev = useCallback(() => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prevIndex) => prevIndex - 1);
-    }
-  }, [currentIndex]);
+  const handleProductClick = useCallback(
+    (productId: number) => {
+      router.push(`/prod/${productId}`);
+    },
+    [router],
+  );
 
   return (
     <div className="w-full py-8">
@@ -136,79 +144,43 @@ const RecentlyViewedCarousel: React.FC = () => {
           </h2>
           <div className="flex space-x-2">
             <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
+              onClick={scrollPrev}
+              disabled={!prevBtnEnabled}
               className={`p-2 text-xl rounded-full transition ${
-                currentIndex === 0
+                !prevBtnEnabled
                   ? 'text-gray-400 cursor-not-allowed'
                   : 'text-primary_1 hover:bg-gray-200'
               }`}
+              aria-label="Previous items"
             >
               <FaChevronLeft />
             </button>
             <button
-              onClick={handleNext}
-              disabled={currentIndex === maxIndex}
+              onClick={scrollNext}
+              disabled={!nextBtnEnabled}
               className={`p-2 text-xl rounded-full transition ${
-                currentIndex === maxIndex
+                !nextBtnEnabled
                   ? 'text-gray-400 cursor-not-allowed'
                   : 'text-primary_1 hover:bg-gray-200'
               }`}
+              aria-label="Next items"
             >
               <FaChevronRight />
             </button>
           </div>
         </div>
 
-        {/* Carousel */}
-        <div className="flex overflow-hidden">
-          <div
-            className="flex transition-transform py-2 duration-500 ease-in-out"
-            style={{
-              transform: `translateX(-${currentIndex * (cardWidth + cardMargin)}px)`,
-            }}
-          >
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex -ml-9 mb-2">
             {products.map((product) => (
               <div
                 key={product.id}
-                onClick={() => {
-                  router.push(`/prod/${product.id}`);
-                }}
-                style={{
-                  marginRight: cardMargin,
-                }}
-                className="hover:bg-white :hover:shadow-md hover:scale-105 rounded-lg hover:shadow-lg flex items-center px-2 py-2 w-[273px] sm:mx-0 cursor-pointer  transform  transition duration-300 ease-in-out"
+                className="flex-shrink-0 min-w-[273px] pl-9"
               >
-                {/* Product Image */}
-                <div className="w-[80px] h-[80px] sm:w-[117px] sm:h-[117px] md:w-[120px] md:h-[120px] lg:w-[117px] lg:h-[139px] relative flex-shrink-0">
-                  <CustomImage
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    style={{ objectFit: 'cover', borderRadius: 10 }}
-                  />
-                </div>
-
-                {/* Product Details */}
-                <div className="ml-4 flex flex-col h-full py-1 justify-between text-left">
-                  <h3 className="text-sm font-semibold leading-tight">
-                    {product.name}
-                  </h3>
-                  <div>
-                    <p className="text-primary_1 font-bold">{product.price}</p>
-                    <div className="flex items-center mt-1">
-                      <StarRating
-                        initialRating={product.rating}
-                        maxRating={4}
-                        starSize={16}
-                        readOnly
-                      />
-                      <span className="ml-2 text-xs text-gray-500">
-                        ({product.reviews})
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                <RecentlyViewedCard
+                  product={product}
+                  onClick={() => handleProductClick(product.id)}
+                />
               </div>
             ))}
           </div>
