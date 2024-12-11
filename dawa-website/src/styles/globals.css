@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(
@@ -137,4 +141,9 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Bottom nav */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
 }

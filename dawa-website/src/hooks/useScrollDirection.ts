@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export function useScrollDirection() {
   const [scrollDirection, setScrollDirection] = useState('up');
   const [prevScrollY, setPrevScrollY] = useState(0);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,10 +19,10 @@ export function useScrollDirection() {
       setPrevScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [prevScrollY]);
 
-  return scrollDirection;
+  return { scrollDirection, pathname };
 }

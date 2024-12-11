@@ -20,6 +20,7 @@ import { UserNavSkeleton } from './UserNavSkeleton';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useDispatch } from '@/lib/hooks';
 import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import { ChevronLeft } from 'lucide-react';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
@@ -34,7 +35,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading, logout, counters } = useAuth();
-  const scrollDirection = useScrollDirection();
+  const { scrollDirection } = useScrollDirection();
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
@@ -74,15 +75,15 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   };
 
   return (
-    <nav className="bg-white relative z-50">
-      <motion.div
-        className={`${
-          isSticky ? 'fixed top-0 left-0 right-0 z-50 bg-white shadow-md' : ''
-        }`}
-        initial={{ y: 0 }}
-        animate={{ y: scrollDirection === 'down' ? '-100%' : 0 }}
-        transition={{ duration: 0.3 }}
-      >
+    <motion.nav
+      className={`${
+        isSticky ? 'fixed top-0 left-0 right-0 z-50 bg-white shadow-md' : ''
+      }`}
+      initial={{ y: 0 }}
+      animate={{ y: scrollDirection === 'down' ? '-100%' : 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="bg-white hidden sm:block">
         <div
           className={`container mx-auto flex items-center justify-between ${
             isSticky ? 'py-2' : 'py-4'
@@ -204,10 +205,17 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <div className="lg:hidden">
-        <div className="container mx-auto px-4 py-2">
+      <div className={`lg:hidden bg-white`}>
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+          {/* left arrow */}
+          <ChevronLeft
+            className="w-8 h-8  text-primary_1 mr-3 cursor-pointer"
+            onClick={() => router.back()}
+          />
+
+          {/* search */}
           <div className="relative w-full">
             <Input
               type="text"
@@ -221,7 +229,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 
