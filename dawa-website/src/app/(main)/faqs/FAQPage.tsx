@@ -1,103 +1,97 @@
 'use client';
-import React, { useState } from 'react';
-import Button from '@/components/common/Button';
-import { FaQuestionCircle, FaBoxOpen, FaBook } from 'react-icons/fa';
-import { IoIosArrowDown } from 'react-icons/io';
-import { IoMail } from 'react-icons/io5';
-import { FaHeadset } from 'react-icons/fa';
 
-const FAQPage = () => {
-  // Set the first category as the default selected category
-  const categories = [
-    {
-      id: 'questions',
-      icon: FaQuestionCircle,
-      title: 'Answer Question',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      id: 'products',
-      icon: FaBoxOpen,
-      title: 'Product Stock',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-    {
-      id: 'manuals',
-      icon: FaBook,
-      title: 'Manual Guide',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    },
-  ];
+import * as React from 'react';
+import { Search, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-  // Initialize selectedCategory with the id of the first category
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0].id,
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { FAQCategory } from '@/lib/mock_data';
+import { FAQ_Category, Question } from '@/types/faq';
+
+export default function FAQPage() {
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState(
+    FAQCategory[0]?.id || '',
   );
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [selectedQuestionId, setSelectedQuestionId] = React.useState<
+    string | null
+  >(null);
+  const [isCategorySheetOpen, setIsCategorySheetOpen] = React.useState(false);
 
-  const faqs = [
-    {
-      category: 'questions',
-      question: 'How to Shopping at Dawa?',
-      answer:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    },
-    {
-      category: 'questions',
-      question: 'How to return product in Dawa?',
-      answer:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    },
-    {
-      category: 'products',
-      question: 'How to pay in Dawa?',
-      answer:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.',
-    },
-    {
-      category: 'manuals',
-      question: 'How to cancel order in Dawa?',
-      answer:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel eros eget felis fringilla rutrum.',
-    },
-  ];
+  const answerRef = React.useRef<HTMLDivElement>(null);
 
-  const toggleAccordion = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index);
+  const filteredCategories = React.useMemo(() => {
+    return FAQCategory.map((category) => ({
+      ...category,
+      questions: category.questions.filter((question) =>
+        question.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    }));
+  }, [searchQuery]);
+
+  const currentCategory = React.useMemo(() => {
+    return (
+      filteredCategories.find(
+        (category) => category.id === selectedCategoryId,
+      ) || filteredCategories[0]
+    );
+  }, [filteredCategories, selectedCategoryId]);
+
+  const selectedQuestion = React.useMemo(() => {
+    return (
+      currentCategory?.questions.find(
+        (question) => question.id === selectedQuestionId,
+      ) || null
+    );
+  }, [currentCategory, selectedQuestionId]);
+
+  React.useEffect(() => {
+    if (currentCategory && currentCategory.questions.length > 0) {
+      setSelectedQuestionId(currentCategory.questions[0].id);
+    } else {
+      setSelectedQuestionId(null);
+    }
+  }, [currentCategory]);
+
+  const handleQuestionClick = (questionId: string) => {
+    setSelectedQuestionId(questionId);
+    if (answerRef.current) {
+      answerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
-  // Filter FAQs based on the selected category
-  const filteredFAQs = faqs.filter((faq) => faq.category === selectedCategory);
-
   return (
-    <div>
-      {/* Header Section */}
-      <div className="bg-primary_1 py-12 lg:py-16 relative lg:h-[268px] lg:mb-24">
-        {/* FAQ Title and Description */}
-        <div className="text-center text-white max-w-xl mx-auto">
-          <h1 className="text-4xl font-bold">FAQ</h1>
-          <p className="mt-4 text-sm leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore e.
-          </p>
-        </div>
-
-        {/* Search Bar */}
-        <div className="w-full flex justify-center relative">
-          <div className="lg:bg-white lg:absolute lg:-bottom-40 px-6 py-10 lg:rounded-xl lg:shadow-xl max-w-6xl w-full mx-auto">
-            <div className="flex md:grid md:grid-cols-5 gap-4 items-center">
-              {/* Input Field */}
-              <div className="w-full sm:col-span-4">
-                <input
-                  type="text"
-                  placeholder="Haven't found anything? Try find here"
-                  className="w-full py-4 pl-6 pr-4 text-sm text-gray-700 border h-12 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary_1"
-                />
-              </div>
-
-              {/* Button */}
-              <div className="sm:col-span-1">
-                <Button className="w-full bg-primary_1 h-12 border border-gray-200 lg:border-none text-white px-6 py-4 rounded-lg font-semibold hover:bg-primary_1-dark transition">
+    <div className="relative">
+      <div className="bg-primary_1">
+        <div className="relative mx-auto max-w-7xl px-4 py-12">
+          <div className="mb-12 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white">FAQ</h1>
+            <p className="mt-3 text-lg md:text-xl text-white/90">
+              Find answers to common questions about our platform.
+            </p>
+          </div>
+          <div className="relative -mb-24">
+            <div className="mx-auto max-w-3xl rounded-lg bg-white p-4 shadow-lg">
+              <div className="flex gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    placeholder="Haven't found anything? Try find here"
+                    className="pl-10 py-6 text-base md:text-lg border-0 shadow-none focus-visible:ring-0"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <Button className="bg-primary_1 px-8 hover:bg-primary_1/80 h-10 hidden md:block">
                   Search
                 </Button>
               </div>
@@ -105,100 +99,133 @@ const FAQPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Categories Section */}
-      <div className="py-12 max-w-6xl mx-auto px-4 lg:px-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`cursor-pointer p-6 rounded-xl flex flex-col items-center text-center hover:shadow-lg transition-shadow ${
-              selectedCategory === category.id
-                ? 'border-2 border-primary_1'
-                : ''
-            }`}
-          >
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary_1 text-white mb-4">
-              <category.icon className="text-xl" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              {category.title}
-            </h3>
-            <p className="text-gray-600 mt-2">{category.description}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Basic Guide Section */}
-      <div className="py-16 max-w-6xl mx-auto px-4 lg:px-0 border-y border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Basic Guide</h2>
-        <div className="space-y-4">
-          {filteredFAQs.map((item, index) => (
-            <div
-              key={index}
-              className={`border border-gray-200 rounded-xl overflow-hidden
-                      ${activeIndex === index ? 'bg-gray-100' : ''}
-                `}
+      <div className="h-24 bg-white" />
+      <div className="relative mx-auto max-w-7xl px-4 py-12">
+        <Sheet open={isCategorySheetOpen} onOpenChange={setIsCategorySheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full mb-6 h-10 border-orange-200 hover:bg-orange-50 text-primary_1"
             >
-              <button
-                onClick={() => toggleAccordion(index)}
-                className="w-full flex justify-between items-center p-4 text-left"
-              >
-                <span className="text-lg font-medium text-gray-900">
-                  {item.question}
-                </span>
-                <span
-                  className={`text-xl transform transition-transform duration-200 ${
-                    activeIndex === index
-                      ? 'bg-primary_2 text-primary_1 rounded-full p-1 rotate-180'
-                      : 'bg-primary_1 text-white rounded-full p-1'
-                  }`}
-                >
-                  {activeIndex === index ? (
-                    <IoIosArrowDown />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </span>
-              </button>
-              {activeIndex === index && (
-                <div className="p-4 text-gray-600 transition-all duration-300">
-                  {item.answer}
+              <span className="flex-1 text-left">Browse categories</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-80 sm:max-w-md">
+            <SheetTitle className="text-center text-2xl font-bold mb-4">
+              Categories
+            </SheetTitle>
+            <CategoryNav
+              categories={filteredCategories}
+              selectedCategoryId={selectedCategoryId}
+              onSelectCategory={(categoryId) => {
+                setSelectedCategoryId(categoryId);
+                setIsCategorySheetOpen(false);
+              }}
+            />
+          </SheetContent>
+        </Sheet>
+        <main>
+          <div className="grid gap-4 lg:grid-cols-[2fr_4fr]">
+            <div className="lg:max-w-md">
+              <ScrollArea className="h-[300px] lg:h-[calc(100vh-300px)] rounded-lg border border-slate-200">
+                <div className="space-y-2 p-4">
+                  {currentCategory?.questions.map((question) => (
+                    <QuestionButton
+                      key={question.id}
+                      question={question}
+                      isSelected={selectedQuestionId === question.id}
+                      onClick={() => handleQuestionClick(question.id)}
+                    />
+                  ))}
                 </div>
-              )}
+              </ScrollArea>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-[#565656] lg:rounded-2xl py-6 px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-white max-w-6xl mx-auto mt-40">
-        {/* Left Section */}
-        <div className="flex items-center space-x-4">
-          {/* Icon */}
-          <div className="p-4 rounded-full flex items-center justify-center">
-            <FaHeadset className="text-5xl text-gray-400" />
+            <div
+              ref={answerRef}
+              className="rounded-lg border border-slate-200 bg-white p-6 lg:p-8"
+            >
+              <AnimatePresence mode="wait">
+                {selectedQuestion ? (
+                  <motion.div
+                    key={selectedQuestion.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                  >
+                    <h2 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6 text-primary_1">
+                      {selectedQuestion.title}
+                    </h2>
+                    <div className="prose prose-sm lg:prose-base prose-slate max-w-none">
+                      {selectedQuestion.content}
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex h-[300px] lg:h-[calc(100vh-300px)] items-center justify-center text-slate-500"
+                  >
+                    Select a question to view the answer
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-          {/* Text */}
-          <div>
-            <h3 className="text-lg font-bold">Still not found anything?</h3>
-            <p className="text-sm text-gray-400">
-              Try asking us through email or live chat
-            </p>
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className="mt-4 sm:mt-0">
-          <Button
-            icon={IoMail}
-            className="flex items-center h-12 bg-primary_1 text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary_1 transition"
-          >
-            CONTACT US
-          </Button>
-        </div>
+        </main>
       </div>
     </div>
   );
-};
+}
 
-export default FAQPage;
+function CategoryNav({
+  categories,
+  selectedCategoryId,
+  onSelectCategory,
+}: {
+  categories: FAQ_Category[];
+  selectedCategoryId: string;
+  onSelectCategory: (categoryId: string) => void;
+}) {
+  return (
+    <nav className="flex flex-col space-y-2">
+      {categories.map((category) => (
+        <button
+          key={category.id}
+          onClick={() => onSelectCategory(category.id)}
+          className={cn(
+            'w-full rounded-lg px-4 py-2.5 text-left transition-all duration-200',
+            selectedCategoryId === category.id
+              ? 'bg-primary_1 text-white'
+              : 'text-slate-600 hover:bg-orange-100',
+          )}
+        >
+          {category.title}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function QuestionButton({
+  question,
+  isSelected,
+  onClick,
+}: {
+  question: Question;
+  isSelected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'w-full rounded-lg px-4 py-3 text-left transition-all duration-200',
+        isSelected ? 'bg-primary_1 text-white' : 'bg-white hover:bg-orange-100',
+      )}
+    >
+      <h3 className="font-medium">{question.title}</h3>
+    </button>
+  );
+}

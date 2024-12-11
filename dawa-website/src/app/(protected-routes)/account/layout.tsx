@@ -51,11 +51,11 @@ export default function AuthenticatedLayout({
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto">
+    <div className="md:bg-white border-t border-gray-200">
+      <div>
         <div className="flex">
           {/* Sidebar */}
-          <div className="hidden lg:block w-[280px] bg-white border-r min-h-[calc(100vh-4rem)] p-6 space-y-6">
+          <div className="hidden lg:block w-[280px] border-r min-h-[calc(100vh-4rem)] p-6 space-y-6">
             <div className="flex flex-col items-center space-y-3">
               <Avatar className="w-24 h-24">
                 <AvatarImage src={user?.image} alt={user?.name} />
@@ -95,7 +95,7 @@ export default function AuthenticatedLayout({
           </div>
 
           {/* Main Content */}
-          <main className="flex-1 md:p-8 lg:p-16 bg-white min-h-[calc(100vh-4rem)]">
+          <main className="flex-1 py-4 md:p-8 lg:p-16 min-h-[calc(100vh-4rem)]">
             {children}
           </main>
         </div>

@@ -123,7 +123,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl min-h-screen mx-auto mt-6 p-4">
+    <div className="space-y-6 my-8">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
         <div>
@@ -208,7 +208,7 @@ export default function NotificationsPage() {
                           size="sm"
                           onClick={() => markAsRead(notification.id)}
                         >
-                          <CheckCircle className="h-4 w-4" />
+                          <CheckCircle className="h-4 w-4 text-primary_1" />
                           <span className="sr-only">Mark as read</span>
                         </Button>
                       )}

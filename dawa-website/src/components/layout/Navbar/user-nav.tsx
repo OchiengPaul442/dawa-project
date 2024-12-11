@@ -16,7 +16,7 @@ import {
   User,
   BarChart2,
   LogOut,
-  FileText,
+  ShoppingCart,
 } from 'lucide-react';
 import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
@@ -114,9 +114,9 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/account/adverts" className="cursor-pointer">
-                <FileText className="mr-2 h-4 w-4" />
-                <span>My Adverts</span>
+              <Link href="/my-shop" className="cursor-pointer">
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                <span>My Shop</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

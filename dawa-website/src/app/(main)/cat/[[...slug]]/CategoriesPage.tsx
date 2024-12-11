@@ -1,89 +1,118 @@
 'use client';
+
 import React from 'react';
-import {
-  FaDesktop,
-  FaHeadphones,
-  FaLaptop,
-  FaTabletAlt,
-  FaWifi,
-} from 'react-icons/fa';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { categories } from '@/lib/mock_data';
+import { ChevronRight } from 'lucide-react';
 
-import BestDealsCarousel from '@/components/features/carousels/BestDealsCarousel';
-import BannerSection from '@/components/Main/category/BannerSection';
-import Sidebar from '@/components/Main/category/Sidebar';
+export default function CategoriesPage() {
+  const params = useParams();
+  const router = useRouter();
+  const slug = params.slug as string[] | undefined;
 
-const CategoriesPage = () => {
-  const subCategories = [
-    {
-      name: 'Laptop',
-      count: 24,
-      icon: <FaLaptop className="text-gray-600" size={32} />,
-    },
-    {
-      name: 'Ultrabook',
-      count: 24,
-      icon: <FaTabletAlt className="text-gray-600" size={32} />,
-    },
-    {
-      name: 'Desktop/PC',
-      count: 24,
-      icon: <FaDesktop className="text-gray-600" size={32} />,
-    },
-    {
-      name: 'All in One PC',
-      count: 24,
-      icon: <FaDesktop className="text-gray-600" size={32} />,
-    },
-    {
-      name: 'Routers',
-      count: 24,
-      icon: <FaWifi className="text-gray-600" size={32} />,
-    },
-    {
-      name: 'Speakers',
-      count: 24,
-      icon: <FaHeadphones className="text-gray-600" size={32} />,
-    },
-  ];
+  // If there are two segments in the URL, redirect to the custom subcategory page
+  React.useEffect(() => {
+    if (slug && slug.length === 2) {
+      router.push(`/cat/${slug[0]}/${slug[1]}`);
+    }
+  }, [slug, router]);
+
+  if (!slug || slug.length === 0) {
+    return <AllCategories />;
+  }
+
+  const category = categories.find((cat) => cat.href === `/cat/${slug[0]}`);
+
+  if (!category) {
+    return <div>Category not found</div>;
+  }
 
   return (
-    <div className="container mx-auto px-4 lg:px-0 mt-8 space-y-12">
-      {/* Main layout grid */}
-      <section className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar Section */}
-        <div className="lg:col-span-1 relative">
-          <Sidebar />
-        </div>
+    <div className="container mx-auto px-4 mt-8">
+      {/* Category Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">{category.name}</h1>
+        <p className="text-gray-600 mt-1">
+          Explore {category.count.toLocaleString()} items in{' '}
+          {category.subcategories.length} subcategories
+        </p>
+      </div>
 
-        {/* Main Content Section */}
-        <div className="lg:col-span-3 space-y-8">
-          {/* Banner Section */}
-          <BannerSection />
+      {/* Subcategories Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {category.subcategories.map((subcat) => (
+          <Link
+            key={subcat.href}
+            href={subcat.href}
+            className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center group"
+          >
+            <div className="bg-gray-100 rounded-full p-4 mr-4">
+              {React.createElement(subcat.icon, {
+                className: 'w-6 h-6 text-gray-600',
+              })}
+            </div>
+            <div className="flex-grow">
+              <h2 className="font-semibold text-gray-900">{subcat.name}</h2>
+              <p className="text-sm text-gray-500">
+                {subcat.count.toLocaleString()} items
+              </p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors duration-200" />
+          </Link>
+        ))}
+      </div>
 
-          {/* Subcategories Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {subCategories.map((subCategory, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center cursor-pointer justify-center p-6 bg-gray-100 border border-gray-200 rounded-2xl text-center hover:bg-gray-200 transition"
+      {/* Explore Other Categories */}
+      <div className="mt-12">
+        <h2 className="text-xl font-semibold mb-4">Explore Other Categories</h2>
+        <div className="flex flex-wrap gap-3">
+          {categories
+            .filter((cat) => cat.href !== `/cat/${slug[0]}`)
+            .map((cat) => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white border border-gray-200 hover:border-orange-500 transition-colors duration-200"
               >
-                {subCategory.icon}
-                <h3 className="text-lg font-semibold mt-2">
-                  {subCategory.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {subCategory.count} Products
-                </p>
-              </div>
+                {React.createElement(cat.icon, {
+                  className: 'w-4 h-4 text-gray-600 mr-2',
+                })}
+                <span className="text-sm">{cat.name}</span>
+              </Link>
             ))}
-          </div>
-
-          {/* Best Deals Carousel */}
-          <BestDealsCarousel />
         </div>
-      </section>
+      </div>
     </div>
   );
-};
+}
 
-export default CategoriesPage;
+function AllCategories() {
+  return (
+    <div className="container mx-auto px-4 my-8">
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">All Categories</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {categories.map((category) => (
+          <Link
+            key={category.href}
+            href={category.href}
+            className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center group"
+          >
+            <div className="bg-gray-100 rounded-full p-4 mr-4">
+              {React.createElement(category.icon, {
+                className: 'w-6 h-6 text-gray-600',
+              })}
+            </div>
+            <div className="flex-grow">
+              <h2 className="font-semibold text-gray-900">{category.name}</h2>
+              <p className="text-sm text-gray-500">
+                {category.count.toLocaleString()} items
+              </p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors duration-200" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
