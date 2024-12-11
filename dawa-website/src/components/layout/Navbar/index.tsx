@@ -34,7 +34,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading, logout, counters } = useAuth();
-  const scrollDirection = useScrollDirection();
+  const { scrollDirection } = useScrollDirection();
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
