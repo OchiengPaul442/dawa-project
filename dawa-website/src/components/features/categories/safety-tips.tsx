@@ -1,29 +1,27 @@
 import { Shield, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 export function SafetyTips() {
   return (
-    <Card className="bg-blue-50 border-blue-100 flex-1 lg:flex-none h-[145px] sm:h-auto lg:h-[145px]">
-      <CardHeader className="pb-1 pt-2">
-        <CardTitle className="text-[10px] font-medium flex items-center gap-1 text-blue-700">
-          <Shield className="h-3 w-3" />
-          Safety Tips
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-[10px] space-y-1 text-blue-600">
-        <div className="flex gap-1 items-start">
-          <AlertCircle className="h-2 w-2 mt-0.5 flex-shrink-0" />
-          <p>Meet in a safe, public location</p>
+    <Card className="bg-[#EFF6FF] border-0 h-[200px] rounded-xl">
+      <div className="p-6 flex flex-col h-full">
+        <div className="flex text-xl  items-center gap-2 mb-4">
+          <Shield className="h-4 w-4 text-blue-600" />
+          <h3 className="font-medium text-blue-600">Safety Tips</h3>
         </div>
-        <div className="flex gap-1 items-start">
-          <AlertCircle className="h-2 w-2 mt-0.5 flex-shrink-0" />
-          <p>Check the item before payment</p>
+        <div className="space-y-3">
+          {[
+            'Meet in a safe, public location',
+            'Check the item before payment',
+            'Never send money in advance',
+          ].map((tip, index) => (
+            <div key={index} className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-blue-600" />
+              <p className="text-xs text-blue-600">{tip}</p>
+            </div>
+          ))}
         </div>
-        <div className="flex gap-1 items-start">
-          <AlertCircle className="h-2 w-2 mt-0.5 flex-shrink-0" />
-          <p>Never send money in advance</p>
-        </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

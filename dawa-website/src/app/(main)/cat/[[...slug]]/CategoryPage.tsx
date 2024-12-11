@@ -29,7 +29,7 @@ type FilterOptionType =
   | 'price_high_to_low';
 type ViewType = 'grid' | 'list';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
@@ -205,7 +205,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
                 className={`${
                   index === breadcrumbItems.length - 1
                     ? 'text-gray-500 cursor-default'
-                    : 'hover:underline text-primary_1 font-medium'
+                    : 'hover:underline text-primary font-medium'
                 }`}
               >
                 {item.name}
@@ -218,7 +218,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
         </ul>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Sidebar */}
         <div className="lg:col-span-1 flex flex-col space-y-6 h-auto">
           <CategoriesAndSubcategories
@@ -254,7 +254,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             <div
               className={`${
                 viewType === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                  ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6'
                   : 'flex flex-col gap-4'
               }`}
             >
@@ -277,7 +277,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
           {/* Pagination with Results Summary */}
           {filteredProducts.length > 0 && (
-            <div className="border-t border-gray-200 mt-20 pt-6 w-full">
+            <div className="border-t border-gray-200 mt-8 pt-6 w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="text-sm text-gray-600">{resultsSummary}</div>
                 <div className="w-full">

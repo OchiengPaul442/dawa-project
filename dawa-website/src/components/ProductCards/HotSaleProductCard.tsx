@@ -1,9 +1,11 @@
-import React from 'react';
+'use client';
+
+import React, { useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
-import CustomImage from '../common/CustomImage';
-import { Progress } from '../ui/progress';
-import Button from '../common/Button';
-import { LikeButton } from '../common/LikeButton';
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { LikeButton } from '@/components/common/LikeButton';
+import CustomImage from '@/components/common/CustomImage';
 import { Product } from '@/types/product';
 
 interface HotSaleProductCardProps {
@@ -11,64 +13,84 @@ interface HotSaleProductCardProps {
   onLike: (id: number) => void;
 }
 
-export const HotSaleProductCard: React.FC<HotSaleProductCardProps> = ({
+export const HotSaleProductCard = memo(function HotSaleProductCard({
   product,
   onLike,
-}) => {
+}: HotSaleProductCardProps) {
   const router = useRouter();
 
+  const handleCardClick = useCallback(() => {
+    router.push(`/prod/${product.id}`);
+  }, [router, product.id]);
+
+  const handleLike = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onLike(product.id);
+    },
+    [onLike, product.id],
+  );
+
+  const stockPercentage =
+    ((product.stockLeft ?? 0) / (product.totalStock ?? 1)) * 100;
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col justify-between">
-      <div className="relative w-full h-[266px] mb-2">
+    <Card
+      className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer bg-white"
+      onClick={handleCardClick}
+    >
+      <div className="absolute top-3 left-3 z-20 bg-black text-white text-xs font-bold px-3 py-1 rounded-lg">
+        SALE
+      </div>
+
+      <div className="relative w-full h-[200px]">
         <CustomImage
           src={product.imageUrl}
           alt={product.name}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{
             objectFit: 'cover',
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
+            width: '100%',
+            height: '100%',
           }}
         />
-        <div className="absolute top-2 right-2 h-12 w-12 flex justify-center items-center bg-primary_1 text-white text-xs font-bold px-2 py-1 rounded-full">
-          SALE
-        </div>
         <LikeButton
           isLiked={product.liked || false}
-          onLike={() => onLike(product.id)}
-          className="absolute bottom-2 right-2"
+          onLike={handleLike}
+          className="absolute bottom-3 right-3 z-20"
         />
       </div>
 
-      <div className="flex flex-col justify-between h-full p-3">
-        <div className="text-center mb-2">
-          <p className="text-primary_1 font-bold text-lg">{product.price}</p>
+      <div className="p-3 space-y-2">
+        <div className="flex items-baseline justify-between">
+          <span className="text-primary_1 font-bold text-base">
+            {product.price}
+          </span>
           {product.originalPrice && (
-            <p className="text-gray-400 line-through text-sm">
+            <span className="text-muted-foreground line-through text-xs">
               {product.originalPrice}
-            </p>
+            </span>
           )}
-          <h3 className="text-black font-bold text-md mt-2 truncate">
-            {product.name}
-          </h3>
         </div>
+
+        <h3 className="font-medium text-sm truncate">{product.name}</h3>
+
         <Progress
-          value={((product?.stockLeft ?? 0) / (product?.totalStock ?? 1)) * 100}
-          className="mt-1 bg-primary_2"
+          value={stockPercentage}
+          className="h-1.5 bg-gray-100"
           indicatorClassName="bg-primary_1"
         />
 
-        <div className="text-center text-xs text-gray-400 my-2">
-          {product.stockLeft} Left Stock
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-primary_1">{product.stockLeft} Left</span>
+          <span className="text-muted-foreground">
+            Total: {product.totalStock}
+          </span>
         </div>
-
-        <Button
-          onClick={() => router.push(`/prod/${product.id}`)}
-          className="w-full mt-4 h-12 text-primary_1 bg-transparent hover:text-white border-2 border-primary_1 rounded-lg"
-        >
-          View more
-        </Button>
       </div>
-    </div>
+    </Card>
   );
-};
+});
+
+HotSaleProductCard.displayName = 'HotSaleProductCard';
