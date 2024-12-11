@@ -42,8 +42,8 @@ import {
   Plane,
 } from 'lucide-react';
 
-import { ProductCarouselItem } from '@/types/category';
 import { Category } from '@/types/category';
+import { ProductCarouselItem } from '@/types/category';
 import { FAQ_Category } from '@/types/faq';
 
 export const FAQCategory: FAQ_Category[] = [
@@ -62,8 +62,9 @@ export const FAQCategory: FAQ_Category[] = [
                 <strong>Live Chat Support (Fastest Method)</strong>
                 <p>Available 24/7 for quick resolutions.</p>
                 <p className="text-sm text-muted-foreground">
-                  To start a chat: Look for the "Support" or "Chat" button,
-                  usually in the bottom right corner of any page on our website.
+                  To start a chat: Look for the &quot;Support&quot; or
+                  &quot;Chat&quot; button, usually in the bottom right corner of
+                  any page on our website.
                 </p>
               </li>
               <li>
@@ -90,16 +91,17 @@ export const FAQCategory: FAQ_Category[] = [
                 corner)
               </li>
               <li>
-                Look for an option that says "Settings" or "Account Settings"
+                Look for an option that says &quot;Settings&quot; or
+                &quot;Account Settings&quot;
               </li>
               <li>
-                You'll see different sections like "Profile", "Notifications",
-                "Privacy", etc.
+                You&apos;ll see different sections like &quot;Profile&quot;,
+                &quot;Notifications&quot;, &quot;Privacy&quot;, etc.
               </li>
               <li>Click on the section you want to change</li>
               <li>
-                Make your changes and look for a "Save" or "Update" button to
-                confirm
+                Make your changes and look for a &quot;Save&quot; or
+                &quot;Update&quot; button to confirm
               </li>
             </ol>
             <p className="text-sm text-muted-foreground">
@@ -120,12 +122,15 @@ export const FAQCategory: FAQ_Category[] = [
         title: 'How do I reset my password?',
         content: (
           <div className="space-y-4">
-            <p>If you've forgotten your password, here's how to reset it:</p>
+            <p>
+              If you&apos;ve forgotten your password, here&apos;s how to reset
+              it:
+            </p>
             <ol className="list-decimal space-y-2 pl-4">
               <li>Go to the login page</li>
               <li>
-                Click on "Forgot Password" or "Reset Password" (usually below
-                the password field)
+                Click on &quot;Forgot Password&quot; or &quot;Reset
+                Password&quot; (usually below the password field)
               </li>
               <li>Enter the email address associated with your account</li>
               <li>
@@ -136,8 +141,8 @@ export const FAQCategory: FAQ_Category[] = [
               <li>Follow the instructions to create a new password</li>
             </ol>
             <p className="text-sm text-muted-foreground">
-              Tip: If you don't see the email, check your spam folder. If you
-              still can't find it, try requesting another reset email.
+              Tip: If you don&apos;t see the email, check your spam folder. If
+              you still can&apos;t find it, try requesting another reset email.
             </p>
           </div>
         ),
