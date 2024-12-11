@@ -2,19 +2,51 @@
 
 import { motion } from 'framer-motion';
 import { Home, Bookmark, PlusCircle, MessageSquare, User } from 'lucide-react';
-import Link from 'next/link';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from '@/lib/hooks';
+import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
-  { icon: Bookmark, label: 'Favorites', href: '/favorites' },
-  { icon: PlusCircle, label: 'Sell', href: '/sell' },
+  { icon: Bookmark, label: 'Wishlist', href: '/wishlist' },
+  { icon: PlusCircle, label: 'Sell', href: '/post-ad' },
   { icon: MessageSquare, label: 'Messages', href: '/messages' },
-  { icon: User, label: 'Profile', href: '/profile' },
+  { icon: User, label: 'Profile', href: '/account/adverts' },
 ];
 
 export function BottomNav() {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const { scrollDirection, pathname } = useScrollDirection();
+  const { user } = useAuth();
+
+  const handleSelect = (url: string) => {
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
+
+    switch (url) {
+      case '/messages':
+        // Handle Messages-specific logic here if needed
+        break;
+      case '/favorites':
+        // Handle Favorites-specific logic here if needed
+        break;
+      case '/profile':
+        // Handle Profile-specific logic here if needed
+        break;
+      case '/sell':
+        // Handle Sell-specific logic here if needed
+        break;
+      default:
+        break;
+    }
+
+    router.push(url);
+  };
 
   return (
     <motion.nav
@@ -24,13 +56,13 @@ export function BottomNav() {
       transition={{ duration: 0.3 }}
     >
       <div className="mx-auto">
-        <div className="flex justify-around items-center h-16 bg-white bg-opacity-80 backdrop-blur-md border-t border-gray-200 rounded-t-3xl shadow-lg">
+        <div className="flex justify-around items-center h-16 bg-white bg-opacity-80 backdrop-blur-md border-t border-gray-200 rounded-t-lg shadow-lg">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link
+              <button
                 key={item.label}
-                href={item.href}
+                onClick={() => handleSelect(item.href)}
                 className="flex flex-col items-center w-16 py-1"
               >
                 <motion.div
@@ -47,7 +79,7 @@ export function BottomNav() {
                 >
                   {item.label}
                 </span>
-              </Link>
+              </button>
             );
           })}
         </div>

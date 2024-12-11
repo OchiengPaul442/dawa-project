@@ -11,7 +11,7 @@ import {
 export default function AdvertsPage() {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between flex-wrap gap-4 items-center">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">My Adverts</h2>
           <p className="text-gray-600">
