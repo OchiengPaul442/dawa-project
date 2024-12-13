@@ -23,13 +23,11 @@ export const MobileCategoryGrid: React.FC<MobileCategoryGridProps> = React.memo(
           const Icon = category.icon;
           const categorySlug = slugify(category.name);
           return (
-            <Link
-              key={category.name}
-              href={`/cat/${categorySlug}`}
-              className="flex flex-col items-center justify-center p-4 bg-gray-100 border aspect-square rounded-lg"
-            >
-              <Icon className="h-6 w-6 mb-2 text-primary" />
-              <span className="text-xs text-center truncate w-full">
+            <Link key={category.name} href={`/cat/${categorySlug}`}>
+              <div className="flex flex-col items-center justify-center p-4 bg-gray-100 border aspect-square rounded-lg">
+                <Icon className="h-6 w-6 mb-2 text-primary" />
+              </div>
+              <span className="text-xs text-center line-clamp-2 mt-2 w-full">
                 {category.name}
               </span>
             </Link>
