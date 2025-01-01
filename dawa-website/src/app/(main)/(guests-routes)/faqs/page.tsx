@@ -1,5 +1,5 @@
 import Layout from '@/components/layout';
-import FAQPage from './FAQPage';
+import FAQPage from '@views/pages/faqs/FAQPage';
 
 const page = () => {
   return (
