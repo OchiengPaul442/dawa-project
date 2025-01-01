@@ -1,9 +1,9 @@
 'use client';
-import CustomImage from '../../common/CustomImage';
+import CustomImage from '@/components/shared/CustomImage';
 import React, { useState } from 'react';
-import StarRating from '../../common/StarRating';
+import StarRating from '../../../components/shared/StarRating';
 import { FaUser, FaCheckCircle } from 'react-icons/fa';
-import Button from '@/components/common/Button';
+import Button from '@/components/shared/Button';
 
 interface ReviewsProps {
   reviews: {

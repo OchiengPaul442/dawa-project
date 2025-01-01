@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { FaHeart, FaShieldAlt, FaPlus, FaStore } from 'react-icons/fa';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useRouter } from 'next/navigation';
-import StarRating from '../common/StarRating';
-import CustomImage from '../common/CustomImage';
+import StarRating from '../../../components/shared/StarRating';
+import CustomImage from '../../../components/shared/CustomImage';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,7 +28,7 @@ import { FaFlag, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import ReportAbuseDialog from '@/components/dialogs/ReportAbuseDialog';
 import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
 import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
-import SafetyTipsDialog from '../dialogs/SafetyTipsDialog';
+import SafetyTipsDialog from '../../../components/dialogs/SafetyTipsDialog';
 
 interface ProductDetailsProps {
   product: {

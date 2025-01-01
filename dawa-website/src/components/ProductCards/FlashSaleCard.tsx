@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 import { Progress } from '@/components/ui/progress';
-import CustomImage from '@/components/common/CustomImage';
+import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/flash-sale';
 
 interface FlashSaleCardProps {

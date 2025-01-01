@@ -5,7 +5,7 @@ import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
 import PopularSearchCarousel from '@/components/features/carousels/PopularSearchCarousel';
 import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
 import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
-import BestDeals from '@/components/product/BestDeals';
+import BestDeals from '@/views/shared/BestDeals';
 import FlashSale from '@/components/features/carousels/FlashSale';
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
 

@@ -2,7 +2,7 @@ import CircleElements from '@public/assets/icons/circleElement.svg';
 import EnvelopIcons from '@public/assets/icons/envelops.svg';
 import React from 'react';
 
-import Button from '../../common/Button';
+import Button from '../../shared/Button';
 
 const Newsletter = ({
   container = false,

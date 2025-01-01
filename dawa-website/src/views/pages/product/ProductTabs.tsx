@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import Description from './Product_Details_tabs/Description';
-import Specification from './Product_Details_tabs/Specification';
-import Reviews from './Product_Details_tabs/Reviews';
-import StarRating from '../common/StarRating';
+import Description from './Description';
+import Specification from './Specification';
+import Reviews from './Reviews';
+import StarRating from '../../../components/shared/StarRating';
 
 import { Progress } from '@/components/ui/progress';
 

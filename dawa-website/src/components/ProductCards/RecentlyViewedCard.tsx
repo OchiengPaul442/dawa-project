@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import CustomImage from '@/components/common/CustomImage';
-import StarRating from '@/components/common/StarRating';
+import CustomImage from '@/components/shared/CustomImage';
+import StarRating from '@/components/shared/StarRating';
 
 interface Product {
   id: number;

@@ -1,4 +1,4 @@
-import ProdPage from './ProdPage';
+import ProdPage from '@views/pages/product/ProdPage';
 
 interface PageProps {
   params: Promise<{

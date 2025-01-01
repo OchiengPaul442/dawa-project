@@ -1,4 +1,4 @@
-import Sidebar, { MobileNav } from '@/components/Main/account/Sidebar';
+import Sidebar, { MobileNav } from '@/views/auth/Sidebar';
 
 export default function AuthenticatedLayout({
   children,

@@ -6,7 +6,7 @@ import { MessageSquare } from 'lucide-react';
 
 interface MessageListProps {
   messages: Message[];
-  loading: boolean;
+  loading?: boolean;
   selectedMessages: string[];
   onSelect: (id: string) => void;
   onMessageClick: (message: Message) => void;

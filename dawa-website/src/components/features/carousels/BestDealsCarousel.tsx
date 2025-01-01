@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import CustomImage from '../../common/CustomImage';
-import StarRating from '../../common/StarRating';
+import CustomImage from '../../shared/CustomImage';
+import StarRating from '../../shared/StarRating';
 
 import { useRouter } from 'next/navigation';
 

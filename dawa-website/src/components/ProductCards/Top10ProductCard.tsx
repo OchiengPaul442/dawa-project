@@ -4,9 +4,9 @@ import React, { useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { LikeButton } from '@/components/common/LikeButton';
-import StarRating from '@/components/common/StarRating';
-import CustomImage from '@/components/common/CustomImage';
+import { LikeButton } from '@/components/shared/LikeButton';
+import StarRating from '@/components/shared/StarRating';
+import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
 
 interface Top10ProductCardProps {

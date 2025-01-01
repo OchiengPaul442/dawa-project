@@ -4,7 +4,7 @@ import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import Button from '../common/Button';
+import Button from '../shared/Button';
 
 // Define the shape of form data
 interface IFormInput {

@@ -4,12 +4,12 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CardLayout from '@/components/ProductCards/CardLayout';
-import ProductFilter from '@/components/product/ProductFilter';
+import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/categories/FiltersAndSorting';
-import CategoriesAndSubcategories from '@/components/Main/category/CategoriesAndSubcategories';
+import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
 import { productsData, categories } from '@/lib/mock_data';
-import CategoriesPage from './CategoriesPage';
-import CustomPagination from '@/components/common/CustomPagination';
+import CategoriesPage from '../../../../../views/pages/category/CategoriesPage';
+import CustomPagination from '@/components/shared/CustomPagination';
 import { slugify } from '@/utils/slugify';
 
 // Types

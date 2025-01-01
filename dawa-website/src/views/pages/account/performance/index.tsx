@@ -275,60 +275,6 @@ export default function PerformancePage() {
           </div>
         </CardContent>
       </Card>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Performing Days</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {data.slice(0, 5).map((day) => (
-                <div
-                  key={day.date}
-                  className="flex items-center justify-between"
-                >
-                  <div>
-                    <p className="font-medium">{day.date}</p>
-                    <p className="text-sm text-gray-500">
-                      {Math.round(day.impressions * 1000)} impressions
-                    </p>
-                  </div>
-                  <div className="text-green-500">
-                    +{Math.round(day.visitors * 100)}%
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Insights</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold mb-2">Peak Traffic Times</h4>
-                <p className="text-sm text-gray-600">
-                  Your platform sees the highest engagement between 2 PM and 5
-                  PM. Consider scheduling your important updates during these
-                  hours.
-                </p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-semibold mb-2">Conversion Rate</h4>
-                <p className="text-sm text-gray-600">
-                  Your chat request conversion rate is 15% higher than the
-                  industry average. Keep engaging with visitors to maintain this
-                  performance.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }

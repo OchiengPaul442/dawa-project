@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import RecentlyViewedCard from '../ProductCards/RecentlyViewedCard';
+import RecentlyViewedCard from '../../components/ProductCards/RecentlyViewedCard';
 
 // Define the structure of each product item
 interface Product {

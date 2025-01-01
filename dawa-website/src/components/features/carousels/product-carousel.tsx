@@ -6,7 +6,7 @@ import AutoplayPlugin from 'embla-carousel-autoplay';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCarouselItem } from '@/types/category';
-import CustomImage from '@/components/common/CustomImage';
+import CustomImage from '@/components/shared/CustomImage';
 import Link from 'next/link';
 
 interface ProductCarouselProps {

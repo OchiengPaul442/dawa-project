@@ -1,6 +1,6 @@
 'use client';
-import VideoSection from '@/components/Main/about/VideoSection';
-import CustomImage from '@/components/common/CustomImage';
+import VideoSection from './VideoSection';
+import CustomImage from '@/components/shared/CustomImage';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import {
   MdOutlineStar,

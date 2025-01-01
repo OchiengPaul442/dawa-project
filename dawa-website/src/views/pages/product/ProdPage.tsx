@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import ImageCarousel from '@/components/features/carousels/ImageCarousel';
-import ProductTabs from '@/components/product/ProductTabs';
-import ShareSection from '@/components/product/ShareSection';
-import ProductDetails from '@/components/product/ProductDetails';
+import ImageCarousel from './ImageCarousel';
+import ProductTabs from './ProductTabs';
+import ShareSection from './ShareSection';
+import ProductDetails from './ProductDetails';
 import Link from 'next/link';
 
 const product = {

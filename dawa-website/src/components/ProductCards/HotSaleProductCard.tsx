@@ -4,8 +4,8 @@ import React, { useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { LikeButton } from '@/components/common/LikeButton';
-import CustomImage from '@/components/common/CustomImage';
+import { LikeButton } from '@/components/shared/LikeButton';
+import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
 
 interface HotSaleProductCardProps {

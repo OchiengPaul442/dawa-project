@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import Sample from '@/components/common/Sample';
+import Sample from '@/components/shared/Sample';
 
 describe('HelloWorld', () => {
   it('renders "Hello, World" text', () => {

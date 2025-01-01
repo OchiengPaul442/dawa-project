@@ -4,7 +4,7 @@ import Shoe from '@public/assets/images/shoe.png';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
-import Button from '../../common/Button';
+import Button from '../../shared/Button';
 
 const slides: any[] = [
   {

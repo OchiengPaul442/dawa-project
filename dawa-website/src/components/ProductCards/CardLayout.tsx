@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import CustomImage from '../common/CustomImage';
-import StarRating from '@/components/common/StarRating';
-import { LikeButton } from '../common/LikeButton';
+import CustomImage from '../shared/CustomImage';
+import StarRating from '@/components/shared/StarRating';
+import { LikeButton } from '../shared/LikeButton';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { cn } from '@/lib/utils';
 

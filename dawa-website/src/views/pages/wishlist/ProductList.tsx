@@ -2,6 +2,7 @@
 
 import React, { FC } from 'react';
 import ProductCard from './ProductCard';
+import SkeletonProductCard from './SkeletonProductCard';
 
 interface Product {
   id: number;
@@ -23,6 +24,7 @@ interface ProductListProps {
   selectedItems: number[];
   onSelectItem: (id: number) => void;
   onRemoveItem: (id: number) => void;
+  isLoading?: boolean;
 }
 
 const ProductList: FC<ProductListProps> = ({
@@ -30,7 +32,11 @@ const ProductList: FC<ProductListProps> = ({
   selectedItems,
   onSelectItem,
   onRemoveItem,
+  isLoading = false,
 }) => {
+  if (isLoading) {
+    return <SkeletonProductCard />;
+  }
   return (
     <div className="space-y-4">
       {products.map((product) => (

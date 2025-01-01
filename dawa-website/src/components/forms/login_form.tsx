@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaUnlock, FaEye, FaEyeSlash, FaUserCircle } from 'react-icons/fa';
-import Button from '@/components/common/Button';
+import Button from '@/components/shared/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import InputField from '@/components/Main/account/InputField';
+import InputField from '@/views/auth/InputField';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

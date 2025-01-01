@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import InputField from '@/components/Main/account/InputField';
+import InputField from '@/views/auth/InputField';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEnvelope } from 'react-icons/fa';
-import Button from '../common/Button';
+import Button from '../shared/Button';
 
 // Define form schema using yup
 const forgotPasswordSchema = yup.object().shape({

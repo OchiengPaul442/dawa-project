@@ -1,7 +1,7 @@
 // components/ImageCarousel.tsx
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import CustomImage from '../../common/CustomImage';
+import CustomImage from '../../../components/shared/CustomImage';
 import {
   AiOutlineUp,
   AiOutlineDown,

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 
-import ScrollToTopButton from '../common/ScrollToTopButton';
+import ScrollToTopButton from '../shared/ScrollToTopButton';
 import Footer from './Footer';
 import NavBar from './Navbar';
 import Newsletter from './NewsLetter';

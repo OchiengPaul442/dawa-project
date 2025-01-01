@@ -1,5 +1,4 @@
 'use client';
-import CustomImage from '../../common/CustomImage';
 import React from 'react';
 
 interface DescriptionProps {

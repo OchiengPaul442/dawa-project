@@ -9,14 +9,14 @@ import {
   FaEyeSlash,
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/common/Button';
+import Button from '@/components/shared/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
-import InputField from '@/components/Main/account/InputField';
+import InputField from '@/views/auth/InputField';
 import Link from 'next/link';
 import { registerUser } from '@/lib/api/auth/api';
 import { schema } from '@/@core/validations/authValidation';

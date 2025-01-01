@@ -3,8 +3,8 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { LikeButton } from '@/components/common/LikeButton';
-import CustomImage from '@/components/common/CustomImage';
+import { LikeButton } from '@/components/shared/LikeButton';
+import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
 
 interface PopularSearchProductCardProps {

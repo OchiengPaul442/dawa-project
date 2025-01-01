@@ -2,7 +2,7 @@
 import { FaRegTrashCan } from 'react-icons/fa6';
 import React, { FC, useCallback } from 'react';
 import { Heart } from 'lucide-react';
-import Button from '../../common/Button';
+import Button from '../../../components/shared/Button';
 import {
   Select,
   SelectContent,
@@ -66,7 +66,7 @@ const WishlistHeader: FC<WishlistHeaderProps> = ({
           {selectedCount > 0 && (
             <Button
               onClick={onRemoveSelected}
-              className="flex items-center"
+              className="flex items-center bg-gray-700"
               icon={FaRegTrashCan}
             >
               Remove Selected ({selectedCount})
