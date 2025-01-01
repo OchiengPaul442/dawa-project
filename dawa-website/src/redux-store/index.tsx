@@ -1,7 +1,7 @@
 'use client';
 
 import { configureStore } from '@reduxjs/toolkit';
-import authDialogReducer from './features/authDialog/authDialogSlice';
+import authDialogReducer from './slices/authDialog/authDialogSlice';
 
 export const store = configureStore({
   reducer: {

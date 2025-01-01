@@ -1,8 +1,8 @@
-import '@/styles/globals.css';
+import './globals.css';
 
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
-import { Providers } from '@/lib/providers';
+import Provider from '@/components/Provider';
 import { AuthDialog } from '@/components/dialogs/auth-dialog';
 
 const poppins = Poppins({
@@ -28,11 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-        <Providers>
+        <Provider>
           {children}
 
           <AuthDialog />
-        </Providers>
+        </Provider>
       </body>
     </html>
   );

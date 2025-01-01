@@ -24,13 +24,17 @@
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/pages/*": ["./src/pages/*"],
-      "@/styles/*": ["./src/styles/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@/store/*": ["./src/store/*"],
       "@/types/*": ["./src/types/*"],
-      "@/hooks/*": ["./src/hooks/*"],
       "@public/*": ["./public/*"],
-      "@validations/*": ["./src/validations/*"]
+      "@redux-store/*": ["./src/redux-store/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@data/*": ["./src/data/*"],
+      "@views/*": ["./src/views/*"],
+      "@core/*": ["./src/@core/*"],
+      "@layouts/*": ["./src/@layouts/*"],
+      "@configs/*": ["./src/configs/*"],
+      "@hocs/*": ["./src/hocs/*"]
     },
     "typeRoots": ["./src/types", "./node_modules/@types"]
   },

@@ -12,13 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import GoogleIcon from '@public/assets/svgs/google.svg';
-import { useDispatch, useSelector } from '@/lib/hooks';
-import { closeAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
-import type { RootState } from '@/lib/store';
+import { useDispatch, useSelector } from '@redux-store/hooks';
+import { closeAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { signIn } from 'next-auth/react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { authSchema } from '@/validations/authValidation';
+import { authSchema } from '@/@core/validations/authValidation';
 import { useState } from 'react';
 
 interface AuthFormInputs {
@@ -30,9 +29,7 @@ interface AuthFormInputs {
 export function AuthDialog() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const isOpen = useSelector(
-    (state: RootState) => state.authDialog.isOpen,
-  ) as boolean;
+  const isOpen = useSelector((state) => state.authDialog.isOpen);
 
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

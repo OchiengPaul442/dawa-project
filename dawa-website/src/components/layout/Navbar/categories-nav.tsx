@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import useWindowSize from '@/hooks/useWindowSize';
+import useWindowSize from '@core/hooks/useWindowSize';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { slugify } from '@/utils/slugify';

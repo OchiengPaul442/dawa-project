@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Top10ProductCard from '@/components/ProductCards/Top10ProductCard';
-import { useLikeableItems } from '@/hooks/useLikeableItems';
+import { useLikeableItems } from '@core/hooks/useLikeableItems';
 import { Product } from '@/types/product';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoplayPlugin from 'embla-carousel-autoplay';

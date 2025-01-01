@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GoogleIcon from '@public/assets/svgs/google.svg';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 
 export default function SettingsPage() {
   const { user } = useAuth();

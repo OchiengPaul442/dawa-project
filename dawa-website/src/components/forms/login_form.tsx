@@ -12,8 +12,8 @@ import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { authSchema } from '@/validations/authValidation';
-import { useAuth } from '@/hooks/use-auth';
+import { authSchema } from '@/@core/validations/authValidation';
+import { useAuth } from '@core/hooks/use-auth';
 
 interface ILoginInputs {
   emailOrUsername: string;

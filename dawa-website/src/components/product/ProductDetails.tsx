@@ -18,10 +18,10 @@ import {
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import useWindowSize from '@/hooks/useWindowSize';
-import { useAuth } from '@/hooks/use-auth';
-import { useDispatch } from '@/lib/hooks';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import useWindowSize from '@core/hooks/useWindowSize';
+import { useAuth } from '@core/hooks/use-auth';
+import { useDispatch } from '@redux-store/hooks';
+import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { FaFlag, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 
 // Importing the new components

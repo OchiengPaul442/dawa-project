@@ -11,7 +11,7 @@ import {
  * @returns Registered user data
  */
 export const registerUser = async (data: RegisterRequest): Promise<any> => {
-  const response = await apiClient(false).post('/api/register/', data);
+  const response = await apiClient(false).post('/register/', data);
   return response.data;
 };
 
@@ -23,7 +23,7 @@ export const registerUser = async (data: RegisterRequest): Promise<any> => {
 export const activateAccount = async (
   data: ActivationRequest,
 ): Promise<any> => {
-  const response = await apiClient(false).post('/api/activateaccount/', data);
+  const response = await apiClient(false).post('/activateaccount/', data);
   return response.data;
 };
 
@@ -35,10 +35,7 @@ export const activateAccount = async (
 export const resendActivationEmail = async (data: {
   email: string;
 }): Promise<any> => {
-  const response = await apiClient(false).post(
-    '/api/resendactivationemail/',
-    data,
-  );
+  const response = await apiClient(false).post('/resendactivationemail/', data);
   return response.data;
 };
 
@@ -50,6 +47,6 @@ export const resendActivationEmail = async (data: {
 export const forgotPassword = async (
   data: ForgotPasswordRequest,
 ): Promise<any> => {
-  const response = await apiClient(false).post('/api/forgotpassword/', data);
+  const response = await apiClient(false).post('/forgotpassword/', data);
   return response.data;
 };

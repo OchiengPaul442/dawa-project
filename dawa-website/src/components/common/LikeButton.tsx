@@ -1,8 +1,9 @@
+'use client';
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
-import { useAuth } from '@/hooks/use-auth';
-import { useDispatch } from '@/lib/hooks';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import { useAuth } from '@core/hooks/use-auth';
+import { useDispatch } from '@redux-store/hooks';
+import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 
 interface LikeButtonProps {
   isLiked: boolean;

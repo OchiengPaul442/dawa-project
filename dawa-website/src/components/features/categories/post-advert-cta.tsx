@@ -3,10 +3,10 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from '@/lib/hooks';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import { useDispatch } from '@redux-store/hooks';
+import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 
 export function PostAdvertCTA() {
   const router = useRouter();

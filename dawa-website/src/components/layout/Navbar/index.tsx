@@ -10,17 +10,18 @@ import Link from 'next/link';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
 import { UserNav } from './user-nav';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '../../common/Button';
 import { Input } from '@/components/ui/input';
 import Sidebar from '@/components/Main/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
-import { useScrollDirection } from '@/hooks/useScrollDirection';
-import { useDispatch } from '@/lib/hooks';
-import { openAuthDialog } from '@/lib/features/authDialog/authDialogSlice';
+import { useScrollDirection } from '@core/hooks/useScrollDirection';
+import { useDispatch } from '@redux-store/hooks';
+import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { ChevronLeft } from 'lucide-react';
+import MainConfigs from '@configs/mainConfigs';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
@@ -104,7 +105,10 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </div>
 
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 lg:hidden">
+          <Link
+            href={MainConfigs.homePageUrl}
+            className="flex-shrink-0 lg:hidden"
+          >
             <Logo2
               className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
                 isSticky ? 'h-24 -my-4' : 'h-28 -my-9'
@@ -114,7 +118,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
 
           {/* logo category search*/}
           <div className="hidden lg:flex items-center gap-6">
-            <Link href="/" className="flex-shrink-0">
+            <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
               <Logo
                 className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
                   isSticky ? 'h-20 -my-4' : 'h-24 -my-8'

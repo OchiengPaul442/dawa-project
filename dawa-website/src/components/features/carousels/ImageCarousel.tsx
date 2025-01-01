@@ -8,7 +8,7 @@ import {
   AiOutlineLeft,
   AiOutlineRight,
 } from 'react-icons/ai';
-import useWindowSize from '@/hooks/useWindowSize';
+import useWindowSize from '@core/hooks/useWindowSize';
 
 interface ImageCarouselProps {
   images: string[];

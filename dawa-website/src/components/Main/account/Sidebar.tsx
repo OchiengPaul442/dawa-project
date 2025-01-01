@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 import { motion } from 'framer-motion';
 
 interface SidebarItem {

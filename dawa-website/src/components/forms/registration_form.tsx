@@ -19,9 +19,9 @@ import GoogleIcon from '@public/assets/svgs/google.svg';
 import InputField from '@/components/Main/account/InputField';
 import Link from 'next/link';
 import { registerUser } from '@/lib/api/auth/api';
-import { schema } from '@/validations/authValidation';
+import { schema } from '@/@core/validations/authValidation';
 import { signIn } from 'next-auth/react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 
 interface IFormInputs {
   email: string;

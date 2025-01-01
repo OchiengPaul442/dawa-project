@@ -10,7 +10,7 @@ import {
   FaTwitter,
   FaYoutube,
 } from 'react-icons/fa';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@core/hooks/use-auth';
 import FooterLinkSection from './FooterLinkSection';
 
 const Footer = () => {
