@@ -1,5 +1,4 @@
-import React from 'react';
-import MessagePage from './MessagePage';
+import MessagePage from '@views/pages/messages/MessagePage';
 
 const page = () => {
   return <MessagePage />;

@@ -1,5 +1,4 @@
-import React from 'react';
-import WishListPage from './WishListPage';
+import WishListPage from '@views/pages/wishlist/WishListPage';
 
 const page = () => {
   return <WishListPage />;
