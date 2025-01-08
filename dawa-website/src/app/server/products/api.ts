@@ -25,22 +25,22 @@ async function apiRequest<T>(
 
 // Fetch categories
 export const getCategoriesList = async <T = any>(): Promise<T> => {
-  return apiRequest<T>(false, 'get', '/getcategories');
+  return apiRequest<T>(false, 'get', '/getcategories/');
 };
 
 // Fetch products
 export const getProductsList = async <T = any>(): Promise<T> => {
-  return apiRequest<T>(false, 'get', '/getitems');
+  return apiRequest<T>(false, 'get', '/getitems/');
 };
 
 // Add an item to the wishlist
 export const addToWishlist = async <T = any>(data: {
   item_id: number;
 }): Promise<T> => {
-  return apiRequest<T>(true, 'post', '/addtowishlist', data);
+  return apiRequest<T>(true, 'post', '/addtowishlist/', data);
 };
 
 // Add a new product
 export const addNewProduct = async <T = any>(data: any): Promise<T> => {
-  return apiRequest<T>(true, 'post', '/additem', data);
+  return apiRequest<T>(true, 'post', '/additem/', data);
 };

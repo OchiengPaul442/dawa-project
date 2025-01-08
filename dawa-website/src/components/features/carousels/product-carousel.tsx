@@ -3,7 +3,6 @@
 import * as React from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoplayPlugin from 'embla-carousel-autoplay';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCarouselItem } from '@/types/category';
 import CustomImage from '@/components/shared/CustomImage';
@@ -19,14 +18,22 @@ export function ProductCarousel({ items }: ProductCarouselProps) {
     [AutoplayPlugin({ delay: 5000, stopOnInteraction: false })],
   );
 
-  const scrollPrev = React.useCallback(
-    () => emblaApi && emblaApi.scrollPrev(),
-    [emblaApi],
-  );
-  const scrollNext = React.useCallback(
-    () => emblaApi && emblaApi.scrollNext(),
-    [emblaApi],
-  );
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on('select', onSelect);
+    onSelect();
+
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
 
   if (!items.length) return null;
 
@@ -54,7 +61,7 @@ export function ProductCarousel({ items }: ProductCarouselProps) {
                       </span>
                     )}
                   </div>
-                  <Button asChild className="w-fit">
+                  <Button asChild className="w-fit bg-gray-700">
                     <Link href={`/prod/${item.id}`}>View Details</Link>
                   </Button>
                 </div>
@@ -72,23 +79,18 @@ export function ProductCarousel({ items }: ProductCarouselProps) {
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full h-8 w-8"
-        onClick={scrollPrev}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full h-8 w-8"
-        onClick={scrollNext}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+        {items.map((_, index) => (
+          <button
+            key={index}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              index === selectedIndex ? 'bg-primary_1 w-4' : 'bg-primary_2'
+            }`}
+            onClick={() => emblaApi?.scrollTo(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }

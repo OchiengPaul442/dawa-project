@@ -1,13 +1,14 @@
 'use client';
 import React from 'react';
 
-import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
-import PopularSearchCarousel from '@/components/features/carousels/PopularSearchCarousel';
+// import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
+// import PopularSearchCarousel from '@/components/features/carousels/PopularSearchCarousel';
+// import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
+// import BestDeals from '@/views/shared/BestDeals';
+// import FlashSale from '@/components/features/carousels/FlashSale';
 import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
-import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
-import BestDeals from '@/views/shared/BestDeals';
-import FlashSale from '@/components/features/carousels/FlashSale';
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
+import ProductPage from '@/views/pages/AllProducts';
 
 const HomePage = () => {
   return (
@@ -16,6 +17,9 @@ const HomePage = () => {
         <CategoriesMenu />
       </section>
       <section>
+        <ProductPage />
+      </section>
+      {/* <section>
         <BestDeals />
       </section>
       <section>
@@ -29,7 +33,7 @@ const HomePage = () => {
       </section>
       <section>
         <HotSalesCarousel />
-      </section>
+      </section> */}
       <section>
         <RecentlyViewedCarousel />
       </section>

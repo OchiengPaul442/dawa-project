@@ -35,7 +35,7 @@ export function CategoriesMenu() {
   };
 
   return (
-    <div className="w-full container mx-auto px-4 py-8">
+    <div className="w-full container mx-auto px-4 pt-8">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Mobile Categories Grid */}
         <div className="lg:hidden">
@@ -48,7 +48,7 @@ export function CategoriesMenu() {
           onMouseLeave={handleMouseLeave}
         >
           {/* Categories */}
-          <div className="w-full sm:w-64 flex flex-col border-b sm:border-b-0 sm:border-r">
+          {/* <div className="w-full sm:w-64 flex flex-col border-b sm:border-b-0 sm:border-r">
             <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               <nav className="flex flex-col">
                 {displayCategories.map((category) => (
@@ -85,7 +85,7 @@ export function CategoriesMenu() {
                 </Button>
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Subcategories and Product Carousel */}
           <div className="relative flex-1 overflow-hidden">
