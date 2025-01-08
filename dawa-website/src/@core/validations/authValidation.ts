@@ -26,7 +26,7 @@ export const authSchema = yup.object({
     .string()
     .required('Password is required')
     .min(6, 'Password must be at least 6 characters'),
-  rememberMe: yup.boolean().default(false),
+  rememberMe: yup.boolean().default(true),
 });
 
 // Improved validation schema

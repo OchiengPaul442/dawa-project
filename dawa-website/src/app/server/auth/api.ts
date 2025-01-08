@@ -50,3 +50,12 @@ export const forgotPassword = async (
   const response = await apiClient(false).post('/forgotpassword/', data);
   return response.data;
 };
+
+/**
+ * Get user profile.
+ * @returns User profile data
+ */
+export const getUserProfile = async (): Promise<any> => {
+  const response = await apiClient(true).get('/getuserprofile/');
+  return response.data;
+};

@@ -129,9 +129,7 @@ const RegistrationForm: React.FC = () => {
       </p>
 
       {apiError && (
-        <div className="mb-4 p-4 text-red-700 bg-red-100 border border-red-400 rounded">
-          {apiError}
-        </div>
+        <p className="text-red-500 text-sm text-center">{apiError}</p>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

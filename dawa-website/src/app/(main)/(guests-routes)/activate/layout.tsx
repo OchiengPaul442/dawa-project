@@ -13,21 +13,19 @@ export default function ActivateLayout({
   const router = useRouter();
 
   return (
-    <GuestOnlyRoute>
-      <div>
-        {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="absolute top-4 left-4 flex items-center px-3 py-2 bg-gray-700 text-primary_1 rounded-lg shadow-sm"
-          aria-label="Go back"
-        >
-          <FaArrowLeft className="mr-2 text-xl" />
-          <span className="font-medium">Back</span>
-        </button>
+    <div>
+      {/* Back Button */}
+      <button
+        onClick={() => router.back()}
+        className="absolute top-4 left-4 flex items-center px-3 py-2 bg-gray-700 text-primary_1 rounded-lg shadow-sm"
+        aria-label="Go back"
+      >
+        <FaArrowLeft className="mr-2 text-xl" />
+        <span className="font-medium">Back</span>
+      </button>
 
-        {/* Children */}
-        {children}
-      </div>
-    </GuestOnlyRoute>
+      {/* Children */}
+      {children}
+    </div>
   );
 }

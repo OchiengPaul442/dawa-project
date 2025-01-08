@@ -3,6 +3,58 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
+interface ApiUserData {
+  id: number;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  user_profile_picture?: string;
+  user_role?: string;
+}
+
+interface LoginResponse {
+  status: number;
+  message?: string;
+  user_data?: {
+    token?: string;
+    user_data?: ApiUserData;
+  };
+}
+
+// Extend NextAuth's default types to include custom fields
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      image: string | null;
+      role: string | null;
+    };
+    accessToken: string | null;
+  }
+
+  interface User {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+    role: string | null;
+    token: string | null;
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string;
+    name: string;
+    email: string;
+    picture: string | null;
+    role: string | null;
+    accessToken: string | null;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -23,13 +75,14 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        // Ensure credentials were provided
         if (!credentials?.username || !credentials?.password) {
-          console.error('Missing username or password in credentials.');
-          return null;
+          throw new Error('Username or password missing');
         }
 
         try {
-          const response = await axios.post(
+          // Attempt login
+          const response = await axios.post<LoginResponse>(
             `${process.env.NEXT_PUBLIC_API_URL}/login/`,
             {
               username: credentials.username,
@@ -40,74 +93,85 @@ export const authOptions: NextAuthOptions = {
             },
           );
 
-          const { user_data, status } = response.data;
+          const { status, user_data, message } = response.data;
 
-          if (status !== 202 || !user_data || !user_data.user_data) {
+          // Validate response
+          if (status !== 202 || !user_data?.user_data) {
             console.error('Invalid login response:', response.data);
-            return null;
+            throw new Error(message || 'Invalid login response');
           }
 
-          const user = user_data.user_data;
+          const userInfo = user_data.user_data;
 
-          if (!user.id || !user.email) {
+          // Validate user info
+          if (!userInfo.id || !userInfo.email) {
             console.error(
               'Incomplete user data returned from login API:',
-              user,
+              userInfo,
             );
-            return null;
+            throw new Error('Incomplete user data returned from login API');
           }
 
-          const data = {
-            id: user.id.toString(),
-            name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
-            email: user.email,
-            image: user.user_profile_picture,
-            role: user.user_role,
-            token: user_data.token,
+          // Return the user object that NextAuth will store in the JWT
+          return {
+            id: userInfo.id.toString(),
+            name: `${userInfo.first_name || ''} ${userInfo.last_name || ''}`.trim(),
+            email: userInfo.email,
+            image: userInfo.user_profile_picture ?? null,
+            role: userInfo.user_role ?? null,
+            token: user_data.token ?? null,
           };
-          return data;
         } catch (error) {
           console.error('Login error:', error);
-          return null;
+          throw error; // Rethrow to stop flow
         }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user, account }) {
-      // Initial sign in
-      if (account && user) {
-        if (account.provider === 'google') {
-          try {
-            const response = await axios.post(
-              `${process.env.NEXT_PUBLIC_API_URL}/googlelogin/`,
-              {
-                google_token: account.id_token,
-                user_role: 'Client',
-              },
+      if (!account || !user) {
+        return token;
+      }
+
+      if (account.provider === 'google') {
+        try {
+          const response = await axios.post<LoginResponse>(
+            `${process.env.NEXT_PUBLIC_API_URL}/googlelogin/`,
+            {
+              google_token: account.id_token,
+              user_role: 'Client',
+            },
+          );
+
+          const { user_data } = response.data;
+          const userInfo = user_data?.user_data;
+
+          if (!userInfo || !userInfo.id) {
+            throw new Error(
+              'Invalid Google login response or user info missing',
             );
-
-            const { user_data } = response.data;
-            const userInfo = user_data?.user_data;
-
-            token.id = userInfo.id.toString();
-            token.name = `${userInfo.first_name} ${userInfo.last_name}`.trim();
-            token.email = userInfo.email;
-            token.picture = userInfo.user_profile_picture;
-            token.role = userInfo.user_role;
-            token.accessToken = user_data.token;
-          } catch (error) {
-            console.error('Error during Google login:', error);
           }
-        } else if (account.provider === 'credentials') {
-          // Handle Credentials Provider
-          token.id = user.id;
-          token.name = user.name;
-          token.email = user.email;
-          token.picture = user.image;
-          token.role = user.role;
-          token.accessToken = user.token;
+
+          token.id = userInfo.id.toString();
+          token.name =
+            `${userInfo.first_name || ''} ${userInfo.last_name || ''}`.trim();
+          token.email = userInfo.email;
+          token.picture = userInfo.user_profile_picture ?? null;
+          token.role = userInfo.user_role ?? null;
+          token.accessToken = user_data?.token ?? null;
+        } catch (error) {
+          console.error('Error during Google login:', error);
+          throw error; // Abort the flow
         }
+      } else if (account.provider === 'credentials') {
+        // Credentials provider logic
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.picture = user.image ?? null;
+        token.role = user.role ?? null;
+        token.accessToken = user.token ?? null;
       }
 
       return token;
