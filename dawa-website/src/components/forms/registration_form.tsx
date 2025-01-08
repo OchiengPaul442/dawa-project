@@ -18,7 +18,7 @@ import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import InputField from '@/views/auth/InputField';
 import Link from 'next/link';
-import { registerUser } from '@/lib/api/auth/api';
+import { registerUser } from '@/app/server/auth/api';
 import { schema } from '@/@core/validations/authValidation';
 import { signIn } from 'next-auth/react';
 import { useAuth } from '@core/hooks/use-auth';

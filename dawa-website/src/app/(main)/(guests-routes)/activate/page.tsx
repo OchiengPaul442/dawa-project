@@ -14,7 +14,7 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import { activateAccount, resendActivationEmail } from '@/lib/api/auth/api';
+import { activateAccount, resendActivationEmail } from '@/app/server/auth/api';
 import { Clock } from 'lucide-react';
 
 export default function ActivationForm() {
