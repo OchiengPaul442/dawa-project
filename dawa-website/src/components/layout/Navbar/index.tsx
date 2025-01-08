@@ -126,30 +126,32 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               />
             </Link>
 
-            {pathname !== '/' && pathname !== '/cat' && (
-              <div className="relative" ref={dropdownRef}>
-                <Button
-                  icon={FiGrid}
-                  className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
-                  onClick={() => setShowDropdown((prev) => !prev)}
-                >
-                  <span>Categories</span>
-                </Button>
-                <AnimatePresence>
-                  {showDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="absolute left-0 top-full mt-2 w-auto z-50"
-                    >
-                      <Sidebar onSelect={handleSheetItemClick} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+            {pathname !== '/' &&
+              pathname !== '/cat' &&
+              pathname !== '/home' && (
+                <div className="relative" ref={dropdownRef}>
+                  <Button
+                    icon={FiGrid}
+                    className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
+                    onClick={() => setShowDropdown((prev) => !prev)}
+                  >
+                    <span>Categories</span>
+                  </Button>
+                  <AnimatePresence>
+                    {showDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className="absolute left-0 top-full mt-2 w-auto z-50"
+                      >
+                        <Sidebar onSelect={handleSheetItemClick} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
           </div>
 
           {/* search */}

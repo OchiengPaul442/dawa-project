@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { FAQCategory } from '@/lib/mock_data';
+import { FAQCategory } from '@/data/faqs';
 import { FAQ_Category, Question } from '@/types/faq';
 
 export default function FAQPage() {

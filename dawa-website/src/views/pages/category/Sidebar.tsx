@@ -116,33 +116,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       >
         <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
           <div className="p-4 space-y-1">
-            <Link href="/cat" passHref onClick={handleItemClick}>
-              <div
-                className={`p-3 rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${
-                  hoveredCategory === null
-                    ? 'bg-gray-100 text-primary_1'
-                    : 'hover:bg-gray-50 hover:text-primary_1'
-                }`}
-                onMouseEnter={() => {
-                  if (isLargeScreen) {
-                    setHoveredCategory(null);
-                    setIsCategoryHovered(true);
-                  }
-                }}
-                onMouseLeave={() => setIsCategoryHovered(false)}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">📂</span>
-                  <div className="flex flex-col items-start w-full truncate">
-                    <span className="font-sm truncate">All Categories</span>
-                  </div>
-                </div>
-                {isLargeScreen && (
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
-            </Link>
-
             {categories.map(renderCategoryItem)}
           </div>
         </ScrollArea>

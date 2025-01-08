@@ -77,10 +77,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   }, [currentPage, filteredProducts.length]);
 
   const breadcrumbItems: BreadcrumbItem[] = useMemo(() => {
-    const items: BreadcrumbItem[] = [
-      { name: 'Home', href: '/' },
-      { name: 'Categories', href: '/cat' },
-    ];
+    const items: BreadcrumbItem[] = [{ name: 'Home', href: '/' }];
 
     if (selectedCategory) {
       items.push({
