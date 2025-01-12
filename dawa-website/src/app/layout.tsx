@@ -1,8 +1,9 @@
 import './globals.css';
-
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import Provider from '@/components/Provider';
+import Loader from '@/components/features/loader/Loading';
 import { AuthDialog } from '@/components/dialogs/auth-dialog';
 
 const poppins = Poppins({
@@ -28,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-        <Provider>
-          {children}
+        <Suspense fallback={<Loader />}>
+          <Provider>
+            {children}
 
-          <AuthDialog />
-        </Provider>
+            <AuthDialog />
+          </Provider>
+        </Suspense>
       </body>
     </html>
   );

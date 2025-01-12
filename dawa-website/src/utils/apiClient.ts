@@ -3,12 +3,9 @@ import { getSession } from 'next-auth/react';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-/**
- * Create a function that returns an Axios instance configured based on `useAuth`.
- * @param useAuth - Determines whether to include the Authorization header.
- * @returns Configured Axios instance.
- */
-const apiClient = (useAuth: boolean): AxiosInstance => {
+type ApiClientType = 'secure' | 'open';
+
+const createApiClient = (type: ApiClientType): AxiosInstance => {
   const instance = axios.create({
     baseURL: BASE_URL,
     headers: {
@@ -16,21 +13,21 @@ const apiClient = (useAuth: boolean): AxiosInstance => {
     },
   });
 
-  // Request interceptor to add the Authorization header if `useAuth` is true
-  instance.interceptors.request.use(
-    async (config: InternalAxiosRequestConfig) => {
-      if (useAuth) {
+  if (type === 'secure') {
+    instance.interceptors.request.use(
+      async (config: InternalAxiosRequestConfig) => {
         const session = await getSession();
         if (session?.accessToken) {
           config.headers.Authorization = `Token ${session.accessToken}`;
         }
-      }
-      return config;
-    },
-    (error) => Promise.reject(error),
-  );
+        return config;
+      },
+      (error) => Promise.reject(error),
+    );
+  }
 
   return instance;
 };
 
-export default apiClient;
+export const secureApiClient = createApiClient('secure');
+export const openApiClient = createApiClient('open');

@@ -1,21 +1,82 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { categories } from '@/lib/mock_data';
-import { Category, Subcategory } from '@/types/category';
+import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
+import { useCategories } from '@/@core/hooks/useProductData';
+import SidebarSkeleton from './SidebarSkeleton';
+
+import {
+  Truck,
+  Home,
+  Phone,
+  Tv,
+  Sofa,
+  Palette,
+  Wrench,
+  ShoppingBag,
+  Activity,
+  Briefcase,
+  Heart,
+} from 'lucide-react';
+
+import {
+  setSelectedCategory,
+  setSelectedSubcategory,
+} from '@redux-store/slices/categories/categorySlice';
+
+const DefaultIcon = ShoppingBag;
+
+const categoryIconMap: Record<string, React.ElementType> = {
+  Vehicles: Truck,
+  Property: Home,
+  'Phones & Tablets': Phone,
+  Electronics: Tv,
+  'Home, Appliances & Furniture': Sofa,
+  'Health & Beauty': Palette,
+  Fashion: ShoppingBag,
+  'Sports, Arts & Outdoors': Activity,
+  'Seeking Work CVs': Briefcase,
+  Services: Wrench,
+  Jobs: Briefcase,
+  'Babies & Kids': ShoppingBag,
+  Pets: Heart,
+  'Agriculture & Food': Wrench,
+  'Commercial Equipment & Tools': Wrench,
+  'Repair & Construction': Wrench,
+};
+
+const subcategoryIconMap: Record<string, React.ElementType> = {
+  Cars: Truck,
+  'Motorcycles & Scooters': Truck,
+  'Trucks & Trailers': Truck,
+  'Houses & Apartments for Sale': Home,
+  'Houses & Apartments for Rent': Home,
+  'Land & Plots for Sale': Home,
+  'Land & Plots for Rent': Home,
+  'Mobile Phones': Phone,
+  Tablets: Phone,
+  TVs: Tv,
+  Furniture: Sofa,
+  Makeup: Palette,
+  'Repair Services': Wrench,
+  'Other Services': Wrench,
+};
 
 interface SidebarProps {
   onSelect?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
+  const { categories, isLoading } = useCategories();
+  const dispatch = useDispatch();
+
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
-  const [isCategoryHovered, setIsCategoryHovered] = useState(false);
-  const [isSubcategoriesHovered, setIsSubcategoriesHovered] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
@@ -25,112 +86,133 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (!isCategoryHovered && !isSubcategoriesHovered) {
-      const timeout = setTimeout(() => setHoveredCategory(null), 200);
-      return () => clearTimeout(timeout);
-    }
-  }, [isCategoryHovered, isSubcategoriesHovered]);
+  const handleItemClick = useCallback(() => {
+    onSelect?.();
+  }, [onSelect]);
 
-  const handleItemClick = () => {
-    if (onSelect) {
-      onSelect();
-    }
-  };
+  const handleCategoryMouseEnter = useCallback(
+    (category: Category) => {
+      if (isLargeScreen) {
+        setHoveredCategory(category);
+      }
+    },
+    [isLargeScreen],
+  );
 
-  const renderCategoryItem = (category: Category) => {
-    const Icon = category.icon;
-    return (
-      <Link
-        key={category.name}
-        href={`/cat/${slugify(category.name)}`}
-        passHref
-        onClick={handleItemClick}
-      >
-        <div
-          className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between ${
-            hoveredCategory?.name === category.name
-              ? 'bg-gray-100 text-primary_1'
-              : 'hover:bg-gray-50 hover:text-primary_1'
-          }`}
-          onMouseEnter={() => {
-            if (isLargeScreen) {
-              setHoveredCategory(category);
-              setIsCategoryHovered(true);
-            }
+  const handleSubcategoryMouseEnter = useCallback((category: Category) => {
+    setHoveredCategory(category);
+  }, []);
+
+  const handleSidebarMouseLeave = useCallback(() => {
+    setHoveredCategory(null);
+  }, []);
+
+  const renderCategoryItem = useCallback(
+    (category: Category) => {
+      const Icon = categoryIconMap[category.category_name] || DefaultIcon;
+      const isActive = hoveredCategory?.id === category.id;
+
+      return (
+        <Link
+          key={category.id}
+          href={`/cat/${slugify(category.category_name)}`}
+          onClick={() => {
+            handleItemClick();
+            dispatch(setSelectedCategory(category));
           }}
-          onMouseLeave={() => setIsCategoryHovered(false)}
         >
-          <div className="w-full truncate">
-            <div className="flex items-center gap-2">
+          <div
+            className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between
+              ${isActive ? 'bg-gray-100 text-primary_1' : 'hover:bg-gray-50 hover:text-primary_1'}
+            `}
+            onMouseEnter={() => handleCategoryMouseEnter(category)}
+          >
+            <div className="flex items-center gap-2 w-full truncate">
               <Icon className="h-5 w-5" />
-              <div className="flex flex-col items-start w-full truncate">
-                <span className="font-sm truncate whitespace-nowrap max-w-[180px]">
-                  {category.name}
-                </span>
-                <span className="text-xs text-gray-500 truncate">{`(${category.count.toLocaleString()})`}</span>
-              </div>
-            </div>
-          </div>
-          {isLargeScreen && <ChevronRight className="h-4 w-4 text-gray-400" />}
-        </div>
-      </Link>
-    );
-  };
-
-  const renderSubcategoryItem = (
-    subcategory: Subcategory,
-    categoryName: string,
-  ) => {
-    const Icon = subcategory.icon;
-    return (
-      <Link
-        key={subcategory.name}
-        href={`/cat/${slugify(categoryName)}/${slugify(subcategory.name)}`}
-        passHref
-        onClick={handleItemClick}
-      >
-        <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between">
-          <div className="flex items-center gap-3 justify-between w-full truncate">
-            <div className="flex items-start gap-2">
-              <Icon className="h-4 w-4" />
-              <span className="font-medium truncate whitespace-nowrap max-w-[180px]">
-                {subcategory.name}
+              <span className="text-sm font-medium truncate max-w-[180px]">
+                {category.category_name}
               </span>
             </div>
-            <span className="text-sm text-gray-500 truncate">{`${subcategory.count.toLocaleString()} ads`}</span>
+            {isLargeScreen && (
+              <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            )}
           </div>
-        </div>
-      </Link>
-    );
-  };
+        </Link>
+      );
+    },
+    [
+      hoveredCategory,
+      isLargeScreen,
+      handleItemClick,
+      handleCategoryMouseEnter,
+      dispatch,
+    ],
+  );
+
+  const renderSubcategoryItem = useCallback(
+    (subcategory: Subcategory, categoryName: string) => {
+      const Icon =
+        subcategoryIconMap[subcategory.subcategory_name] || DefaultIcon;
+      return (
+        <Link
+          key={subcategory.id}
+          href={`/cat/${slugify(categoryName)}/${slugify(subcategory.subcategory_name)}`}
+          onClick={() => {
+            handleItemClick();
+            dispatch(setSelectedSubcategory(subcategory));
+          }}
+        >
+          <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center">
+            <Icon className="h-4 w-4 mr-2" />
+            <span className="font-medium truncate max-w-[180px]">
+              {subcategory.subcategory_name}
+            </span>
+          </div>
+        </Link>
+      );
+    },
+    [handleItemClick, dispatch],
+  );
+
+  if (isLoading) {
+    return <SidebarSkeleton />;
+  }
 
   return (
-    <div className="w-full lg:w-[288px] relative z-30">
+    <div
+      className="relative w-full lg:w-[288px] z-30"
+      onMouseLeave={handleSidebarMouseLeave}
+    >
+      {/* Main Category List */}
       <div
-        className={`bg-white rounded-md border sticky top-[100px] ${
-          hoveredCategory
-            ? 'rounded-r-none border-r-primary_1'
-            : 'rounded-md border-gray-200'
-        }`}
+        className={`bg-white rounded-md border sticky top-[100px]
+          ${hoveredCategory ? 'rounded-r-none border-r-primary_1' : 'rounded-md border-gray-200'}
+        `}
       >
         <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-          <div className="p-4 space-y-1">
-            {categories.map(renderCategoryItem)}
-          </div>
+          {categories && categories.length > 0 ? (
+            <div className="p-4 space-y-1">
+              {categories.map(renderCategoryItem)}
+            </div>
+          ) : (
+            <div className="p-4 text-gray-500">No categories found.</div>
+          )}
         </ScrollArea>
       </div>
 
+      {/* Subcategory List (visible on hover, large screens only) */}
       {isLargeScreen && hoveredCategory && (
         <div
           className="absolute bg-white rounded-r-md border-r border-y min-w-[288px] left-[288px] top-0 z-30"
-          onMouseEnter={() => setIsSubcategoriesHovered(true)}
-          onMouseLeave={() => setIsSubcategoriesHovered(false)}
+          onMouseEnter={() => handleSubcategoryMouseEnter(hoveredCategory)}
         >
           <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
             <div className="p-4 space-y-1">
               {hoveredCategory.subcategories?.map((subcategory) =>
-                renderSubcategoryItem(subcategory, hoveredCategory.name),
+                renderSubcategoryItem(
+                  subcategory,
+                  hoveredCategory.category_name,
+                ),
               )}
             </div>
           </ScrollArea>

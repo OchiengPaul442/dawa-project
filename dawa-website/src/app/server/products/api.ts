@@ -1,46 +1,70 @@
-import apiClient from '@/utils/apiClient';
-
-// Generic request function to reduce repetition
-async function apiRequest<T>(
-  auth: boolean,
-  method: 'get' | 'post',
-  url: string,
-  data?: any,
-): Promise<T> {
-  try {
-    const client = apiClient(auth);
-    const response =
-      method === 'get'
-        ? await client.get<T>(url)
-        : await client.post<T>(url, data);
-    return response.data;
-  } catch (error) {
-    console.error(
-      `Error in API request [${method.toUpperCase()} ${url}]:`,
-      error,
-    );
-    throw error;
-  }
-}
+'use server';
+import { secureApiClient, openApiClient } from '@/utils/apiClient';
 
 // Fetch categories
-export const getCategoriesList = async <T = any>(): Promise<T> => {
-  return apiRequest<T>(false, 'get', '/getcategories/');
+export const getCategoriesList = async (): Promise<any> => {
+  try {
+    const response = await openApiClient.get('/getcategories/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+};
+
+// Fetch categories for a specific category
+export const getCategoryData = async (body: any): Promise<any> => {
+  try {
+    const response = await openApiClient.post('/getitems/', body);
+    return response.data;
+  } catch (error: unknown) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
 };
 
 // Fetch products
-export const getProductsList = async <T = any>(): Promise<T> => {
-  return apiRequest<T>(false, 'get', '/getitems/');
+export const getTrendingProductsList = async (): Promise<any> => {
+  try {
+    const response = await openApiClient.post('/getitems/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
+  }
 };
 
-// Add an item to the wishlist
-export const addToWishlist = async <T = any>(data: {
+// Add or remove an item from the wishlist
+export const addOrRemoveItemToWishlist = async (data: {
   item_id: number;
-}): Promise<T> => {
-  return apiRequest<T>(true, 'post', '/addtowishlist/', data);
+}): Promise<any> => {
+  try {
+    const response = await secureApiClient.post('/wishunwish/', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating wishlist:', error);
+    throw error;
+  }
+};
+
+// get user wishlist
+export const getUserWishlist = async (): Promise<any> => {
+  try {
+    const response = await secureApiClient.get('/getuserwishlist/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching wishlist:', error);
+    throw error;
+  }
 };
 
 // Add a new product
-export const addNewProduct = async <T = any>(data: any): Promise<T> => {
-  return apiRequest<T>(true, 'post', '/additem/', data);
+export const addNewProduct = async (data: any): Promise<any> => {
+  try {
+    const response = await secureApiClient.post('/additem/', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding new product:', error);
+    throw error;
+  }
 };

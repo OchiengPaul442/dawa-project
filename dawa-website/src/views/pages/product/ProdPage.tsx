@@ -1,10 +1,12 @@
 'use client';
+
 import React from 'react';
+import Link from 'next/link';
 import ImageCarousel from './ImageCarousel';
 import ProductTabs from './ProductTabs';
 import ShareSection from './ShareSection';
 import ProductDetails from './ProductDetails';
-import Link from 'next/link';
+import { slugify } from '@/utils/slugify';
 
 const product = {
   id: '123456789',
@@ -19,7 +21,7 @@ const product = {
     name: 'Dawa Trading Limited',
     location: 'Kampala, Uganda',
     avatar:
-      'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
+      'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=500&auto=format&fit=crop&q=60',
   },
   images: [
     'https://images.unsplash.com/photo-1484788984921-03950022c9ef?q=80&w=2132&auto=format&fit=crop',
@@ -65,40 +67,7 @@ const product = {
       rating: 4.5,
       review: 'Great product! Highly recommend it for office use.',
     },
-    {
-      name: 'Jane Smith',
-      image:
-        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&auto=format&fit=crop',
-      isVerified: true,
-      rating: 4.0,
-      review:
-        'Good quality and decent performance. Works well for gaming and productivity.',
-    },
-    {
-      name: 'Mike Johnson',
-      image:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&auto=format&fit=crop',
-      isVerified: false,
-      rating: 3.5,
-      review: 'Satisfactory product, but could use better color calibration.',
-    },
-    {
-      name: 'Alice Brown',
-      image:
-        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=500&auto=format&fit=crop',
-      isVerified: true,
-      rating: 5.0,
-      review:
-        'Excellent! The screen is bright and crisp. Perfect for video editing.',
-    },
-    {
-      name: 'James Wilson',
-      image:
-        'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=500&auto=format&fit=crop',
-      isVerified: false,
-      rating: 2.0,
-      review: 'Not what I expected. The build quality feels cheap.',
-    },
+    // ... other reviews
   ],
 };
 
@@ -107,8 +76,8 @@ interface ProdPageProps {
 }
 
 const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
-  if (slug.length === 0) {
-    // Handle `/prod` route
+  // If slug array is empty, show fallback content
+  if (!slug || slug.length === 0) {
     return (
       <div>
         <h1>Welcome to the Prod Page</h1>
@@ -126,8 +95,9 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
             Home
           </Link>
           <span>/</span>
+
           <Link
-            href="/cat/TV & Monitors"
+            href={`/cat/${slugify('TV & Monitors')}`}
             className="hover:underline text-primary_1"
           >
             TV & Monitors

@@ -1,4 +1,4 @@
-import apiClient from '@/utils/apiClient';
+import { secureApiClient, openApiClient } from '@/utils/apiClient';
 import {
   RegisterRequest,
   ActivationRequest,
@@ -11,7 +11,7 @@ import {
  * @returns Registered user data
  */
 export const registerUser = async (data: RegisterRequest): Promise<any> => {
-  const response = await apiClient(false).post('/register/', data);
+  const response = await openApiClient.post('/register/', data);
   return response.data;
 };
 
@@ -23,7 +23,7 @@ export const registerUser = async (data: RegisterRequest): Promise<any> => {
 export const activateAccount = async (
   data: ActivationRequest,
 ): Promise<any> => {
-  const response = await apiClient(false).post('/activateaccount/', data);
+  const response = await openApiClient.post('/activateaccount/', data);
   return response.data;
 };
 
@@ -35,7 +35,7 @@ export const activateAccount = async (
 export const resendActivationEmail = async (data: {
   email: string;
 }): Promise<any> => {
-  const response = await apiClient(false).post('/resendactivationemail/', data);
+  const response = await openApiClient.post('/resendactivationemail/', data);
   return response.data;
 };
 
@@ -47,7 +47,7 @@ export const resendActivationEmail = async (data: {
 export const forgotPassword = async (
   data: ForgotPasswordRequest,
 ): Promise<any> => {
-  const response = await apiClient(false).post('/forgotpassword/', data);
+  const response = await openApiClient.post('/forgotpassword/', data);
   return response.data;
 };
 
@@ -56,6 +56,6 @@ export const forgotPassword = async (
  * @returns User profile data
  */
 export const getUserProfile = async (): Promise<any> => {
-  const response = await apiClient(true).get('/getuserprofile/');
+  const response = await secureApiClient.get('/getuserprofile/');
   return response.data;
 };

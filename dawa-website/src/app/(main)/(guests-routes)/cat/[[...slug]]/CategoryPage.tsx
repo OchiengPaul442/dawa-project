@@ -1,21 +1,25 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSelector, useDispatch } from 'react-redux';
+
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/categories/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
-import { productsData, categories } from '@/lib/mock_data';
-import CategoriesPage from '../../../../../views/pages/category/CategoriesPage';
+import CategoriesPage from '@/views/pages/category/CategoriesPage';
 import CustomPagination from '@/components/shared/CustomPagination';
-import { slugify } from '@/utils/slugify';
 
-// Types
-interface CategoryPageProps {
-  category: string[];
-}
+import { slugify } from '@/utils/slugify';
+import {
+  setSelectedCategory,
+  setSelectedSubcategory,
+} from '@redux-store/slices/categories/categorySlice';
+import { useCategoryData } from '@core/hooks/useProductData';
+
+import type { Category, Subcategory } from '@/types/category';
 
 interface BreadcrumbItem {
   name: string;
@@ -31,14 +35,35 @@ type ViewType = 'grid' | 'list';
 
 const ITEMS_PER_PAGE = 12;
 
+interface CategoryPageProps {
+  category: string[];
+}
+
+// Extend imported types to include missing fields
+interface ExtendedSubcategory extends Subcategory {
+  subcategory_item_count: number;
+}
+
+interface ExtendedCategory extends Category {
+  category_item_count: number;
+  subcategories: ExtendedSubcategory[];
+}
+
 const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  // Cast the categories from Redux store to our extended type
+  const categories = useSelector(
+    (state: any) => state.categories.categories,
+  ) as ExtendedCategory[];
+
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter states
-  const [filteredProducts, setFilteredProducts] = useState<any[]>(productsData);
+  const [products, setProducts] = useState<any[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
     0, 1000000000,
   ]);
@@ -47,29 +72,59 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     [],
   );
 
-  // Memoized values
-  const selectedCategory = useMemo(
-    () =>
-      categories.find(
-        (cat) => slugify(cat.name) === slugify(category[0] || ''),
-      ),
-    [category],
-  );
+  const selectedCategory: ExtendedCategory | undefined = useMemo(() => {
+    return categories.find(
+      (cat) => slugify(cat.category_name) === slugify(category[0] || ''),
+    );
+  }, [categories, category]);
 
-  const selectedSubcategory = useMemo(
-    () =>
-      selectedCategory?.subcategories?.find(
-        (sub: any) => slugify(sub.name) === slugify(category[1] || ''),
-      ),
-    [selectedCategory, category],
-  );
+  const selectedSubcategory: ExtendedSubcategory | undefined = useMemo(() => {
+    return selectedCategory?.subcategories.find(
+      (sub) => slugify(sub.subcategory_name) === slugify(category[1] || ''),
+    );
+  }, [selectedCategory, category]);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      dispatch(setSelectedCategory(selectedCategory));
+    } else {
+      dispatch(setSelectedCategory(null));
+    }
+  }, [selectedCategory, dispatch]);
+
+  useEffect(() => {
+    if (selectedSubcategory) {
+      dispatch(setSelectedSubcategory(selectedSubcategory));
+    } else {
+      dispatch(setSelectedSubcategory(null));
+    }
+  }, [selectedSubcategory, dispatch]);
+
+  // Use the custom SWR hook to fetch category data
+  const {
+    data: fetchedData,
+    error,
+    isLoading,
+  } = useCategoryData({
+    selectedCategory,
+    selectedSubcategory,
+  });
+
+  useEffect(() => {
+    if (fetchedData && fetchedData.data) {
+      setProducts(fetchedData.data);
+      setFilteredProducts(fetchedData.data);
+    } else {
+      setProducts([]);
+      setFilteredProducts([]);
+    }
+  }, [fetchedData]);
 
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredProducts, currentPage]);
 
-  // Results summary text
   const resultsSummary = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
     const end = Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length);
@@ -81,24 +136,21 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
     if (selectedCategory) {
       items.push({
-        name: `${selectedCategory.name} (${selectedCategory.count})`,
-        href: `/cat/${slugify(selectedCategory.name)}`,
+        name: `${selectedCategory.category_name} (${selectedCategory.category_item_count})`,
+        href: `/cat/${slugify(selectedCategory.category_name)}`,
       });
     }
 
-    if (selectedSubcategory) {
+    if (selectedSubcategory && selectedCategory) {
       items.push({
-        name: `${selectedSubcategory.name} (${selectedSubcategory.count})`,
-        href: `/cat/${slugify(selectedCategory?.name || '')}/${slugify(
-          selectedSubcategory.name,
-        )}`,
+        name: `${selectedSubcategory.subcategory_name} (${selectedSubcategory.subcategory_item_count})`,
+        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(selectedSubcategory.subcategory_name)}`,
       });
     }
 
     return items;
   }, [selectedCategory, selectedSubcategory]);
 
-  // Handlers
   const handleViewMore = useCallback(
     (productId: number) => {
       router.push(`/prod/${productId}`);
@@ -112,7 +164,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
       location: string,
       selectedColors: string[],
     ) => {
-      let filtered = [...productsData];
+      let filtered = [...products];
 
       if (location) {
         filtered = filtered.filter((product) => product.location === location);
@@ -132,7 +184,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
       setFilteredProducts(filtered);
       setCurrentPage(1);
     },
-    [],
+    [products],
   );
 
   const handleApplyFilters = useCallback(
@@ -153,9 +205,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     setAppliedPriceRange([0, 1000000000]);
     setAppliedLocation('');
     setAppliedSelectedColors([]);
-    setFilteredProducts(productsData);
+    setFilteredProducts(products);
     setCurrentPage(1);
-  }, []);
+  }, [products]);
 
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -199,11 +251,11 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             <li key={index} className="flex items-center">
               <Link
                 href={item.href}
-                className={`${
+                className={
                   index === breadcrumbItems.length - 1
                     ? 'text-gray-500 cursor-default'
                     : 'hover:underline text-primary font-medium'
-                }`}
+                }
               >
                 {item.name}
               </Link>
@@ -217,14 +269,16 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Sidebar */}
-        <div className="lg:col-span-1 flex flex-col space-y-6 h-auto">
+        <aside className="lg:col-span-1 flex flex-col space-y-6">
           <CategoriesAndSubcategories
-            categoryName={selectedCategory.name}
-            categoryCount={selectedCategory.count}
-            subcategories={selectedCategory.subcategories}
+            categoryName={selectedCategory.category_name}
+            categoryCount={selectedCategory.category_item_count}
+            subcategories={selectedCategory.subcategories.map((sub) => ({
+              name: sub.subcategory_name,
+              count: sub.subcategory_item_count,
+            }))}
             parentCategory={category[0]}
           />
-
           <div className="mt-6">
             <ProductFilter
               appliedPriceRange={appliedPriceRange}
@@ -234,11 +288,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
               onResetFilters={resetFilters}
             />
           </div>
-        </div>
+        </aside>
 
         {/* Main Content */}
-        <div className="lg:col-span-3">
-          {/* Filters and Content Container */}
+        <main className="lg:col-span-3">
           <div className="space-y-6">
             <FiltersAndSorting
               category={category}
@@ -248,32 +301,37 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
               handleFilterChange={handleFilterChange}
             />
 
-            <div
-              className={`${
-                viewType === 'grid'
-                  ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6'
-                  : 'flex flex-col gap-4'
-              }`}
-            >
-              {paginatedProducts.length > 0 ? (
-                paginatedProducts.map((product) => (
-                  <CardLayout
-                    key={product.id}
-                    product={product}
-                    viewType={viewType}
-                    onViewMore={handleViewMore}
-                  />
-                ))
-              ) : (
-                <p className="text-center text-gray-500 w-full col-span-full">
-                  No products found matching the selected filters.
-                </p>
-              )}
-            </div>
+            {isLoading ? (
+              <div className="text-center py-8">
+                <span>Loading...</span>
+              </div>
+            ) : (
+              <div
+                className={
+                  viewType === 'grid'
+                    ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6'
+                    : 'flex flex-col gap-4'
+                }
+              >
+                {paginatedProducts.length > 0 ? (
+                  paginatedProducts.map((product) => (
+                    <CardLayout
+                      key={product.id}
+                      product={product}
+                      viewType={viewType}
+                      onViewMore={handleViewMore}
+                    />
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 w-full col-span-full">
+                    No products found matching the selected filters.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Pagination with Results Summary */}
-          {filteredProducts.length > 0 && (
+          {!isLoading && filteredProducts.length > 0 && (
             <div className="border-t border-gray-200 mt-8 pt-6 w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="text-sm text-gray-600">{resultsSummary}</div>
@@ -288,7 +346,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
               </div>
             </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );

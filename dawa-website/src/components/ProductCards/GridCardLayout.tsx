@@ -12,7 +12,7 @@ interface ProductCardProps {
     name: string;
     price: number;
     originalPrice?: number;
-    image: string;
+    images: any[];
     liked: boolean;
   };
   onLike: (id: number) => void;
@@ -28,11 +28,14 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
 
     const handleLikeClick = useCallback(
       (e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent the card click event
+        e.stopPropagation();
         onLike(product.id);
       },
       [onLike, product.id],
     );
+
+    // get the first item from the images array
+    const image = product.images[0].image_url;
 
     return (
       <Card
@@ -43,12 +46,13 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
           {/* Product Image and Like Button */}
           <div className="relative aspect-square w-full">
             <CustomImage
-              src={product.image}
+              src={image}
               alt={product.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
             />
+
             <LikeButton
               isLiked={product.liked}
               onLike={handleLikeClick}

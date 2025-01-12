@@ -18,7 +18,7 @@ import Sidebar from '@views/pages/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { useScrollDirection } from '@core/hooks/useScrollDirection';
-import { useDispatch } from '@redux-store/hooks';
+import { useDispatch, useSelector } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { ChevronLeft } from 'lucide-react';
 import MainConfigs from '@configs/mainConfigs';
@@ -28,6 +28,7 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
+  const categories = useSelector((state: any) => state.categories.categories);
   const router = useRouter();
   const dispatch = useDispatch();
   const [isSticky, setIsSticky] = useState(false);

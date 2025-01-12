@@ -1,44 +1,36 @@
-'use client';
-import React from 'react';
-
-// import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
-// import PopularSearchCarousel from '@/components/features/carousels/PopularSearchCarousel';
-// import Top10ProductCarousel from '@/components/features/carousels/Top10ProductCarousel';
-// import BestDeals from '@/views/shared/BestDeals';
-// import FlashSale from '@/components/features/carousels/FlashSale';
 import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
-import ProductPage from '@/views/pages/AllProducts';
+import ProductPage from '@/views/pages/trendingProducts';
+import dynamic from 'next/dynamic';
+import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
+const Sidebar = dynamic(() => import('@views/pages/category/Sidebar'));
 
-const HomePage = () => {
+export default function HomePage() {
   return (
     <div className="flex flex-col gap-12">
       <section>
         <CategoriesMenu />
       </section>
       <section>
-        <ProductPage />
-      </section>
-      {/* <section>
-        <BestDeals />
-      </section>
-      <section>
-        <Top10ProductCarousel />
-      </section>
-      <section>
-        <PopularSearchCarousel />
-      </section>
-      <section>
-        <FlashSale />
+        <div className="container mx-auto px-4">
+          <div className="flex gap-4">
+            <div className="hidden lg:block w-72 flex-shrink-0">
+              <div className="sticky top-6 z-40">
+                <Sidebar />
+              </div>
+            </div>
+            <div className="flex-grow min-w-0 z-30">
+              <ProductPage />
+            </div>
+          </div>
+        </div>
       </section>
       <section>
         <HotSalesCarousel />
-      </section> */}
+      </section>
       <section>
         <RecentlyViewedCarousel />
       </section>
     </div>
   );
-};
-
-export default HomePage;
+}

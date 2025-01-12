@@ -45,7 +45,7 @@ import {
 import { Category } from '@/types/category';
 import { ProductCarouselItem } from '@/types/category';
 
-export const categories: Category[] = [
+export const categories: any[] = [
   {
     name: 'Vehicles',
     count: 30141,

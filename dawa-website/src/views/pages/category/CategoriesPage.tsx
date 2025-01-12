@@ -41,7 +41,7 @@ export default function CategoriesPage() {
 
       {/* Subcategories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {category.subcategories.map((subcat) => (
+        {category.subcategories.map((subcat: any) => (
           <Link
             key={subcat.href}
             href={subcat.href}

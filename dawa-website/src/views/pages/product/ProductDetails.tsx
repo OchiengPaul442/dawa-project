@@ -1,4 +1,4 @@
-// components/ProductDetails.tsx
+'use client';
 
 import React, { useState } from 'react';
 import { FaHeart, FaShieldAlt, FaPlus, FaStore } from 'react-icons/fa';
@@ -7,15 +7,6 @@ import { useRouter } from 'next/navigation';
 import StarRating from '../../../components/shared/StarRating';
 import CustomImage from '../../../components/shared/CustomImage';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import useWindowSize from '@core/hooks/useWindowSize';
