@@ -1,11 +1,14 @@
 'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
 import InputField from '@/views/auth/InputField';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEnvelope } from 'react-icons/fa';
 import Button from '../shared/Button';
+import { forgotPassword } from '@/app/server/auth/api';
+import { useRouter } from 'next/navigation';
 
 // Define form schema using yup
 const forgotPasswordSchema = yup.object().shape({
@@ -24,15 +27,27 @@ const ForgotPasswordForm: React.FC = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<ForgotPasswordFormInputs>({
     resolver: yupResolver(forgotPasswordSchema),
-    mode: 'onChange', // Enables form validation on change
+    mode: 'onChange',
   });
 
-  const onSubmit: SubmitHandler<ForgotPasswordFormInputs> = (data) => {
-    console.log('Forgot Password Form Submitted', data);
-    // Implement your reset password logic here
+  const router = useRouter();
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const onSubmit: SubmitHandler<ForgotPasswordFormInputs> = async (data) => {
+    setApiError(null);
+    try {
+      await forgotPassword({ email: data.email });
+      // Store the email in sessionStorage
+      sessionStorage.setItem('resetEmail', data.email);
+      // Redirect to Change Password page
+      router.push('/change-password');
+    } catch (error: any) {
+      // Handle API errors
+      setApiError(error.message || 'Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -53,15 +68,20 @@ const ForgotPasswordForm: React.FC = () => {
         )}
       />
 
+      {/* API Error Message */}
+      {apiError && (
+        <p className="text-red-500 text-sm text-center">{apiError}</p>
+      )}
+
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={!isValid}
+        disabled={!isValid || isSubmitting}
         className={`w-full py-3 bg-primary_1 text-white font-semibold h-10 rounded-md shadow hover:bg-primary_1-dark transition-colors ${
-          !isValid ? 'opacity-50 cursor-not-allowed' : ''
+          !isValid || isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
-        Send Reset Link
+        {isSubmitting ? 'Sending...' : 'Send Reset Link'}
       </Button>
     </form>
   );

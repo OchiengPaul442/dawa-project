@@ -3,6 +3,7 @@ import {
   RegisterRequest,
   ActivationRequest,
   ForgotPasswordRequest,
+  ResetPasswordPayload,
 } from '@/types/api';
 
 /**
@@ -48,6 +49,18 @@ export const forgotPassword = async (
   data: ForgotPasswordRequest,
 ): Promise<any> => {
   const response = await openApiClient.post('/forgotpassword/', data);
+  return response.data;
+};
+
+/**
+ * Initiate password reset process.
+ * @param data - Email for password reset
+ * @returns Response message
+ */
+export const resetPassword = async (
+  data: ResetPasswordPayload,
+): Promise<any> => {
+  const response = await openApiClient.post('/resetpassword/', data);
   return response.data;
 };
 

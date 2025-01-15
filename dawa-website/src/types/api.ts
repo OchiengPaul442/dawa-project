@@ -15,3 +15,10 @@ export interface ActivationRequest {
 export interface ForgotPasswordRequest {
   email: string;
 }
+
+export interface ResetPasswordPayload {
+  email: string;
+  otp: number;
+  new_password: string;
+  confirm_password: string;
+}
