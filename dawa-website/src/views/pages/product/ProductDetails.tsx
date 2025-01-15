@@ -19,7 +19,8 @@ import { FaFlag, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import ReportAbuseDialog from '@/components/dialogs/ReportAbuseDialog';
 import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
 import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
-import SafetyTipsDialog from '../../../components/dialogs/SafetyTipsDialog';
+import SafetyTipsDialog from '@/components/dialogs/SafetyTipsDialog';
+import MakeOfferDialog from '@/components/dialogs/MakeOfferDialog';
 
 interface ProductDetailsProps {
   product: {
@@ -69,6 +70,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [makeOfferDialogOpen, setMakeOfferDialogOpen] = useState(false);
   const { width } = useWindowSize();
   const isBreakPoint = width < 1300;
 
@@ -122,6 +124,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     }
   };
 
+  const handleSubmitOffer = (price: number) => {
+    console.log('Offer submitted:', price);
+    alert('Your offer has been sent to the seller.');
+  };
+
   return (
     <div
       className={`grid ${isBreakPoint ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-3'} gap-6`}
@@ -132,26 +139,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
             {product.title}
           </h1>
-          <div className="flex flex-wrap items-center text-sm space-x-4 mb-6">
-            <div className="flex items-center text-primary_1 gap-2 font-semibold">
-              <span className="text-lg">{product.rating.toFixed(1)}</span>
-              <StarRating
-                initialRating={product.rating}
-                maxRating={5}
-                starSize={18}
-                readOnly
-              />
-            </div>
-            <span className="text-gray-500">
-              {product.totalReviews.toLocaleString()} reviews
-            </span>
-            <span className="text-gray-500">
-              {product.sold.toLocaleString()} Sold
-            </span>
-            <span className="text-gray-500">
-              {product.viewed.toLocaleString()} Viewed
-            </span>
-          </div>
+
           <h2 className="text-3xl md:text-4xl font-bold text-primary_1 mb-6">
             {product.price}
           </h2>
@@ -212,17 +200,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => {
-              if (!user) {
-                dispatch(openAuthDialog());
-                return;
-              } else {
-                router.push(`/reviews/${product.id}`);
-              }
-            }}
+            onClick={() => handleAction(() => setMakeOfferDialogOpen(true))}
             className="flex-1"
           >
-            <HiOutlineArrowRight className="mr-2 h-4 w-4" /> See Reviews
+            <HiOutlineArrowRight className="mr-2 h-4 w-4" /> Make an Offer
           </Button>
         </div>
       </div>
@@ -306,6 +287,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         open={safetyDialogOpen}
         onOpenChange={setSafetyDialogOpen}
         safetyTips={safetyTips}
+      />
+
+      <MakeOfferDialog
+        open={makeOfferDialogOpen}
+        onOpenChange={setMakeOfferDialogOpen}
+        currentPrice={product.price}
+        onSubmitOffer={handleSubmitOffer}
       />
     </div>
   );

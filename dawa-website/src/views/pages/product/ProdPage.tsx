@@ -118,7 +118,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
         <ShareSection />
       </section>
 
-      <section>
+      <section className="container mx-auto mb-12">
         <ProductTabs product={product} />
       </section>
     </div>
