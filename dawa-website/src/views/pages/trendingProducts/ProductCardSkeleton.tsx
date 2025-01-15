@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ProductCardSkeleton = ({
-  ITEMS_PER_PAGE = 16,
+  ITEMS_PER_PAGE = 8,
 }: {
   ITEMS_PER_PAGE?: number;
 }) => {

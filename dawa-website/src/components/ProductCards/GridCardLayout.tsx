@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
     return (
       <Card
         onClick={handleCardClick}
-        className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg h-full"
+        className="overflow-hidden cursor-pointer w-full max-w-[280px] transition-shadow hover:shadow-lg h-full"
       >
         <CardContent className="p-0">
           {/* Product Image and Like Button */}

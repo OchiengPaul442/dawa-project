@@ -20,6 +20,7 @@ import {
 import { useCategoryData } from '@core/hooks/useProductData';
 
 import type { Category, Subcategory } from '@/types/category';
+import ProductCardSkeleton from '@/views/pages/trendingProducts/ProductCardSkeleton';
 
 interface BreadcrumbItem {
   name: string;
@@ -302,8 +303,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             />
 
             {isLoading ? (
-              <div className="text-center py-8">
-                <span>Loading...</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                <ProductCardSkeleton />
               </div>
             ) : (
               <div
