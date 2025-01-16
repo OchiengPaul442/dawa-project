@@ -1,30 +1,27 @@
 'use client';
-import React from 'react';
+
 import { Skeleton } from '@/components/ui/skeleton';
 
-const SidebarSkeleton: React.FC = () => {
+export default function SidebarSkeleton() {
   return (
-    <div className="p-4 space-y-2">
-      {Array.from({ length: 8 }).map((_, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between gap-4 p-3 bg-gray-100 rounded-md"
-        >
-          <div className="flex items-center gap-3">
-            {/* Icon Skeleton */}
-            <Skeleton className="h-8 w-8 rounded-full" />
-            {/* Text Skeleton */}
-            <div className="flex flex-col gap-1 w-full">
-              <Skeleton className="h-4 w-2/3 rounded-md" />
-              <Skeleton className="h-3 w-1/2 rounded-md" />
+    <div className="w-full bg-white border rounded-lg">
+      <div className="flex flex-col">
+        {Array.from({ length: 12 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50/50 border-b border-gray-100 last:border-b-0"
+          >
+            <div className="flex items-center gap-3">
+              {/* Icon Skeleton */}
+              <Skeleton className="h-5 w-5 rounded-md bg-gray-200/70" />
+              {/* Text Skeleton */}
+              <Skeleton className="h-4 w-24 rounded-md bg-gray-200/70" />
             </div>
+            {/* Chevron Skeleton */}
+            <Skeleton className="h-4 w-4 rounded-sm bg-gray-200/70" />
           </div>
-          {/* Chevron Skeleton */}
-          <Skeleton className="h-5 w-5 rounded-full" />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-};
-
-export default SidebarSkeleton;
+}

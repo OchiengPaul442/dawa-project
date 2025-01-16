@@ -107,9 +107,9 @@ export function LocationDialog({
                       )}
                     >
                       <span>{location.name}</span>
-                      <span className="text-gray-400 text-sm">
+                      {/* <span className="text-gray-400 text-sm">
                         {location.count} ads
-                      </span>
+                      </span> */}
                     </Button>
                   ))}
                 </div>

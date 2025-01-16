@@ -1,5 +1,5 @@
-// components/ImageCarousel.tsx
 'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import CustomImage from '../../../components/shared/CustomImage';
 import {
@@ -11,7 +11,7 @@ import {
 import useWindowSize from '@core/hooks/useWindowSize';
 
 interface ImageCarouselProps {
-  images: string[];
+  images: { image_id: number; image_url: string }[];
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
@@ -31,7 +31,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   // Automatically switch images every 3 seconds
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || images.length === 0) return;
 
     const timer = setInterval(() => {
       const nextIndex =
@@ -134,6 +134,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     visibleStartIndex + maxVisibleThumbnails,
   );
 
+  if (images.length === 0) {
+    return <p className="text-gray-500">No images available.</p>;
+  }
+
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start">
       {/* Main Image */}
@@ -149,7 +153,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
           onClick={toggleZoom}
         >
           <CustomImage
-            src={images[selectedIndex]}
+            src={images[selectedIndex]?.image_url}
             alt={`Selected Image ${selectedIndex + 1}`}
             fill
             style={{
@@ -197,12 +201,12 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             const actualIndex = visibleStartIndex + index;
             return (
               <div
-                key={actualIndex}
+                key={image.image_id}
                 className="relative w-20 h-20 m-1 flex-shrink-0 cursor-pointer"
                 onClick={() => setSelectedIndex(actualIndex)}
               >
                 <CustomImage
-                  src={image}
+                  src={image.image_url}
                   alt={`Thumbnail ${actualIndex + 1}`}
                   fill
                   style={{ objectFit: 'cover' }}

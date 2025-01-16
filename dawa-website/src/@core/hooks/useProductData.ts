@@ -5,13 +5,19 @@ import {
   getTrendingProductsList,
   getCategoriesList,
   getCategoryData,
+  addNewProduct,
+  getProductDetails,
 } from '@/app/server/products/api';
 import { setCategories } from '@/redux-store/slices/categories/categories';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from '@/redux-store/hooks';
 import { swrOptions } from '../swrConfig';
+import useSWRMutation from 'swr/mutation';
+import { getMessages, sendMessage } from '@/app/server/messages/api';
+import { SendMessagePayload } from '@/types/message';
+import { ProductUploadProps } from '@/types/product';
 
-export function useProducts() {
+export function useTrendingProducts() {
   const { data, error, isLoading, mutate } = useSWR(
     'products',
     getTrendingProductsList,
@@ -72,3 +78,72 @@ export function useCategoryData({
 
   return { data, error, isLoading, mutate };
 }
+
+export function useMessages() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'messages',
+    getMessages,
+    swrOptions,
+  );
+
+  return {
+    messagesData: data?.data || [],
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+export function useSendMessage() {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any,
+    any,
+    string,
+    SendMessagePayload
+  >('/sendmessage/', sendMessage);
+
+  return {
+    sendMessage: trigger,
+    isSending: isMutating,
+    error,
+  };
+}
+
+//:TODO FIX LATER
+export function useAddNewProduct() {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any, // Replace with the actual response type if available
+    any, // Replace with the actual error type if available
+    string, // Key type
+    ProductUploadProps // Argument type
+  >('/additem/', (key, { arg }) => addNewProduct(arg));
+
+  return {
+    addProduct: trigger,
+    isAdding: isMutating,
+    error,
+  };
+}
+
+export const useProductDetails = (itemId: any) => {
+  const {
+    data: productData,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR(
+    [`/getitemdetails`, itemId],
+    async () => {
+      const response = await getProductDetails({ item_id: itemId });
+      return response;
+    },
+    swrOptions,
+  );
+
+  return {
+    productData: productData?.data as any,
+    isError: !!error,
+    isLoading,
+    mutate,
+  };
+};

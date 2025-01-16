@@ -2,7 +2,6 @@ import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyView
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
 import ProductPage from '@/views/pages/trendingProducts';
 import dynamic from 'next/dynamic';
-import HotSalesCarousel from '@/components/features/carousels/HotSalesCarousel';
 const Sidebar = dynamic(() => import('@views/pages/category/Sidebar'));
 
 export default function HomePage() {
@@ -24,9 +23,6 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
-      <section>
-        <HotSalesCarousel />
       </section>
       <section>
         <RecentlyViewedCarousel />

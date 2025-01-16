@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 interface MakeOfferDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentPrice: string;
+  currentPrice: string | number;
   onSubmitOffer: (price: number) => void;
 }
 
@@ -23,11 +23,19 @@ export default function MakeOfferDialog({
   currentPrice,
   onSubmitOffer,
 }: MakeOfferDialogProps) {
-  const basePrice = parseInt(currentPrice.replace(/[^0-9]/g, ''));
+  // Ensure `currentPrice` is a number and fallback to 0 if invalid
+  const basePrice =
+    typeof currentPrice === 'string'
+      ? parseInt(currentPrice.replace(/[^0-9]/g, '')) || 0
+      : typeof currentPrice === 'number'
+        ? currentPrice
+        : 0;
+
   const [customPrice, setCustomPrice] = useState('');
 
   // Calculate suggested prices as percentages below the current price
   const getSuggestedPrices = (price: number) => {
+    if (price <= 0) return [];
     return [
       Math.round(price * 0.95), // 5% below
       Math.round(price * 0.9), // 10% below
@@ -66,18 +74,24 @@ export default function MakeOfferDialog({
         </p>
 
         {/* Suggested Offers */}
-        <div className="grid grid-cols-2 gap-4 py-4">
-          {suggestedPrices.map((price, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              onClick={() => setCustomPrice(price.toString())}
-              className="w-full"
-            >
-              UGX {price.toLocaleString()}
-            </Button>
-          ))}
-        </div>
+        {suggestedPrices.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 py-4">
+            {suggestedPrices.map((price, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                onClick={() => setCustomPrice(price.toString())}
+                className="w-full"
+              >
+                UGX {price.toLocaleString()}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center mb-4">
+            No suggestions available.
+          </p>
+        )}
 
         {/* Input Field with UGX prefix */}
         <div className="flex items-center gap-2">

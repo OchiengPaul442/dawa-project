@@ -2,11 +2,10 @@
 
 import React, { useState, useCallback } from 'react';
 
-import { useProducts } from '@core/hooks/useProductData';
+import { useTrendingProducts } from '@core/hooks/useProductData';
 import { addOrRemoveItemToWishlist } from '@/app/server/products/api';
 import ProductCard from '@/components/ProductCards/GridCardLayout';
 import CustomPagination from '@/components/shared/CustomPagination';
-import ProductCardSkeleton from '@/views/pages/trendingProducts/ProductCardSkeleton';
 
 interface Product {
   id: number;
@@ -19,7 +18,7 @@ interface Product {
 const ITEMS_PER_PAGE = 16;
 
 const ProductPage: React.FC = () => {
-  const { productsData, isLoading, isError, mutate } = useProducts();
+  const { productsData, isLoading, isError, mutate } = useTrendingProducts();
   const [currentPage, setCurrentPage] = useState(1);
 
   //=====================//
@@ -60,8 +59,8 @@ const ProductPage: React.FC = () => {
   //=====================//
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        <ProductCardSkeleton />
+      <div className="flex justify-center items-center h-full py-16">
+        <div className="SpinnerLoader"></div>
       </div>
     );
   }
@@ -75,7 +74,7 @@ const ProductPage: React.FC = () => {
   //=====================//
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentProducts = productsData.slice(startIndex, endIndex);
+  const currentProducts = productsData?.slice(startIndex, endIndex);
 
   //=====================//
   //     MAIN RENDER     //

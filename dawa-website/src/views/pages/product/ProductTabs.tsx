@@ -47,9 +47,9 @@ const ProductTabs: React.FC<any> = ({ product }) => {
           {activeTab === 'description' && (
             <Description title={product.title} images={product.images} />
           )}
-          {activeTab === 'specification' && (
+          {/* {activeTab === 'specification' && (
             <Specification specifications={product.specifications} />
-          )}
+          )} */}
           {activeTab === 'reviews' && (
             <Reviews reviews={reviews} onAddReview={handleAddReview} />
           )}

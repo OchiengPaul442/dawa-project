@@ -84,7 +84,7 @@ export default function ActivationForm() {
     try {
       const response = await activateAccount({
         email,
-        activation_code: fullCode,
+        otp_code: fullCode,
       });
 
       if (response.status === 200) {

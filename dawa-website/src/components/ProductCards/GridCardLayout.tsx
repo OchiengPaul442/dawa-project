@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { LikeButton } from '@/components/shared/LikeButton';
 import CustomImage from '@/components/shared/CustomImage';
+import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
+import { useDispatch } from '@/redux-store/hooks';
+import { slugify } from '@/utils/slugify';
 
 interface ProductCardProps {
   product: {
@@ -21,9 +24,11 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = React.memo(
   ({ product, onLike }) => {
     const router = useRouter();
+    const dispatch = useDispatch();
 
     const handleCardClick = useCallback(() => {
-      router.push(`/prod/${product.id}`);
+      dispatch(setSelectedProduct(product.id));
+      router.push(`/prod/${slugify(product.name)}`);
     }, [router, product.id]);
 
     const handleLikeClick = useCallback(

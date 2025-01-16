@@ -69,7 +69,7 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
       </Link>
 
       {/* Notifications */}
-      <Link
+      {/* <Link
         href="/notifications"
         className="relative hidden lg:flex items-center"
       >
@@ -81,7 +81,7 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
             </span>
           ) : null}
         </Button>
-      </Link>
+      </Link> */}
 
       {/* User Dropdown */}
       <DropdownMenu>

@@ -9,7 +9,7 @@ export interface RegisterRequest {
 
 export interface ActivationRequest {
   email: string;
-  activation_code: string;
+  otp_code: string;
 }
 
 export interface ForgotPasswordRequest {

@@ -20,7 +20,6 @@ import {
 import { useCategoryData } from '@core/hooks/useProductData';
 
 import type { Category, Subcategory } from '@/types/category';
-import ProductCardSkeleton from '@/views/pages/trendingProducts/ProductCardSkeleton';
 
 interface BreadcrumbItem {
   name: string;
@@ -255,7 +254,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
                 className={
                   index === breadcrumbItems.length - 1
                     ? 'text-gray-500 cursor-default'
-                    : 'hover:underline text-primary font-medium'
+                    : 'hover:underline text-primary_1 font-medium'
                 }
               >
                 {item.name}
@@ -303,8 +302,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             />
 
             {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                <ProductCardSkeleton />
+              <div className="flex justify-center items-center h-full py-16">
+                <div className="SpinnerLoader"></div>
               </div>
             ) : (
               <div

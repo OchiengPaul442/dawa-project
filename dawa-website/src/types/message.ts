@@ -20,3 +20,9 @@ export type UpdateMessageFunction = (
   id: string,
   updates: Partial<Message>,
 ) => Promise<Message>;
+
+export interface SendMessagePayload {
+  receiver_id: string;
+  item_id: string;
+  message: string;
+}
