@@ -18,29 +18,28 @@ export function MessageDialog({ message, onClose }: MessageDialogProps) {
   if (!message) return null;
 
   return (
-    <Dialog open={!!message} onOpenChange={onClose}>
+    <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Message from {message.sender.name}</DialogTitle>
+          <DialogTitle>Message from {message.sender.username}</DialogTitle>
           <DialogDescription>
-            Sent on {format(new Date(message.timestamp), 'MMM d, yyyy h:mm a')}
+            Sent on {format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">
           <div className="flex items-center gap-4 mb-4">
             <Avatar>
-              <AvatarImage
-                src={message.sender.avatar}
-                alt={message.sender.name}
-              />
-              <AvatarFallback>{message.sender.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={''} alt={message.sender.username} />
+              <AvatarFallback>
+                {message.sender.username.charAt(0)}
+              </AvatarFallback>
             </Avatar>
             <div>
-              <h4 className="font-semibold">{message.sender.name}</h4>
-              <p className="text-sm text-gray-500">{message.sender.id}</p>
+              <h4 className="font-semibold">{message.sender.username}</h4>
+              {/* <p className="text-sm text-gray-500">{message.sender.id}</p> */}
             </div>
           </div>
-          <p className="text-sm text-gray-700">{message.content}</p>
+          <p className="text-sm text-gray-700">{message.message}</p>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import {
   Dialog,
   DialogContent,
@@ -21,6 +25,14 @@ interface SendMessageDialogProps {
   itemId: string;
 }
 
+interface SendMessageFormValues {
+  message: string;
+}
+
+const schema = yup.object({
+  message: yup.string().required('Message is required'),
+});
+
 const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
   open,
   onOpenChange,
@@ -28,23 +40,25 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
   itemId,
 }) => {
   const { sendMessage, isSending, error } = useSendMessage();
-  const [message, setMessage] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SendMessageFormValues>({
+    resolver: yupResolver(schema),
+  });
 
-  const handleSubmitMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (data: SendMessageFormValues) => {
     try {
       await sendMessage({
         receiver_id: receiverId,
         item_id: itemId,
-        message: message,
+        message: data.message,
       });
-      setMessage('');
+      reset();
       onOpenChange(false);
-
       alert('Message sent successfully');
     } catch {
       // Error is handled via the hook's error state
@@ -60,17 +74,13 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
             Send a message to the seller about this product.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmitMessage} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="message">Your Message</Label>
-            <Textarea
-              id="message"
-              name="message"
-              value={message}
-              onChange={handleInputChange}
-              rows={4}
-              required
-            />
+            <Textarea id="message" {...register('message')} rows={4} />
+            {errors.message && (
+              <p className="text-red-500 text-sm">{errors.message.message}</p>
+            )}
           </div>
           {error && (
             <p className="text-red-500 text-sm">

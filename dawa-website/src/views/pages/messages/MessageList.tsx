@@ -20,7 +20,7 @@ export function MessageList({
   onMessageClick,
 }: MessageListProps) {
   if (loading) {
-    return <MessageListSkeleton count={5} />;
+    return <MessageListSkeleton />;
   }
 
   if (messages.length === 0) {

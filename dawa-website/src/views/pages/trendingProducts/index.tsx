@@ -3,9 +3,10 @@
 import React, { useState, useCallback } from 'react';
 
 import { useTrendingProducts } from '@core/hooks/useProductData';
-import { addOrRemoveItemToWishlist } from '@/app/server/products/api';
+import { toggleWishlistItem } from '@/app/server/wishList/api';
 import ProductCard from '@/components/ProductCards/GridCardLayout';
 import CustomPagination from '@/components/shared/CustomPagination';
+import Loader from '@/components/Loader';
 
 interface Product {
   id: number;
@@ -27,7 +28,7 @@ const ProductPage: React.FC = () => {
   const handleLike = useCallback(
     async (itemId: number) => {
       try {
-        await addOrRemoveItemToWishlist({ item_id: itemId });
+        // await toggleWishlistItem({ item_id: itemId });
 
         // Optimistically update the SWR cache
         mutate((currentData: any) => {
@@ -58,11 +59,7 @@ const ProductPage: React.FC = () => {
   //   LOADING / ERROR   //
   //=====================//
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full py-16">
-        <div className="SpinnerLoader"></div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (isError) {

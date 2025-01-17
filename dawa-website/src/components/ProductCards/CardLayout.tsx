@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import ImportedProductCard from './GridCardLayout';
 import ListLayout from './ListCardLayout';
 
 interface Image {
-  image_id: number;
+  image_id: string;
   image_url: string;
 }
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   originalPrice?: number;
@@ -24,52 +24,26 @@ interface Product {
 interface CardLayoutProps {
   product: Product;
   viewType: 'grid' | 'list';
-  onViewMore: (id: number) => void;
 }
 
-// Define the expected props for ProductCard
+// 1) Extract the prop types from the imported grid card
 type ProductCardPropsType = React.ComponentProps<typeof ImportedProductCard>;
 
-// Assert the imported ProductCard with the expected prop types
+// 2) Re-assign to maintain correct prop types for the grid card
 const ProductCard = ImportedProductCard as React.FC<ProductCardPropsType>;
 
-const CardLayout: React.FC<CardLayoutProps> = ({
-  product,
-  viewType,
-  onViewMore,
-}) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleToggleFavorite = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    setIsFavorite((prev) => !prev);
+const CardLayout: React.FC<CardLayoutProps> = ({ product, viewType }) => {
+  // Prepare a common object for both layouts
+  const transformedProduct = {
+    ...product,
+    // Ensure there's always an imageUrl even if images is empty
+    imageUrl: product.images[0]?.image_url || '',
   };
 
   if (viewType === 'grid') {
-    const transformedProduct = {
-      ...product,
-      imageUrl: product.images[0]?.image_url || '',
-      liked: isFavorite,
-    };
-
-    return (
-      <ProductCard
-        product={transformedProduct}
-        onLike={(id: number) => setIsFavorite((prev) => !prev)}
-      />
-    );
+    return <ProductCard product={transformedProduct} />;
   } else {
-    return (
-      <ListLayout
-        product={{
-          ...product,
-          imageUrl: product.images[0]?.image_url || '',
-        }}
-        onViewMore={onViewMore}
-        isLiked={isFavorite}
-        onLike={handleToggleFavorite}
-      />
-    );
+    return <ListLayout product={transformedProduct} />;
   }
 };
 

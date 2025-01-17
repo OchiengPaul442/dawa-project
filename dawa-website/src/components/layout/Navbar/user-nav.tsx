@@ -1,3 +1,4 @@
+import { useWishlistActions } from '@/@core/hooks/useWishlistActions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,11 +29,6 @@ interface UserNavProps {
     image: string;
   };
   onLogout: () => void;
-  counters: {
-    favorites?: number;
-    messages?: number;
-    notifications?: number;
-  };
 }
 
 // Number formatter for counters
@@ -41,47 +37,58 @@ const formatCount = (count: number) => {
   return count.toString();
 };
 
-export function UserNav({ user, onLogout, counters }: UserNavProps) {
+export function UserNav({ user, onLogout }: UserNavProps) {
+  const { rawWishlist } = useWishlistActions();
+  const favoritesCount = rawWishlist.length;
+
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-4">
       {/* Favorites */}
-      <Link href="/wishlist" className="relative hidden lg:flex items-center">
+      <Link
+        href="/wishlist"
+        className="relative hidden lg:flex items-center justify-center"
+      >
         <Button variant="ghost" size="icon" className="rounded-xl h-6 w-6">
           <FaHeart className="h-5 w-5 text-gray-700" />
-          {counters.favorites ? (
-            <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-primary_1 text-white text-xs font-bold rounded-full w-auto px-1 h-4 flex items-center justify-center">
-              {formatCount(counters.favorites)}
+          {favoritesCount ? (
+            <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
+              {formatCount(favoritesCount)}
             </span>
           ) : null}
         </Button>
       </Link>
 
       {/* Messages */}
-      <Link href="/messages" className="relative hidden lg:flex items-center">
+      <Link
+        href="/messages"
+        className="relative hidden lg:flex items-center justify-center"
+      >
         <Button variant="ghost" size="icon" className="rounded-full h-6 w-6">
           <MessageSquare className="h-5 w-5 text-gray-700" />
-          {counters.messages ? (
-            <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-primary_1 text-white text-xs font-bold rounded-full w-auto px-1 h-4 flex items-center justify-center">
+          {/* {counters.messages ? (
+            <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
               {formatCount(counters.messages)}
             </span>
-          ) : null}
+          ) : null} */}
         </Button>
       </Link>
 
-      {/* Notifications */}
-      {/* <Link
+      {/* Notifications (Commented Out) */}
+      {/* 
+      <Link
         href="/notifications"
-        className="relative hidden lg:flex items-center"
+        className="relative hidden lg:flex items-center justify-center"
       >
         <Button variant="ghost" size="icon" className="rounded-full h-6 w-6">
           <Bell className="h-5 w-5 text-gray-700" />
           {counters.notifications ? (
-            <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-primary_1 text-white text-xs font-bold rounded-full w-auto px-1 h-4 flex items-center justify-center">
+            <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
               {formatCount(counters.notifications)}
             </span>
           ) : null}
         </Button>
-      </Link> */}
+      </Link>
+      */}
 
       {/* User Dropdown */}
       <DropdownMenu>
@@ -96,6 +103,7 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
@@ -105,7 +113,9 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
               </p>
             </div>
           </DropdownMenuLabel>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <Link href="/account/adverts" className="cursor-pointer">
@@ -132,7 +142,9 @@ export function UserNav({ user, onLogout, counters }: UserNavProps) {
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem onClick={onLogout} className="text-red-600">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>

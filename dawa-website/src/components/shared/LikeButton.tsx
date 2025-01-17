@@ -1,33 +1,39 @@
 'use client';
 import React from 'react';
 import { FaHeart } from 'react-icons/fa';
-import { useAuth } from '@core/hooks/use-auth';
-import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
+import { useDispatch } from '@redux-store/hooks';
+import { useAuth } from '@core/hooks/use-auth';
+import { useWishlistActions } from '@core/hooks/useWishlistActions';
 
 interface LikeButtonProps {
-  isLiked: boolean;
-  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  productId: string;
   className?: string;
 }
 
 export const LikeButton: React.FC<LikeButtonProps> = ({
-  isLiked,
-  onLike,
+  productId,
   className = '',
 }) => {
-  const { user } = useAuth();
   const dispatch = useDispatch();
+  const { user } = useAuth();
+  const { isInWishlist, toggle } = useWishlistActions();
+
+  const isLiked = isInWishlist(productId);
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
+    // This calls our toggler in the custom hook
+    toggle(productId);
+  };
+
   return (
     <button
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!user) {
-          dispatch(openAuthDialog());
-          return;
-        }
-        onLike(e);
-      }}
+      onClick={handleClick}
       className={`p-2 bg-white rounded-full ${className}`}
     >
       <FaHeart

@@ -87,9 +87,6 @@ const WishlistHeader: FC<WishlistHeaderProps> = ({
               <SelectItem value="price-high" className="h-10 cursor-pointer">
                 Price: High to Low
               </SelectItem>
-              <SelectItem value="orders" className="h-10 cursor-pointer">
-                Most Orders
-              </SelectItem>
             </SelectContent>
           </Select>
         </div>

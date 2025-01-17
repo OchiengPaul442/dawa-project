@@ -2,14 +2,10 @@ import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface MessageListSkeletonProps {
-  count: number;
-}
-
-export function MessageListSkeleton({ count }: MessageListSkeletonProps) {
+export function MessageListSkeleton() {
   return (
     <ul className="space-y-4" role="list" aria-busy="true">
-      {Array.from({ length: count }).map((_, index) => (
+      {Array.from({ length: 3 }).map((_, index) => (
         <li key={index}>
           <Card>
             <CardContent className="p-4">

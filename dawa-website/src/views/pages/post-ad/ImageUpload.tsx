@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { XIcon, UploadIcon, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -146,10 +147,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {imageUrls.map((url, index) => (
                 <div key={index} className="relative group aspect-square">
-                  <img
-                    src={url}
+                  <Image
+                    src={url || '/placeholder.svg'}
                     alt={`Uploaded ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
+                    fill
+                    className="object-cover rounded-lg"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
                     <button
@@ -166,10 +168,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               ))}
               {uploadingImages.map((image) => (
                 <div key={image.id} className="relative aspect-square">
-                  <img
-                    src={image.preview}
+                  <Image
+                    src={image.preview || '/placeholder.svg'}
                     alt="Uploading"
-                    className="w-full h-full object-cover rounded-lg filter blur-[2px]"
+                    fill
+                    className="object-cover rounded-lg filter blur-[2px]"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-lg">
                     <div className="w-2/3">

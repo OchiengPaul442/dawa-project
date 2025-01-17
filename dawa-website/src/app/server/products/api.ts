@@ -1,6 +1,10 @@
-'use server';
-import { secureApiClient, openApiClient } from '@/utils/apiClient';
+import {
+  secureApiClient,
+  openApiClient,
+  secureMultipartApiClient,
+} from '@/utils/apiClient';
 import { ProductUploadProps } from '@/types/product';
+import { ReportAbuseProps } from '@/types/reportAbuse';
 
 // Fetch categories
 export const getCategoriesList = async (): Promise<any> => {
@@ -46,52 +50,21 @@ export const getProductDetails = async (body: any): Promise<any> => {
   }
 };
 
-// Add or remove an item from the wishlist
-export const addOrRemoveItemToWishlist = async (data: {
-  item_id: number;
-}): Promise<any> => {
-  try {
-    const response = await secureApiClient.post('/wishunwish/', data);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating wishlist:', error);
-    throw error;
-  }
-};
-
-// get user wishlist
-export const getUserWishlist = async (): Promise<any> => {
-  try {
-    const response = await secureApiClient.get('/getuserwishlist/');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching wishlist:', error);
-    throw error;
-  }
-};
-
 // Add a new product
-export const addNewProduct = async (body: ProductUploadProps): Promise<any> => {
-  try {
-    const response = await secureApiClient.post('/additem/', body);
-    return response.data;
-  } catch (error) {
-    console.error('Error adding new product:', error);
-    throw error;
-  }
+export const addNewProduct = async (
+  url: string,
+  { arg }: { arg: ProductUploadProps },
+): Promise<any> => {
+  return secureMultipartApiClient
+    .post(url, arg)
+    .then((response) => response.data);
 };
 
 // report abuse
-export const reportAbuse = async (data: {
-  item_id: string;
-  reason: string;
-  description: string;
-}): Promise<any> => {
-  try {
-    const response = await secureApiClient.post('/makereportofabuse/', data);
-    return response.data;
-  } catch (error) {
-    console.error('Error reporting abuse:', error);
-    throw error;
-  }
+export const reportAbuse = async (
+  url: string,
+  { arg }: { arg: ReportAbuseProps },
+): Promise<any> => {
+  console.log(arg);
+  return secureApiClient.post(url, arg).then((response) => response.data);
 };

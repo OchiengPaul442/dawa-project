@@ -35,7 +35,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user, loading, logout, counters } = useAuth();
+  const { user, loading, logout } = useAuth();
   const { scrollDirection } = useScrollDirection();
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               <UserNavSkeleton />
             ) : user ? (
               <>
-                <UserNav user={user} onLogout={logout} counters={counters} />
+                <UserNav user={user} onLogout={logout} />
                 <Button
                   className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
                   onClick={handleSellClick}

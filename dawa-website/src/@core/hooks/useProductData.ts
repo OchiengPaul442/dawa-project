@@ -7,6 +7,7 @@ import {
   getCategoryData,
   addNewProduct,
   getProductDetails,
+  reportAbuse,
 } from '@/app/server/products/api';
 import { setCategories } from '@/redux-store/slices/categories/categories';
 import { useEffect, useMemo } from 'react';
@@ -16,6 +17,8 @@ import useSWRMutation from 'swr/mutation';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
 import { SendMessagePayload } from '@/types/message';
 import { ProductUploadProps } from '@/types/product';
+import { ReportAbuseProps } from '@/types/reportAbuse';
+import { getUserWishList, toggleWishlistItem } from '@/app/server/wishList/api';
 
 export function useTrendingProducts() {
   const { data, error, isLoading, mutate } = useSWR(
@@ -109,14 +112,13 @@ export function useSendMessage() {
   };
 }
 
-//:TODO FIX LATER
 export function useAddNewProduct() {
   const { trigger, isMutating, error } = useSWRMutation<
     any, // Replace with the actual response type if available
     any, // Replace with the actual error type if available
     string, // Key type
     ProductUploadProps // Argument type
-  >('/additem/', (key, { arg }) => addNewProduct(arg));
+  >('/additem/', addNewProduct);
 
   return {
     addProduct: trigger,
@@ -147,3 +149,48 @@ export const useProductDetails = (itemId: any) => {
     mutate,
   };
 };
+
+export function useReportAbuse() {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any,
+    any,
+    string,
+    ReportAbuseProps
+  >('/makereportofabuse/', reportAbuse);
+
+  return {
+    reportAbuse: trigger,
+    isLoading: isMutating,
+    error,
+  };
+}
+
+// export function useWishlist() {
+//   const { data, error, isLoading, mutate } = useSWR(
+//     'wishlist',
+//     getUserWishList,
+//     swrOptions,
+//   );
+
+//   return {
+//     wishlist: data || [],
+//     isLoading,
+//     isError: !!error,
+//     mutate,
+//   };
+// }
+
+// export function useToggleWishlistItem() {
+//   const { trigger, isMutating, error } = useSWRMutation<
+//     any,
+//     any,
+//     string,
+//     { item_id: number }
+//   >('/wishunwish/', toggleWishlistItem);
+
+//   return {
+//     toggleItem: trigger,
+//     isToggling: isMutating,
+//     error,
+//   };
+// }

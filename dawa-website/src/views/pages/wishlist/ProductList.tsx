@@ -3,27 +3,13 @@
 import React, { FC } from 'react';
 import ProductCard from './ProductCard';
 import SkeletonProductCard from './SkeletonProductCard';
-
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  originalPrice?: string;
-  discount?: number;
-  image: string;
-  rating: number;
-  orders: number;
-  shipping: string;
-  store: string;
-  dateAdded: string;
-  description?: string;
-}
+import { Product } from '@/types/wishList';
 
 interface ProductListProps {
   products: Product[];
-  selectedItems: number[];
-  onSelectItem: (id: number) => void;
-  onRemoveItem: (id: number) => void;
+  selectedItems: string[];
+  onSelectItem: (id: string) => void;
+  onRemoveItem: (id: string) => void;
   isLoading?: boolean;
 }
 
@@ -37,6 +23,7 @@ const ProductList: FC<ProductListProps> = ({
   if (isLoading) {
     return <SkeletonProductCard />;
   }
+
   return (
     <div className="space-y-4">
       {products.map((product) => (
@@ -44,8 +31,6 @@ const ProductList: FC<ProductListProps> = ({
           key={product.id}
           product={product}
           isSelected={selectedItems.includes(product.id)}
-          onSelect={onSelectItem}
-          onRemove={onRemoveItem}
         />
       ))}
     </div>

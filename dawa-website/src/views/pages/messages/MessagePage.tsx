@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Fuse from 'fuse.js';
 import { MessageSquare, PlusCircle, Search } from 'lucide-react';
 import Button from '@/components/shared/Button';
@@ -9,38 +8,23 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageDialog } from './MessageDialog';
-import { Message, UpdateMessageFunction } from '@/types/message';
+import { Message } from '@/types/message';
 import { MessageList } from './MessageList';
-import { fetchMessages } from '@/data/messages';
 import { useMessages } from '@core/hooks/useProductData';
 
-const updateMessage: UpdateMessageFunction = async (id, updates) => {
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return { id, ...updates } as Message;
-};
-
 export default function MessagesPage() {
-  // const { messagesData, isLoading, isError, mutate } = useMessages();
+  const { messagesData, isLoading, isError } = useMessages();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [activeMessage, setActiveMessage] = useState<Message | null>(null);
-  const { data: messages = [], isLoading } = useQuery({
-    queryKey: ['messages'],
-    queryFn: fetchMessages,
-  });
-  const queryClient = useQueryClient();
 
-  const updateMessageMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Message> }) =>
-      updateMessage(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
-    },
-  });
+  // Flatten messages from items
+  const messages: Message[] = messagesData
+    ? messagesData.flatMap((item: any) => item.messages)
+    : [];
 
   const fuse = new Fuse(messages, {
-    keys: ['sender.name', 'content'],
+    keys: ['sender.username', 'message'],
     threshold: 0.3,
   });
 
@@ -55,6 +39,10 @@ export default function MessagesPage() {
         : [...prev, id],
     );
   };
+
+  if (isError) {
+    return <div>Error loading messages.</div>;
+  }
 
   return (
     <div className="my-8">
@@ -92,22 +80,20 @@ export default function MessagesPage() {
             Unread
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="all">
           <MessageList
-            messages={filteredMessages.filter(
-              (m) => !m.isArchived && !m.isSpam,
-            )}
+            messages={filteredMessages}
             loading={isLoading}
             selectedMessages={selectedMessages}
             onSelect={handleSelect}
             onMessageClick={setActiveMessage}
           />
         </TabsContent>
+
         <TabsContent value="unread">
           <MessageList
-            messages={filteredMessages.filter(
-              (m) => !m.isRead && !m.isArchived && !m.isSpam,
-            )}
+            messages={filteredMessages.filter((m) => !m.message_read)}
             loading={isLoading}
             selectedMessages={selectedMessages}
             onSelect={handleSelect}

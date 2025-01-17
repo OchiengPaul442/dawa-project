@@ -1,19 +1,22 @@
 'use client';
-
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Card } from '@/components/ui/card';
-import CustomImage from '../shared/CustomImage';
+import CustomImage from '@/components/shared/CustomImage';
 import StarRating from '@/components/shared/StarRating';
-import { LikeButton } from '@/components/shared/LikeButton';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
+import { LikeButton } from '@/components/shared/LikeButton';
+import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from '@/redux-store/hooks';
+import { slugify } from '@/utils/slugify';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   originalPrice?: number;
-  rating?: number; // Make rating optional
+  rating?: number;
   reviews?: number;
   imageUrl: string;
   sku?: string;
@@ -22,17 +25,17 @@ interface Product {
 
 interface ListLayoutProps {
   product: Product;
-  onViewMore: (id: number) => void;
-  isLiked: boolean;
-  onLike: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const ListLayout: React.FC<ListLayoutProps> = ({
-  product,
-  onViewMore,
-  isLiked,
-  onLike,
-}) => {
+const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const handleCardClick = useCallback(() => {
+    dispatch(setSelectedProduct(product.id as any));
+    router.push(`/prod/${slugify(product.name)}`);
+  }, [router, dispatch, product.id, product.name]);
+
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg w-full">
       <div className="flex flex-col sm:flex-row">
@@ -46,6 +49,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
             priority={false}
           />
         </div>
+
         <div className="flex flex-row justify-between w-full p-4">
           <div className="flex flex-col gap-2">
             {/* Conditionally render the rating */}
@@ -80,6 +84,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
               </ul>
             )}
           </div>
+
           <div className="flex flex-col items-start justify-end mt-4 sm:mt-0">
             <div className="flex flex-col items-baseline gap-1">
               {product.originalPrice && (
@@ -91,17 +96,20 @@ const ListLayout: React.FC<ListLayoutProps> = ({
                 UGX {product.price.toLocaleString()}
               </span>
             </div>
+
             <div className="flex items-center gap-3 mt-4">
               <Button
-                onClick={() => onViewMore(product.id)}
+                onClick={handleCardClick}
                 className="bg-gray-700 text-primary-foreground"
               >
                 View more
               </Button>
+
+              {/* Use the new LikeButton */}
               <LikeButton
-                isLiked={isLiked}
-                onLike={onLike}
-                className="bg-transparent hover:bg-transparent border border-primary text-primary"
+                productId={product.id}
+                className="bg-transparent hover:bg-transparent
+                           border border-primary text-primary"
               />
             </div>
           </div>

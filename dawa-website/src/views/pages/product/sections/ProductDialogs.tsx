@@ -38,17 +38,7 @@ export const ProductDialogs: React.FC<ProductDialogsProps> = ({
     <ReportAbuseDialog
       open={dialogStates.report}
       onOpenChange={() => toggleDialog('report')}
-      reportAbuseDetails={{ name: '', email: '', description: '' }}
-      handleInputChange={(e) => {
-        // Handle input change
-      }}
-      handleSubmitReport={() => {
-        console.log('Report Submitted');
-        alert(
-          'Thank you for reporting. We will review your submission shortly.',
-        );
-        toggleDialog('report');
-      }}
+      itemId={product.id}
     />
     <SendMessageDialog
       open={dialogStates.message}

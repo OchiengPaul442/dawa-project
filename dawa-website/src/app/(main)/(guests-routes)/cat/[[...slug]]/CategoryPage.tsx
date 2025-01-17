@@ -20,6 +20,7 @@ import {
 import { useCategoryData } from '@core/hooks/useProductData';
 
 import type { Category, Subcategory } from '@/types/category';
+import Loader from '@/components/Loader';
 
 interface BreadcrumbItem {
   name: string;
@@ -302,9 +303,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
             />
 
             {isLoading ? (
-              <div className="flex justify-center items-center h-full py-16">
-                <div className="SpinnerLoader"></div>
-              </div>
+              <Loader />
             ) : (
               <div
                 className={

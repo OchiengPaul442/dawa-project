@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { PencilIcon, DollarSignIcon } from 'lucide-react';
+import { PencilIcon } from 'lucide-react';
 import InputField from '@/views/auth/InputField';
 import CategorySelect from './CategorySelect';
 import ImageUpload from './ImageUpload';
@@ -15,7 +15,7 @@ import { useAddNewProduct, useCategories } from '@core/hooks/useProductData';
 import { locations } from '@/data/locations';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ProductUploadProps } from '@/types/product';
+import Loader from '@/components/Loader';
 
 // Define proper types for the form values
 type FormValues = {
@@ -24,12 +24,12 @@ type FormValues = {
   item_subcategory_id: string;
   item_description: string;
   location: string;
-  negotiation: boolean | null;
+  negotiation: boolean;
   images: File[];
 };
 
 // Create a schema that matches the FormValues type
-const schema: yup.ObjectSchema<FormValues> = yup
+const schema = yup
   .object({
     item_name: yup.string().required('Item name is required'),
     item_price: yup
@@ -43,7 +43,6 @@ const schema: yup.ObjectSchema<FormValues> = yup
     location: yup.string().required('Location is required'),
     negotiation: yup
       .boolean()
-      .nullable()
       .required('Please indicate if negotiation is open'),
     images: yup.array().of(yup.mixed<File>().required()).default([]),
   })
@@ -68,35 +67,23 @@ export default function PostAdPage() {
       item_subcategory_id: '',
       item_description: '',
       location: '',
-      negotiation: null,
+      negotiation: false,
       images: [],
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-10 px-4 flex items-center justify-center">
-        <p className="text-lg font-semibold">Loading categories...</p>
-      </div>
-    );
-  }
-
   const onSubmit = async (data: FormValues) => {
     try {
-      // Convert the data to the format expected by the API
-      const payload: ProductUploadProps = {
-        item_name: data.item_name,
-        item_price: String(data.item_price),
-        item_subcategory_id: data.item_subcategory_id,
-        item_description: data.item_description,
-        item_location: data.location,
-        item_negotiable: data.negotiation,
-        images: data.images,
-      };
+      const formData: any = new FormData();
+      formData.append('item_name', data.item_name);
+      formData.append('item_price', String(data.item_price));
+      formData.append('item_subcategory_id', data.item_subcategory_id);
+      formData.append('item_description', data.item_description);
+      formData.append('item_location', data.location);
+      formData.append('item_negotiable', String(data.negotiation));
+      data.images.forEach((image) => formData.append('images', image));
 
-      console.log('Submitting product with payload:', payload);
-
-      await addProduct(payload);
+      await addProduct(formData);
       reset();
       setSuccessMessage('Your ad has been posted successfully!');
       setTimeout(() => setSuccessMessage(null), 5000);
@@ -104,6 +91,10 @@ export default function PostAdPage() {
       console.error('Failed to add product:', err);
     }
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="container mx-auto min-h-screen py-10 px-4">
@@ -116,7 +107,6 @@ export default function PostAdPage() {
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Item Name */}
               <InputField
                 label="Item Name"
                 icon={PencilIcon}
@@ -125,17 +115,14 @@ export default function PostAdPage() {
                 {...register('item_name')}
               />
 
-              {/* Price */}
               <InputField
                 label="Price (UGX)"
                 type="number"
-                // icon={}
                 placeholder="Enter price"
                 errors={errors.item_price?.message}
                 {...register('item_price')}
               />
 
-              {/* Category Select */}
               <Controller
                 name="item_subcategory_id"
                 control={control}
@@ -154,7 +141,6 @@ export default function PostAdPage() {
                 )}
               />
 
-              {/* Location Select */}
               <div className="space-y-2">
                 <label className="block font-semibold text-gray-700">
                   Location
@@ -179,7 +165,6 @@ export default function PostAdPage() {
                 )}
               </div>
 
-              {/* Description */}
               <div className="space-y-2">
                 <label className="block font-semibold text-gray-700">
                   Description
@@ -196,7 +181,6 @@ export default function PostAdPage() {
                 )}
               </div>
 
-              {/* Negotiation */}
               <Controller
                 name="negotiation"
                 control={control}
@@ -211,7 +195,7 @@ export default function PostAdPage() {
                           <Checkbox
                             checked={field.value === true}
                             onCheckedChange={(checked) => {
-                              field.onChange(checked ? true : null);
+                              field.onChange(checked ? true : false);
                             }}
                             className="border-orange-500 text-orange-500"
                           />
@@ -221,7 +205,7 @@ export default function PostAdPage() {
                           <Checkbox
                             checked={field.value === false}
                             onCheckedChange={(checked) => {
-                              field.onChange(checked ? false : null);
+                              field.onChange(checked ? false : false);
                             }}
                             className="border-orange-500 text-orange-500"
                           />
@@ -238,7 +222,6 @@ export default function PostAdPage() {
                 )}
               />
 
-              {/* Image Upload */}
               <Controller
                 name="images"
                 control={control}
@@ -253,17 +236,15 @@ export default function PostAdPage() {
                 )}
               />
 
-              {/* Error and Success Messages */}
               {error && (
                 <p className="text-red-500 text-center">
-                  Error: {typeof error === 'string' ? error : error.message}
+                  Error: {error.message}
                 </p>
               )}
               {successMessage && (
                 <p className="text-green-500 text-center">{successMessage}</p>
               )}
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 disabled={isAdding}
