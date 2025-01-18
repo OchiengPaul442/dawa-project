@@ -134,12 +134,12 @@ export function UserNav({ user, onLogout }: UserNavProps) {
                 <span>My Shop</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            {/* <DropdownMenuItem asChild>
               <Link href="/account/performance" className="cursor-pointer">
                 <BarChart2 className="mr-2 h-4 w-4" />
                 <span>Performance</span>
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem asChild>
               <Link href="/account/settings" className="cursor-pointer">
                 <Settings className="mr-2 h-4 w-4" />

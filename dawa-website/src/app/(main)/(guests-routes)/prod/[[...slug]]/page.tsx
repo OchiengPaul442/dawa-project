@@ -1,22 +1,17 @@
 import ProdPage from '@views/pages/product/ProdPage';
 
 interface PageProps {
-  params: Promise<{
-    slug?: string[];
-  }>;
+  params: Promise<{ slug?: string[] }>;
 }
 
 const Page = async ({ params }: PageProps) => {
-  // Wait for params to resolve
+  // Await params before accessing slug
   const resolvedParams = await params;
 
-  const slug = resolvedParams?.slug
-    ? Array.isArray(resolvedParams.slug)
-      ? resolvedParams.slug
-      : [resolvedParams.slug]
-    : [];
+  // Ensure slug is always an array
+  const slug = resolvedParams?.slug ?? [];
 
-  return <ProdPage slug={slug} />;
+  return <ProdPage params={{ slug }} />;
 };
 
 export default Page;

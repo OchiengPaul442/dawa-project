@@ -4,6 +4,7 @@ import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
 import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
 import SafetyTipsDialog from '@/components/dialogs/SafetyTipsDialog';
 import MakeOfferDialog from '@/components/dialogs/MakeOfferDialog';
+import { ProductType } from '@/types/product';
 
 const safetyTips = [
   'Always inspect the item before purchasing.',
@@ -16,15 +17,7 @@ const safetyTips = [
 type DialogType = 'safety' | 'report' | 'message' | 'contact' | 'makeOffer';
 
 interface ProductDialogsProps {
-  product: {
-    id: string;
-    price: string;
-    seller: {
-      seller_id: string;
-      seller_contact: string;
-      seller_email: string;
-    };
-  };
+  product: ProductType;
   dialogStates: Record<DialogType, boolean>;
   toggleDialog: (dialog: DialogType) => void;
 }

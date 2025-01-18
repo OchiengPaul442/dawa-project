@@ -1,34 +1,28 @@
 'use client';
 
 import React from 'react';
-import ImageCarousel from './ImageCarousel';
-import ProductTabs from './ProductTabs';
-import ShareSection from './ShareSection';
-import { ProductDetails } from './ProductDetails';
-import { useProductDetails } from '@/@core/hooks/useProductData';
 import { useSelector } from '@/redux-store/hooks';
-import ProductSkeleton from './product-skeleton';
+import { useProductDetails } from '@/@core/hooks/useProductData';
+import { ProductDetails } from './ProductDetails';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
+import ProductSkeleton from './product-skeleton';
 import Link from 'next/link';
 
 interface ProdPageProps {
-  slug: string[];
+  params: { slug: string[] }; // Ensured slug exists in params
 }
 
-const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
+const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
+  const { slug } = params; // Now correctly typed and always an array
+
   const selectedProductId = useSelector(
     (state) => state.product.selectedProductId,
   );
-
   const { productData, isLoading, isError } =
     useProductDetails(selectedProductId);
 
-  // Handle loading state
-  if (isLoading) {
-    return <ProductSkeleton />;
-  }
+  if (isLoading) return <ProductSkeleton />;
 
-  // Handle error state
   if (isError) {
     return (
       <div className="container mx-auto py-10 px-5 text-center">
@@ -39,8 +33,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
     );
   }
 
-  // Handle missing product or invalid slug
-  if (!productData || !slug || slug.length === 0) {
+  if (!productData || slug.length === 0) {
     return (
       <div className="container mx-auto py-10 px-5 text-center">
         <p className="text-gray-500">
@@ -54,37 +47,17 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
   }
 
   return (
-    <div className="flex flex-col gap-10">
-      <section className="container mx-auto py-10 px-5">
-        {/* Use the refactored Breadcrumbs component */}
-        <Breadcrumbs
-          categoryName={productData.category}
-          subcategoryName={productData.subcategory}
-          productName={productData.name}
-        />
+    <section className="container mx-auto h-screen py-10 px-5">
+      <Breadcrumbs
+        categoryName={productData.category}
+        subcategoryName={productData.subcategory}
+        productName={productData.name}
+      />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Product Images Carousel */}
-          {productData.images && productData.images.length > 0 ? (
-            <ImageCarousel images={productData.images} />
-          ) : (
-            <p className="text-gray-500">
-              No images available for this product.
-            </p>
-          )}
-
-          {/* Product Details */}
-          <ProductDetails product={productData} />
-        </div>
-
-        {/* Share Section */}
-        <ShareSection />
-      </section>
-
-      <section className="container mx-auto mb-12">
-        <ProductTabs product={productData} />
-      </section>
-    </div>
+      <div>
+        <ProductDetails product={productData} />
+      </div>
+    </section>
   );
 };
 

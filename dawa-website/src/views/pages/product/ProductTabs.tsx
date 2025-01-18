@@ -1,61 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
-import Description from './Description';
-import Specification from './Specification';
-import Reviews from './Reviews';
-import { Review } from './ReviewItem';
+import React from 'react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import Description from './sections/Description';
+import Reviews from './sections/Reviews';
+import { ProductType } from '@/types/product';
 
-const ProductTabs: React.FC<any> = ({ product }) => {
-  const [activeTab, setActiveTab] = useState('description');
-  const [reviews, setReviews] = useState<Review[]>(product.reviews || []);
+interface ProductTabsProps {
+  product: ProductType;
+}
 
-  const handleAddReview = (review: Review) => {
-    setReviews((prevReviews) => [...prevReviews, review]);
-  };
-
+const ProductTabs: React.FC<ProductTabsProps> = ({ product }) => {
   return (
-    <div className="flex flex-wrap lg:flex-nowrap gap-6">
-      {/* Tabs and Content Section */}
-      <div className="w-full flex flex-col gap-6 lg:w-[111%]">
-        {/* Tabs Navigation */}
-        <div className="flex justify-between items-center bg-gray-100 px-4 lg:px-6 rounded-md overflow-x-auto">
-          {['Description', 'Specification', `Reviews (${reviews.length})`].map(
-            (tab, index) => (
-              <button
-                key={index}
-                className={`relative py-2 md:py-4 px-2 md:px-4 text-center transition-all ${
-                  activeTab === tab.toLowerCase().replace(/\s\(.+?\)/, '')
-                    ? 'text-primary_1 font-semibold'
-                    : 'text-gray-600'
-                }`}
-                onClick={() =>
-                  setActiveTab(tab.toLowerCase().replace(/\s\(.+?\)/, ''))
-                }
-              >
-                {tab}
-                {activeTab === tab.toLowerCase().replace(/\s\(.+?\)/, '') && (
-                  <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-[3px] w-6 md:w-8 bg-primary_1 rounded-t"></span>
-                )}
-              </button>
-            ),
-          )}
-        </div>
-
-        {/* Tabs Content */}
-        <div>
-          {activeTab === 'description' && (
-            <Description title={product.title} images={product.images} />
-          )}
-          {/* {activeTab === 'specification' && (
-            <Specification specifications={product.specifications} />
-          )} */}
-          {activeTab === 'reviews' && (
-            <Reviews reviews={reviews} onAddReview={handleAddReview} />
-          )}
-        </div>
-      </div>
-    </div>
+    <Tabs defaultValue="description" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-8 h-auto">
+        <TabsTrigger value="description" className="h-10">
+          Description
+        </TabsTrigger>
+        <TabsTrigger value="reviews" className="h-10">
+          Reviews ({product.reviews?.length || 0})
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="description">
+        <Description product={product} />
+      </TabsContent>
+      <TabsContent value="reviews">
+        <Reviews product={product as any} />
+      </TabsContent>
+    </Tabs>
   );
 };
 

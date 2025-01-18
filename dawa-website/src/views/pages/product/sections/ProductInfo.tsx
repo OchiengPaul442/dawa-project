@@ -1,24 +1,42 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { ProductType } from '@/types/product';
+import { CalendarDays, MapPin } from 'lucide-react';
+import { format } from 'date-fns';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface ProductInfoProps {
-  product: {
-    name: string;
-    price: string;
-    item_negotiable: boolean;
-  };
+  product: ProductType;
 }
 
-export const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => (
-  <div className="bg-white p-6 rounded-lg shadow-sm">
-    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-      {product.name}
-    </h1>
-    <h2 className="text-3xl md:text-4xl font-bold text-primary_1 mb-6">
-      UGX {product.price}
-    </h2>
-    <Badge variant={product.item_negotiable ? 'secondary' : 'default'}>
-      {product.item_negotiable ? 'Negotiable' : 'Fixed Price'}
-    </Badge>
-  </div>
-);
+export const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
+  return (
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+      <div className="flex items-center space-x-4">
+        <Badge
+          variant={product.item_negotiable ? 'secondary' : 'default'}
+          className="text-sm"
+        >
+          {product.item_negotiable ? 'Negotiable' : 'Fixed Price'}
+        </Badge>
+        <Badge
+          className={`text-sm ${product.status === 'Available' ? 'bg-green-500' : 'bg-red-500'}`}
+        >
+          {product.status}
+        </Badge>
+        <span className="text-sm text-gray-500 flex items-center">
+          <CalendarDays className="w-4 h-4 mr-1" />
+          Posted {format(new Date(product.created_at), 'MMMM d, yyyy')}
+        </span>
+      </div>
+      <h2 className="text-4xl font-bold text-primary_1">
+        <CurrencyFormatter price={product.price as any} />
+      </h2>
+      <p className="text-sm text-gray-600 flex items-center">
+        <MapPin className="w-4 h-4 mr-1" />
+        {product.location}
+      </p>
+    </div>
+  );
+};

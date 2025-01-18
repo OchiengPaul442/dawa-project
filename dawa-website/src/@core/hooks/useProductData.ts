@@ -8,6 +8,7 @@ import {
   addNewProduct,
   getProductDetails,
   reportAbuse,
+  sendReview,
 } from '@/app/server/products/api';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from '@/redux-store/hooks';
@@ -138,6 +139,19 @@ export function useReportAbuse() {
 
   return {
     reportAbuse: trigger,
+    isLoading: isMutating,
+    error,
+  };
+}
+
+export function useSendReviews() {
+  const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
+    '/submitreview/',
+    sendReview,
+  );
+
+  return {
+    sendReviews: trigger,
     isLoading: isMutating,
     error,
   };

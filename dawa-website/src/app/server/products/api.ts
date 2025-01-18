@@ -68,3 +68,11 @@ export const reportAbuse = async (
   console.log(arg);
   return secureApiClient.post(url, arg).then((response) => response.data);
 };
+
+// send review
+export const sendReview = async (
+  url: string,
+  { arg }: { arg: any },
+): Promise<any> => {
+  return secureApiClient.post(url, arg).then((response) => response.data);
+};

@@ -16,21 +16,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { slugify } from '@/utils/slugify';
 import { categories } from '@/lib/mock_data';
-import {
-  FcAutomotive,
-  FcHome,
-  FcPhoneAndroid,
-  FcElectronics,
-  FcShop,
-  FcCustomerSupport,
-  FcBusiness,
-  FcSportsMode,
-  FcCollaboration,
-  FcFinePrint,
-  FcLandscape,
-  FcCamcorderPro,
-  FcBriefcase,
-} from 'react-icons/fc';
+
 import { ChevronRight } from 'lucide-react';
 
 // Define the Category interface based on the updated categories array

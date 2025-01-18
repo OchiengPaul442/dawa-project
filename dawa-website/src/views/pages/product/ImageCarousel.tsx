@@ -1,272 +1,222 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import CustomImage from '../../../components/shared/CustomImage';
+import React, { useState } from 'react';
+import Image from 'next/image';
 import {
-  AiOutlineUp,
-  AiOutlineDown,
-  AiOutlineLeft,
-  AiOutlineRight,
-} from 'react-icons/ai';
-import useWindowSize from '@core/hooks/useWindowSize';
+  ChevronLeft,
+  ChevronRight,
+  Expand,
+  ZoomIn,
+  ZoomOut,
+  X,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { VisuallyHidden } from '@/components/ui/visually-hidden';
+
+interface ImageType {
+  image_id: number;
+  image_url: string;
+}
 
 interface ImageCarouselProps {
-  images: { image_id: number; image_url: string }[];
+  images: ImageType[];
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
-  const windowSize = useWindowSize();
-  const { width } = windowSize;
-
-  // Determine layout based on screen width
-  const isMobile = width < 768;
-  const maxVisibleThumbnails = isMobile ? 2 : width < 1024 ? 3 : 4;
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [visibleStartIndex, setVisibleStartIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomStyle, setZoomStyle] = useState<React.CSSProperties>({});
-  const mainImageRef = useRef<HTMLDivElement>(null);
+  const [showFullscreen, setShowFullscreen] = useState(false);
 
-  // Automatically switch images every 3 seconds
-  useEffect(() => {
-    if (isPaused || images.length === 0) return;
+  // Safely get current image
+  const currentImage = images[currentIndex] || images[0];
 
-    const timer = setInterval(() => {
-      const nextIndex =
-        selectedIndex === images.length - 1 ? 0 : selectedIndex + 1;
-      setSelectedIndex(nextIndex);
-
-      // Update thumbnail visibility when switching automatically
-      if (nextIndex >= visibleStartIndex + maxVisibleThumbnails) {
-        setVisibleStartIndex(
-          Math.min(visibleStartIndex + 1, images.length - maxVisibleThumbnails),
-        );
-      }
-      if (nextIndex < visibleStartIndex) {
-        setVisibleStartIndex(Math.max(visibleStartIndex - 1, 0));
-      }
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [
-    selectedIndex,
-    visibleStartIndex,
-    images.length,
-    maxVisibleThumbnails,
-    isPaused,
-  ]);
-
-  const handleScrollUp = () => {
-    if (visibleStartIndex > 0) {
-      setVisibleStartIndex((prev) => Math.max(prev - 1, 0));
-      setSelectedIndex((prev) => Math.max(prev - 1, 0));
-    }
+  const handlePrevious = () => {
+    setCurrentIndex((current) =>
+      current === 0 ? images.length - 1 : current - 1,
+    );
   };
 
-  const handleScrollDown = () => {
-    if (visibleStartIndex + maxVisibleThumbnails < images.length) {
-      setVisibleStartIndex((prev) =>
-        Math.min(prev + 1, images.length - maxVisibleThumbnails),
-      );
-      setSelectedIndex((prev) => Math.min(prev + 1, images.length - 1));
-    }
-  };
-
-  const handleScrollLeft = () => {
-    if (visibleStartIndex > 0) {
-      setVisibleStartIndex((prev) => Math.max(prev - 1, 0));
-      setSelectedIndex((prev) => Math.max(prev - 1, 0));
-    }
-  };
-
-  const handleScrollRight = () => {
-    if (visibleStartIndex + maxVisibleThumbnails < images.length) {
-      setVisibleStartIndex((prev) =>
-        Math.min(prev + 1, images.length - maxVisibleThumbnails),
-      );
-      setSelectedIndex((prev) => Math.min(prev + 1, images.length - 1));
-    }
-  };
-
-  const handleMouseEnter = () => {
-    setIsPaused(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsPaused(false);
-    setIsZoomed(false);
-    setZoomStyle({});
-  };
-
-  const handleTouchStart = () => {
-    setIsPaused(true);
-  };
-
-  const handleTouchEnd = () => {
-    setIsPaused(false);
-    setIsZoomed(false);
-    setZoomStyle({});
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (!isZoomed || !mainImageRef.current) return;
-
-    const rect = mainImageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position within the element
-    const y = e.clientY - rect.top; // y position within the element
-
-    const xPercent = (x / rect.width) * 100;
-    const yPercent = (y / rect.height) * 100;
-
-    setZoomStyle({
-      transformOrigin: `${xPercent}% ${yPercent}%`,
-    });
+  const handleNext = () => {
+    setCurrentIndex((current) =>
+      current === images.length - 1 ? 0 : current + 1,
+    );
   };
 
   const toggleZoom = () => {
-    setIsZoomed((prev) => !prev);
+    setIsZoomed(!isZoomed);
   };
 
-  const visibleThumbnails = images.slice(
-    visibleStartIndex,
-    visibleStartIndex + maxVisibleThumbnails,
-  );
-
-  if (images.length === 0) {
-    return <p className="text-gray-500">No images available.</p>;
+  if (!images || images.length === 0) {
+    return (
+      <Card className="relative aspect-[4/3] bg-gray-100">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <p className="text-gray-500">No images available</p>
+        </div>
+      </Card>
+    );
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-center md:items-start">
-      {/* Main Image */}
-      <div className="flex-1 w-full md:w-auto md:flex-1 lg:flex-2 h-auto max-w-full">
-        <div
-          ref={mainImageRef}
-          className="relative w-full h-64 sm:h-96 md:h-[450px] lg:h-[450px] border overflow-hidden cursor-zoom-in"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onMouseMove={handleMouseMove}
-          onClick={toggleZoom}
-        >
-          <CustomImage
-            src={images[selectedIndex]?.image_url}
-            alt={`Selected Image ${selectedIndex + 1}`}
-            fill
-            style={{
-              objectFit: isZoomed ? 'cover' : 'cover',
-              transition: 'transform 0.3s ease',
-              transform: isZoomed ? 'scale(1.5)' : 'scale(1)',
-              ...zoomStyle,
-            }}
-          />
-        </div>
-      </div>
+    <div className="space-y-4">
+      {/* Main Image Container */}
+      <Card className="relative overflow-hidden bg-gray-100">
+        <div className="relative aspect-[4/3] md:aspect-[16/9]">
+          <div
+            className={`relative h-full w-full transition-transform duration-300 ${
+              isZoomed ? 'cursor-zoom-out scale-150' : 'cursor-zoom-in'
+            }`}
+          >
+            <Image
+              src={currentImage.image_url || '/placeholder.svg'}
+              alt={`Product image ${currentIndex + 1}`}
+              fill
+              priority
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 50vw"
+              onClick={toggleZoom}
+            />
+          </div>
 
-      {/* Thumbnails with Scrolling */}
-      <div
-        className={`flex flex-col items-center mt-4 md:mt-0 ${
-          isMobile ? 'flex-row md:flex-col ml-0 md:ml-4' : 'ml-4'
-        } space-y-4 md:space-y-0 md:space-x-2`}
-      >
-        {/* Navigation Arrows */}
-        {!isMobile ? (
-          <>
-            {/* Up Arrow */}
-            <button
-              className={`p-1 text-gray-500 hover:text-primary_1 ${
-                visibleStartIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              onClick={handleScrollUp}
-              disabled={visibleStartIndex === 0}
-              aria-label="Scroll Up"
-            >
-              <AiOutlineUp size={24} />
-            </button>
-          </>
-        ) : null}
-
-        {/* Thumbnails */}
-        <div
-          className={`flex ${
-            isMobile
-              ? 'flex-row space-x-3 overflow-x-auto'
-              : 'flex-col space-y-3 overflow-hidden'
-          }`}
-        >
-          {visibleThumbnails.map((image, index) => {
-            const actualIndex = visibleStartIndex + index;
-            return (
-              <div
-                key={image.image_id}
-                className="relative w-20 h-20 m-1 flex-shrink-0 cursor-pointer"
-                onClick={() => setSelectedIndex(actualIndex)}
+          {/* Navigation Controls */}
+          {images.length > 1 && (
+            <>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+                onClick={handlePrevious}
               >
-                <CustomImage
-                  src={image.image_url}
-                  alt={`Thumbnail ${actualIndex + 1}`}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  className={`${
-                    selectedIndex === actualIndex ? 'ring-2 ring-primary_1' : ''
-                  }`}
-                />
-              </div>
-            );
-          })}
-        </div>
+                <ChevronLeft className="h-4 w-4" />
+                <VisuallyHidden>Previous image</VisuallyHidden>
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+                onClick={handleNext}
+              >
+                <ChevronRight className="h-4 w-4" />
+                <VisuallyHidden>Next image</VisuallyHidden>
+              </Button>
+            </>
+          )}
 
-        {!isMobile ? (
-          <>
-            {/* Down Arrow */}
-            <button
-              className={`p-1 text-gray-500 hover:text-primary_1 ${
-                visibleStartIndex + maxVisibleThumbnails >= images.length
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }`}
-              onClick={handleScrollDown}
-              disabled={
-                visibleStartIndex + maxVisibleThumbnails >= images.length
-              }
-              aria-label="Scroll Down"
+          {/* Controls */}
+          <div className="absolute bottom-4 left-4 flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="icon"
+              className="bg-white/80 hover:bg-white shadow-lg"
+              onClick={toggleZoom}
             >
-              <AiOutlineDown size={24} />
-            </button>
-          </>
-        ) : null}
-      </div>
+              {isZoomed ? (
+                <ZoomOut className="h-4 w-4" />
+              ) : (
+                <ZoomIn className="h-4 w-4" />
+              )}
+              <VisuallyHidden>
+                {isZoomed ? 'Zoom out' : 'Zoom in'}
+              </VisuallyHidden>
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="bg-white/80 hover:bg-white shadow-lg"
+              onClick={() => setShowFullscreen(true)}
+            >
+              <Expand className="h-4 w-4" />
+              <VisuallyHidden>View fullscreen</VisuallyHidden>
+            </Button>
+          </div>
 
-      {/* Mobile Navigation Arrows */}
-      {isMobile && (
-        <div className="flex space-x-2 mt-2">
-          <button
-            className={`p-1 text-gray-500 hover:text-primary_1 ${
-              visibleStartIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            onClick={handleScrollLeft}
-            disabled={visibleStartIndex === 0}
-            aria-label="Scroll Left"
-          >
-            <AiOutlineLeft size={24} />
-          </button>
-          <button
-            className={`p-1 text-gray-500 hover:text-primary_1 ${
-              visibleStartIndex + maxVisibleThumbnails >= images.length
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            }`}
-            onClick={handleScrollRight}
-            disabled={visibleStartIndex + maxVisibleThumbnails >= images.length}
-            aria-label="Scroll Right"
-          >
-            <AiOutlineRight size={24} />
-          </button>
+          {/* Image Counter */}
+          <div className="absolute bottom-4 right-4 bg-white/80 px-3 py-1.5 rounded-full text-sm font-medium">
+            {currentIndex + 1} / {images.length}
+          </div>
+        </div>
+      </Card>
+
+      {/* Thumbnail Strip */}
+      {images.length > 1 && (
+        <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 gap-2 px-1">
+          {images.map((image, index) => (
+            <button
+              key={image.image_id}
+              onClick={() => setCurrentIndex(index)}
+              className={`
+                relative aspect-square rounded-lg overflow-hidden
+                transition-all duration-200
+                ${
+                  currentIndex === index
+                    ? 'ring-2 ring-primary ring-offset-2'
+                    : 'hover:ring-2 hover:ring-primary/50 hover:ring-offset-1'
+                }
+              `}
+            >
+              <Image
+                src={image.image_url || '/placeholder.svg'}
+                alt={`Thumbnail ${index + 1}`}
+                fill
+                className={`
+                  object-cover
+                  ${currentIndex === index ? 'opacity-100' : 'opacity-70 hover:opacity-100'}
+                `}
+                sizes="(max-width: 768px) 20vw, 10vw"
+              />
+            </button>
+          ))}
         </div>
       )}
+
+      {/* Fullscreen Dialog */}
+      <Dialog open={showFullscreen} onOpenChange={setShowFullscreen}>
+        <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
+          <DialogTitle className="sr-only">Fullscreen Image View</DialogTitle>
+          <div className="relative w-full h-full">
+            <Image
+              src={currentImage.image_url || '/placeholder.svg'}
+              alt={`Product image ${currentIndex + 1} fullscreen`}
+              fill
+              className="object-contain"
+              priority
+            />
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute top-4 right-4 bg-white/80 hover:bg-white shadow-lg"
+              onClick={() => setShowFullscreen(false)}
+            >
+              <X className="h-4 w-4" />
+              <VisuallyHidden>Close fullscreen view</VisuallyHidden>
+            </Button>
+
+            {images.length > 1 && (
+              <>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+                  onClick={handlePrevious}
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                  <VisuallyHidden>Previous image</VisuallyHidden>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
+                  onClick={handleNext}
+                >
+                  <ChevronRight className="h-6 w-6" />
+                  <VisuallyHidden>Next image</VisuallyHidden>
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

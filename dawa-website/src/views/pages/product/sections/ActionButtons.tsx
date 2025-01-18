@@ -1,6 +1,5 @@
 import React from 'react';
-import { FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
-import { HiOutlineArrowRight } from 'react-icons/hi';
+import { PhoneCall, MessageCircle, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ActionButtonsProps {
@@ -14,20 +13,24 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   onMessage,
   onMakeOffer,
 }) => (
-  <div className="flex flex-wrap gap-4">
-    <Button variant="outline" size="lg" className="flex-1" onClick={onContact}>
-      <FaPhoneAlt className="mr-2 h-4 w-4" /> Contact
-    </Button>
-    <Button size="lg" className="flex-1 bg-primary_1" onClick={onMessage}>
-      <FaEnvelope className="mr-2 h-4 w-4" /> Message
+  <div className="grid grid-cols-3 gap-4">
+    <Button variant="outline" size="lg" className="w-full" onClick={onContact}>
+      <PhoneCall className="mr-2 h-4 w-4" /> Contact
     </Button>
     <Button
-      variant="outline"
       size="lg"
-      className="flex-1"
+      className="w-full bg-primary_1 hover:bg-gray-700"
+      onClick={onMessage}
+    >
+      <MessageCircle className="mr-2 h-4 w-4" /> Message
+    </Button>
+    <Button
+      variant="secondary"
+      size="lg"
+      className="w-full"
       onClick={onMakeOffer}
     >
-      <HiOutlineArrowRight className="mr-2 h-4 w-4" /> Make an Offer
+      <DollarSign className="mr-2 h-4 w-4" /> Make Offer
     </Button>
   </div>
 );
