@@ -105,7 +105,7 @@ const BestDeals: React.FC = () => {
         {products.map((product) => (
           <RecentlyViewedCard
             key={product.id}
-            product={product}
+            product={product as any}
             onClick={() => handleClick(product.id)}
           />
         ))}
