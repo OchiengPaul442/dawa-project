@@ -38,8 +38,7 @@ const formatCount = (count: number) => {
 };
 
 export function UserNav({ user, onLogout }: UserNavProps) {
-  const { rawWishlist } = useWishlistActions();
-  const favoritesCount = rawWishlist.length;
+  const { wishlistCount } = useWishlistActions();
 
   return (
     <div className="flex items-center gap-4">
@@ -50,11 +49,17 @@ export function UserNav({ user, onLogout }: UserNavProps) {
       >
         <Button variant="ghost" size="icon" className="rounded-xl h-6 w-6">
           <FaHeart className="h-5 w-5 text-gray-700" />
-          {favoritesCount ? (
+          {wishlistCount ? (
             <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
-              {formatCount(favoritesCount)}
+              {formatCount(wishlistCount as any)}
             </span>
-          ) : null}
+          ) : (
+            <span>
+              <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
+                0
+              </span>
+            </span>
+          )}
         </Button>
       </Link>
 

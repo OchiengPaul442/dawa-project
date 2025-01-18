@@ -9,7 +9,7 @@ const selectedProductSlice = createSlice({
   name: 'selectedProduct',
   initialState,
   reducers: {
-    setSelectedProduct: (state, action: PayloadAction<number>) => {
+    setSelectedProduct: (state, action: PayloadAction<any>) => {
       state.selectedProductId = action.payload;
       state.lastSelectedAt = new Date().toISOString();
     },

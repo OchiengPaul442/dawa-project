@@ -3,5 +3,5 @@ export const swrOptions = {
   revalidateOnReconnect: false,
   refreshWhenOffline: false,
   refreshWhenHidden: false,
-  dedupingInterval: 60000, // Deduplicate requests made within 60 seconds
+  dedupingInterval: 60000,
 };

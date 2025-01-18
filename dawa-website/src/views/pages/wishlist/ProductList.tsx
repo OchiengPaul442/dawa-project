@@ -7,19 +7,10 @@ import { Product } from '@/types/wishList';
 
 interface ProductListProps {
   products: Product[];
-  selectedItems: string[];
-  onSelectItem: (id: string) => void;
-  onRemoveItem: (id: string) => void;
   isLoading?: boolean;
 }
 
-const ProductList: FC<ProductListProps> = ({
-  products,
-  selectedItems,
-  onSelectItem,
-  onRemoveItem,
-  isLoading = false,
-}) => {
+const ProductList: FC<ProductListProps> = ({ products, isLoading = false }) => {
   if (isLoading) {
     return <SkeletonProductCard />;
   }
@@ -27,11 +18,7 @@ const ProductList: FC<ProductListProps> = ({
   return (
     <div className="space-y-4">
       {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          isSelected={selectedItems.includes(product.id)}
-        />
+        <ProductCard key={product.id} product={product} />
       ))}
     </div>
   );

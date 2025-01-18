@@ -12,30 +12,20 @@ import {
 } from '@/components/ui/tooltip';
 import CustomImage from '@/components/shared/CustomImage';
 import { useRouter } from 'next/navigation';
-import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { slugify } from '@/utils/slugify';
 import { useDispatch } from '@redux-store/hooks';
-
-// Import the hook so we can call toggleWishlist
+import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useWishlistActions } from '@core/hooks/useWishlistActions';
-import { useSWRConfig } from 'swr';
 
-// Types
 import { ProductCardProps } from '@/types/wishList';
 
 const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { removeItem } = useWishlistActions();
 
-  // Access the toggle function from the hook
-  const { toggle } = useWishlistActions();
-  // Access SWR's mutate for manual cache updates
-  const { mutate: globalMutate } = useSWRConfig();
-
-  // Handle sharing
   const handleShare = useCallback(() => {
     if (navigator.share) {
-      // Web Share API
       navigator
         .share({
           title: product.name,
@@ -45,7 +35,6 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
         .then(() => console.log('Successful share'))
         .catch((error) => console.error('Error sharing', error));
     } else {
-      // Clipboard fallback
       navigator.clipboard
         .writeText(window.location.href)
         .then(() => alert('Link copied to clipboard!'))
@@ -53,28 +42,14 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
     }
   }, [product]);
 
-  // Immediately remove the item from the SWR cache after toggling
-  const handleRemoveFromWishlist = useCallback(() => {
-    // 1) Toggle in Redux + server
-    toggle(product.id);
-
-    // 2) Manually remove from the local SWR cache so it disappears immediately
-    globalMutate(
-      'userWishlist',
-      (existingData: any[] | undefined) =>
-        existingData
-          ? existingData.filter((item) => item.id !== product.id)
-          : [],
-      false,
-    );
-  }, [product.id, toggle, globalMutate]);
-
   const handleViewDetails = useCallback(() => {
-    // Optionally store selected product in Redux
-    dispatch(setSelectedProduct(product.id as any));
-    // Navigate to product page
+    dispatch(setSelectedProduct(product.id));
     router.push(`/prod/${slugify(product.name)}`);
   }, [dispatch, router, product]);
+
+  const handleRemoveFromWishlist = useCallback(() => {
+    removeItem(product.id);
+  }, [removeItem, product.id]);
 
   return (
     <Card className="hover:shadow-md transition-shadow duration-200">

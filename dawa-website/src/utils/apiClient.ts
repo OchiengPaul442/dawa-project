@@ -51,10 +51,6 @@ export async function apiRequest(
         : await secureApiClient.post(url, data);
     return response.data;
   } catch (error: any) {
-    console.error(
-      `Error in API request [${method.toUpperCase()} ${url}]:`,
-      error?.response?.data || error.message || 'Unknown error',
-    );
     throw error?.response?.data || error.message || error;
   }
 }
