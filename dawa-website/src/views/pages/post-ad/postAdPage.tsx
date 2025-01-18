@@ -117,6 +117,7 @@ export default function PostAdPage() {
       await addProduct(formData as any);
 
       reset();
+      alert('Your ad has been posted successfully!');
       setSuccessMessage('Your ad has been posted successfully!');
       setTimeout(() => setSuccessMessage(null), 5000);
       setCurrentStep(1); // Optionally reset to step 1
@@ -146,7 +147,7 @@ export default function PostAdPage() {
   };
 
   return (
-    <div className="container mx-auto min-h-screen py-10">
+    <div className="min-h-screen py-10">
       <div className="max-w-3xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="border-b bg-gray-50/50">

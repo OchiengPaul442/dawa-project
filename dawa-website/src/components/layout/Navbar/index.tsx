@@ -37,17 +37,12 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const pathname = usePathname();
   const { user, loading, logout } = useAuth();
   const { scrollDirection } = useScrollDirection();
-  const [showBackArrow, setShowBackArrow] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    setShowBackArrow(window.history.length > 1);
-  }, [pathname, router]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -221,12 +216,10 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
       <div className={`lg:hidden bg-white`}>
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           {/* left arrow */}
-          {showBackArrow === true && (
-            <ChevronLeft
-              className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
-              onClick={() => router.back()}
-            />
-          )}
+          <ChevronLeft
+            className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
+            onClick={() => router.back()}
+          />
 
           {/* search */}
           <div className="relative w-full">
