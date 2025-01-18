@@ -1,9 +1,7 @@
-'use client';
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface WishlistState {
-  items: string[]; // store only item IDs (to keep it simple)
+  items: string[]; // store only item IDs
   count: number; // track the number of wishlist items
 }
 

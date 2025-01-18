@@ -3,12 +3,11 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
-import { useCategories } from '@/@core/hooks/useProductData';
 import SidebarSkeleton from './SidebarSkeleton';
 
 import {
@@ -29,6 +28,7 @@ import {
   setSelectedCategory,
   setSelectedSubcategory,
 } from '@redux-store/slices/categories/categorySlice';
+import { selectCategories } from '@redux-store/slices/categories/categories';
 
 const DefaultIcon = ShoppingBag;
 
@@ -73,7 +73,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
-  const { categories, isLoading } = useCategories();
+  // Retrieve categories from Redux
+  const categories = useSelector(selectCategories);
   const dispatch = useDispatch();
 
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
@@ -174,7 +175,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [handleItemClick, dispatch],
   );
 
-  if (isLoading) {
+  // Fallback if categories are not yet available
+  if (!categories) {
     return <SidebarSkeleton />;
   }
 
@@ -190,9 +192,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         `}
       >
         <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-          {categories && categories.length > 0 ? (
+          {categories.length > 0 ? (
             <div className="p-4 space-y-1">
-              {categories.map(renderCategoryItem)}
+              {categories.map((category) =>
+                renderCategoryItem(category as any),
+              )}
             </div>
           ) : (
             <div className="p-4 text-gray-500">No categories found.</div>

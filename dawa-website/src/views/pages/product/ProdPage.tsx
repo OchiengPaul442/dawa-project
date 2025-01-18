@@ -1,15 +1,15 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import ImageCarousel from './ImageCarousel';
 import ProductTabs from './ProductTabs';
 import ShareSection from './ShareSection';
 import { ProductDetails } from './ProductDetails';
-import { slugify } from '@/utils/slugify';
 import { useProductDetails } from '@/@core/hooks/useProductData';
 import { useSelector } from '@/redux-store/hooks';
 import ProductSkeleton from './product-skeleton';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
+import Link from 'next/link';
 
 interface ProdPageProps {
   slug: string[];
@@ -19,6 +19,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
   const selectedProductId = useSelector(
     (state) => state.product.selectedProductId,
   );
+
   const { productData, isLoading, isError } =
     useProductDetails(selectedProductId);
 
@@ -38,7 +39,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
     );
   }
 
-  // Handle empty productData or invalid slug
+  // Handle missing product or invalid slug
   if (!productData || !slug || slug.length === 0) {
     return (
       <div className="container mx-auto py-10 px-5 text-center">
@@ -55,28 +56,12 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
   return (
     <div className="flex flex-col gap-10">
       <section className="container mx-auto py-10 px-5">
-        {/* Breadcrumb */}
-        <div className="text-sm text-gray-500 flex items-center space-x-2 mb-6">
-          <Link href="/home" className="hover:underline text-primary_1">
-            Home
-          </Link>
-          <span>/</span>
-          <Link
-            href={`/cat/${slugify(productData.category)}`}
-            className="hover:underline text-primary_1"
-          >
-            {productData.category}
-          </Link>
-          <span>/</span>
-          <Link
-            href={`/cat/${slugify(productData.category)}/${slugify(productData.subcategory)}`}
-            className="hover:underline text-primary_1"
-          >
-            {productData.subcategory}
-          </Link>
-          <span>/</span>
-          <span className="text-gray-800">{productData.name}</span>
-        </div>
+        {/* Use the refactored Breadcrumbs component */}
+        <Breadcrumbs
+          categoryName={productData.category}
+          subcategoryName={productData.subcategory}
+          productName={productData.name}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Product Images Carousel */}
@@ -97,7 +82,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ slug }) => {
       </section>
 
       <section className="container mx-auto mb-12">
-        {productData ? <ProductTabs product={productData} /> : null}
+        <ProductTabs product={productData} />
       </section>
     </div>
   );

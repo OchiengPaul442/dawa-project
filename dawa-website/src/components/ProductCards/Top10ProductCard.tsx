@@ -48,8 +48,7 @@ const Top10ProductCard = memo(function Top10ProductCard({
             priority
           />
           <LikeButton
-            isLiked={product.liked || false}
-            onLike={handleLike}
+            productId={product.id as any}
             className="absolute bottom-2 right-2 z-10"
           />
         </AspectRatio>

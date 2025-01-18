@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { Category } from '@/types/category';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { RootState } from '@/redux-store';
+
+export interface Category {
+  id: string;
+  category_name: string;
+  subcategories?: { id: string; subcategory_name: string }[];
+}
 
 interface CategoriesState {
   categories: Category[];
@@ -14,6 +20,22 @@ const initialState: CategoriesState = {
   error: null,
 };
 
+// Async thunk to fetch categories
+export const fetchCategories = createAsyncThunk<
+  Category[],
+  void,
+  { rejectValue: string }
+>('categories/fetchCategories', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/getcategories/`,
+    );
+    return response.data.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || 'Failed to fetch categories');
+  }
+});
+
 const categoriesSlice = createSlice({
   name: 'categories',
   initialState,
@@ -23,19 +45,26 @@ const categoriesSlice = createSlice({
       state.status = 'succeeded';
       state.error = null;
     },
-    setLoading: (state) => {
-      state.status = 'loading';
-      state.error = null;
-    },
-    setError: (state, action: PayloadAction<string>) => {
-      state.status = 'failed';
-      state.error = action.payload;
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCategories.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+        state.status = 'succeeded';
+      })
+      .addCase(fetchCategories.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || 'Failed to fetch categories';
+      });
   },
 });
 
-export const { setCategories, setLoading, setError } = categoriesSlice.actions;
-
-export const selectedCategories = (state: RootState) =>
+// Selector to access categories state
+export const selectCategories = (state: RootState) =>
   state.categories.categories;
+
 export default categoriesSlice.reducer;

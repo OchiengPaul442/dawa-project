@@ -1,15 +1,22 @@
 'use client';
-import { NextAuthProvider } from '@contexts/nextAuthProvider';
-import { Provider as LocalProvider } from 'react-redux';
-import { store } from '@redux-store/index';
 
-const Provider = (props: any) => {
-  // Props
-  const { children } = props;
+import React from 'react';
+import { NextAuthProvider } from '@contexts/nextAuthProvider';
+import { Provider as ReduxProvider } from 'react-redux';
+import { initializeStore } from '@/redux-store';
+import type { RootState } from '@/redux-store';
+
+interface ProviderProps {
+  children: React.ReactNode;
+  preloadedState?: Partial<RootState>;
+}
+
+const Provider: React.FC<ProviderProps> = ({ children, preloadedState }) => {
+  const store = initializeStore(preloadedState);
 
   return (
     <NextAuthProvider basePath={process.env.NEXTAUTH_BASEPATH}>
-      <LocalProvider store={store}>{children}</LocalProvider>
+      <ReduxProvider store={store}>{children}</ReduxProvider>
     </NextAuthProvider>
   );
 };

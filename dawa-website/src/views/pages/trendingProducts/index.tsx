@@ -9,7 +9,7 @@ import CustomPagination from '@/components/shared/CustomPagination';
 import Loader from '@/components/Loader';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
   images: any[];
@@ -21,34 +21,6 @@ const ITEMS_PER_PAGE = 16;
 const ProductPage: React.FC = () => {
   const { productsData, isLoading, isError, mutate } = useTrendingProducts();
   const [currentPage, setCurrentPage] = useState(1);
-
-  //=====================//
-  //   EVENT HANDLERS    //
-  //=====================//
-  const handleLike = useCallback(
-    async (itemId: number) => {
-      try {
-        // await toggleWishlistItem({ item_id: itemId });
-
-        // Optimistically update the SWR cache
-        mutate((currentData: any) => {
-          if (!currentData?.data) return currentData;
-          return {
-            ...currentData,
-            data: currentData.data.map((product: Product) =>
-              product.id === itemId
-                ? { ...product, liked: !product.liked }
-                : product,
-            ),
-          };
-        }, false);
-      } catch (err) {
-        console.error('Error adding to wishlist:', err);
-        alert('Failed to add product to wishlist. Please try again.');
-      }
-    },
-    [mutate],
-  );
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -84,7 +56,7 @@ const ProductPage: React.FC = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {currentProducts.map((product: Product) => (
-          <ProductCard key={product.id} product={product} onLike={handleLike} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
 

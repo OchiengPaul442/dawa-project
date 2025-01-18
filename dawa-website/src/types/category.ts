@@ -9,13 +9,12 @@ export interface Subcategory {
 
 export interface Category {
   id: string;
-
-  name: string;
-  count: number;
-  icon: React.ElementType;
-  href: string;
-  subcategories: Subcategory[];
   category_name: string;
+  name?: string;
+  count?: number;
+  icon?: string;
+  href?: string;
+  subcategories?: Subcategory[];
 }
 
 export interface ProductCarouselItem {

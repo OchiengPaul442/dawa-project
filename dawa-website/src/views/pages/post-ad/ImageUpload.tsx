@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { XIcon, UploadIcon, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -41,7 +41,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     const urls = images.map((file) => URL.createObjectURL(file));
     setImageUrls(urls);
 
-    // Cleanup URLs when component unmounts or images change
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
@@ -49,12 +48,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: any[]) => {
-      // Handle rejected files
       if (rejectedFiles.length > 0) {
         const errors = rejectedFiles.map((file) => {
-          if (file.file.size > MAX_FILE_SIZE) {
-            return 'File too large (max 5MB)';
-          }
+          if (file.file.size > MAX_FILE_SIZE) return 'File too large (max 5MB)';
           return 'Invalid file type';
         });
         setError(errors[0]);
@@ -65,7 +61,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       const remainingSlots = maxImages - images.length;
       const filesToProcess = acceptedFiles.slice(0, remainingSlots);
 
-      // Create local uploading images
       const newUploadingImages = filesToProcess.map((file) => ({
         id: Math.random().toString(36).substr(2, 9),
         file,
@@ -75,7 +70,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       setUploadingImages((prev) => [...prev, ...newUploadingImages]);
 
-      // Simulate upload progress for each file
+      // Simulate upload progress
       newUploadingImages.forEach((img) => {
         let progress = 0;
         const interval = setInterval(() => {
@@ -87,12 +82,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           if (progress >= 100) {
             clearInterval(interval);
             setUploadingImages((prev) => prev.filter((u) => u.id !== img.id));
-
-            // Update the parent component with the new file
-            const updatedFiles = [...images, img.file];
-            onUpload(updatedFiles);
-
-            // Cleanup preview URL
+            onUpload([...images, img.file]);
             URL.revokeObjectURL(img.preview);
           }
         }, 300);
@@ -145,6 +135,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {/* Existing images */}
               {imageUrls.map((url, index) => (
                 <div key={index} className="relative group aspect-square">
                   <Image
@@ -166,6 +157,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   </div>
                 </div>
               ))}
+
+              {/* Uploading images */}
               {uploadingImages.map((image) => (
                 <div key={image.id} className="relative aspect-square">
                   <Image

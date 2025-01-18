@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
@@ -11,6 +10,7 @@ import FiltersAndSorting from '@/components/features/categories/FiltersAndSortin
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
 import CategoriesPage from '@/views/pages/category/CategoriesPage';
 import CustomPagination from '@/components/shared/CustomPagination';
+import Loader from '@/components/Loader';
 
 import { slugify } from '@/utils/slugify';
 import {
@@ -20,12 +20,7 @@ import {
 import { useCategoryData } from '@core/hooks/useProductData';
 
 import type { Category, Subcategory } from '@/types/category';
-import Loader from '@/components/Loader';
-
-interface BreadcrumbItem {
-  name: string;
-  href: string;
-}
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 type FilterOptionType =
   | 'default'
@@ -36,11 +31,7 @@ type ViewType = 'grid' | 'list';
 
 const ITEMS_PER_PAGE = 12;
 
-interface CategoryPageProps {
-  category: string[];
-}
-
-// Extend imported types to include missing fields
+// Extend your types if needed
 interface ExtendedSubcategory extends Subcategory {
   subcategory_item_count: number;
 }
@@ -50,11 +41,15 @@ interface ExtendedCategory extends Category {
   subcategories: ExtendedSubcategory[];
 }
 
+interface CategoryPageProps {
+  category: string[];
+}
+
 const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Cast the categories from Redux store to our extended type
+  // Grab categories from the Redux store (extended type)
   const categories = useSelector(
     (state: any) => state.categories.categories,
   ) as ExtendedCategory[];
@@ -65,6 +60,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
     0, 1000000000,
   ]);
@@ -73,18 +69,21 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     [],
   );
 
-  const selectedCategory: ExtendedCategory | undefined = useMemo(() => {
+  // Derive selectedCategory based on the URL slug
+  const selectedCategory = useMemo(() => {
     return categories.find(
       (cat) => slugify(cat.category_name) === slugify(category[0] || ''),
     );
   }, [categories, category]);
 
-  const selectedSubcategory: ExtendedSubcategory | undefined = useMemo(() => {
+  // Derive selectedSubcategory
+  const selectedSubcategory = useMemo(() => {
     return selectedCategory?.subcategories.find(
       (sub) => slugify(sub.subcategory_name) === slugify(category[1] || ''),
     );
   }, [selectedCategory, category]);
 
+  // Dispatch to Redux for global reference
   useEffect(() => {
     if (selectedCategory) {
       dispatch(setSelectedCategory(selectedCategory));
@@ -101,7 +100,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     }
   }, [selectedSubcategory, dispatch]);
 
-  // Use the custom SWR hook to fetch category data
+  // Custom hook to fetch data for this category or subcategory
   const {
     data: fetchedData,
     error,
@@ -111,6 +110,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     selectedSubcategory,
   });
 
+  // Update products state on fetch
   useEffect(() => {
     if (fetchedData && fetchedData.data) {
       setProducts(fetchedData.data);
@@ -121,6 +121,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     }
   }, [fetchedData]);
 
+  // Pagination
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -130,59 +131,33 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
     const end = Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length);
     return `Showing ${start}-${end} of ${filteredProducts.length} results`;
-  }, [currentPage, filteredProducts.length]);
+  }, [currentPage, filteredProducts]);
 
-  const breadcrumbItems: BreadcrumbItem[] = useMemo(() => {
-    const items: BreadcrumbItem[] = [{ name: 'Home', href: '/' }];
-
-    if (selectedCategory) {
-      items.push({
-        name: `${selectedCategory.category_name} (${selectedCategory.category_item_count})`,
-        href: `/cat/${slugify(selectedCategory.category_name)}`,
-      });
-    }
-
-    if (selectedSubcategory && selectedCategory) {
-      items.push({
-        name: `${selectedSubcategory.subcategory_name} (${selectedSubcategory.subcategory_item_count})`,
-        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(selectedSubcategory.subcategory_name)}`,
-      });
-    }
-
-    return items;
-  }, [selectedCategory, selectedSubcategory]);
-
-  const handleViewMore = useCallback(
-    (productId: number) => {
-      router.push(`/prod/${productId}`);
-    },
-    [router],
-  );
-
+  // Filter & Sorting Logic
   const applyFilters = useCallback(
     (
       priceRange: [number, number],
       location: string,
       selectedColors: string[],
     ) => {
-      let filtered = [...products];
+      let updated = [...products];
 
       if (location) {
-        filtered = filtered.filter((product) => product.location === location);
+        updated = updated.filter((product) => product.location === location);
       }
 
-      filtered = filtered.filter(
+      updated = updated.filter(
         (product) =>
           product.price >= priceRange[0] && product.price <= priceRange[1],
       );
 
       if (selectedColors.length > 0) {
-        filtered = filtered.filter((product) =>
+        updated = updated.filter((product) =>
           selectedColors.includes(product.color),
         );
       }
 
-      setFilteredProducts(filtered);
+      setFilteredProducts(updated);
       setCurrentPage(1);
     },
     [products],
@@ -215,58 +190,40 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
       const selectedOption = event.target.value as FilterOptionType;
       setFilterOption(selectedOption);
 
-      let sortedProducts = [...filteredProducts];
+      let sorted = [...filteredProducts];
       switch (selectedOption) {
         case 'rating':
-          sortedProducts.sort((a, b) => b.rating - a.rating);
+          sorted.sort((a, b) => b.rating - a.rating);
           break;
         case 'price_low_to_high':
-          sortedProducts.sort((a, b) => a.price - b.price);
+          sorted.sort((a, b) => a.price - b.price);
           break;
         case 'price_high_to_low':
-          sortedProducts.sort((a, b) => b.price - a.price);
+          sorted.sort((a, b) => b.price - a.price);
           break;
         default:
           break;
       }
 
-      setFilteredProducts(sortedProducts);
+      setFilteredProducts(sorted);
       setCurrentPage(1);
     },
     [filteredProducts],
   );
 
+  // If no category is found, show the categories listing page
   if (!selectedCategory) {
     return <CategoriesPage />;
   }
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* Breadcrumb Navigation */}
-      <nav
-        className="flex flex-wrap items-center text-sm mb-6"
-        aria-label="Breadcrumb"
-      >
-        <ul className="flex items-center space-x-2">
-          {breadcrumbItems.map((item, index) => (
-            <li key={index} className="flex items-center">
-              <Link
-                href={item.href}
-                className={
-                  index === breadcrumbItems.length - 1
-                    ? 'text-gray-500 cursor-default'
-                    : 'hover:underline text-primary_1 font-medium'
-                }
-              >
-                {item.name}
-              </Link>
-              {index < breadcrumbItems.length - 1 && (
-                <span className="text-gray-400 mx-2">/</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {/* Use the refactored Breadcrumbs component */}
+      <Breadcrumbs
+        categoryName={selectedCategory.category_name}
+        subcategoryName={selectedSubcategory?.subcategory_name}
+        // productName="Optional Product Name"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Sidebar */}
@@ -318,7 +275,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
                       key={product.id}
                       product={product}
                       viewType={viewType}
-                      onViewMore={handleViewMore}
                     />
                   ))
                 ) : (

@@ -1,14 +1,18 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+interface Subcategory {
+  id: number;
+  subcategory_name: string;
+}
+
 interface Category {
   id: number;
   category_name: string;
-  subcategories: {
-    id: number;
-    subcategory_name: string;
-  }[];
+  subcategories: Subcategory[];
 }
 
 interface CategorySelectProps {
@@ -31,14 +35,14 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    function handleClickOutside(event: MouseEvent) {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
         if (!selectedCategory) setIsOpen(false);
       }
-    };
+    }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -77,9 +81,12 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
       >
         {getSelectedSubcategoryName()}
         <ChevronDown
-          className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`ml-2 h-4 w-4 transition-transform ${
+            isOpen ? 'rotate-180' : ''
+          }`}
         />
       </Button>
+
       {isOpen && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
           <div className="max-h-60 overflow-auto">
@@ -105,13 +112,13 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
                 ))}
               </div>
             ) : (
-              categories.map((category) => (
+              categories.map((cat) => (
                 <button
-                  key={category.id}
+                  key={cat.id}
                   className="w-full p-2 text-left hover:bg-gray-100 flex items-center justify-between text-sm"
-                  onClick={() => handleCategoryClick(category)}
+                  onClick={() => handleCategoryClick(cat)}
                 >
-                  {category.category_name}
+                  {cat.category_name}
                   <ChevronRight className="h-4 w-4" />
                 </button>
               ))
@@ -119,6 +126,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({
           </div>
         </div>
       )}
+
       {errors && <p className="text-sm text-red-500 mt-1">{errors}</p>}
     </div>
   );

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "allowSyntheticDefaultImports": true,
+    "target": "es2020",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["jest"],
+    "types": ["jest", "node"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -45,7 +46,8 @@
     ".next/types/**/*.ts",
     "jest.setup.ts",
     "next.config.mjs",
-    "src/app/(main)/wishlist"
+    "src/app/(main)/wishlist",
+    "scripts/fetch-categories.cjs"
   ],
   "exclude": ["node_modules"]
 }

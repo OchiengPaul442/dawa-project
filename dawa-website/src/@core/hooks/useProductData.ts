@@ -9,7 +9,6 @@ import {
   getProductDetails,
   reportAbuse,
 } from '@/app/server/products/api';
-import { setCategories } from '@/redux-store/slices/categories/categories';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from '@/redux-store/hooks';
 import { swrOptions } from '../swrConfig';
@@ -18,7 +17,6 @@ import { getMessages, sendMessage } from '@/app/server/messages/api';
 import { SendMessagePayload } from '@/types/message';
 import { ProductUploadProps } from '@/types/product';
 import { ReportAbuseProps } from '@/types/reportAbuse';
-import { getUserWishList, toggleWishlistItem } from '@/app/server/wishList/api';
 
 export function useTrendingProducts() {
   const { data, error, isLoading, mutate } = useSWR(
@@ -35,26 +33,6 @@ export function useTrendingProducts() {
   };
 }
 
-export function useCategories() {
-  const dispatch = useDispatch();
-  const { data, error, isLoading } = useSWR(
-    'categories',
-    getCategoriesList,
-    swrOptions,
-  );
-
-  useEffect(() => {
-    if (data?.data) {
-      dispatch(setCategories(data.data));
-    }
-  }, [data, dispatch]);
-
-  return {
-    categories: data?.data || [],
-    isLoading,
-    isError: error,
-  };
-}
 export function useCategoryData({
   selectedCategory,
   selectedSubcategory,
@@ -164,33 +142,3 @@ export function useReportAbuse() {
     error,
   };
 }
-
-// export function useWishlist() {
-//   const { data, error, isLoading, mutate } = useSWR(
-//     'wishlist',
-//     getUserWishList,
-//     swrOptions,
-//   );
-
-//   return {
-//     wishlist: data || [],
-//     isLoading,
-//     isError: !!error,
-//     mutate,
-//   };
-// }
-
-// export function useToggleWishlistItem() {
-//   const { trigger, isMutating, error } = useSWRMutation<
-//     any,
-//     any,
-//     string,
-//     { item_id: number }
-//   >('/wishunwish/', toggleWishlistItem);
-
-//   return {
-//     toggleItem: trigger,
-//     isToggling: isMutating,
-//     error,
-//   };
-// }

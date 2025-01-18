@@ -56,8 +56,7 @@ export const HotSaleProductCard = memo(function HotSaleProductCard({
           }}
         />
         <LikeButton
-          isLiked={product.liked || false}
-          onLike={handleLike}
+          productId={product.id as any}
           className="absolute bottom-3 right-3 z-20"
         />
       </div>

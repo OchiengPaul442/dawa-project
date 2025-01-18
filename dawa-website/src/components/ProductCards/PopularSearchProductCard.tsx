@@ -43,8 +43,7 @@ export const PopularSearchProductCard: React.FC<PopularSearchProductCardProps> =
               className="object-cover"
             />
             <LikeButton
-              isLiked={product.liked || false}
-              onLike={handleLike}
+              productId={product.id as any}
               className="absolute bottom-2 right-2 z-10"
             />
           </div>
