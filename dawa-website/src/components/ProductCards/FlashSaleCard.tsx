@@ -4,6 +4,7 @@ import React, { memo } from 'react';
 import { Progress } from '@/components/ui/progress';
 import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/flash-sale';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface FlashSaleCardProps {
   product: Product;
@@ -34,7 +35,7 @@ export const FlashSaleCard = memo(function FlashSaleCard({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <p className="text-primary_1 font-bold text-base">
-                {product.price}
+                <CurrencyFormatter price={product.price as any} />
               </p>
             </div>
             <div className="space-y-1">

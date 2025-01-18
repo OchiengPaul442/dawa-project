@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { LikeButton } from '@/components/shared/LikeButton';
 import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface PopularSearchProductCardProps {
   product: Product;
@@ -50,7 +51,9 @@ export const PopularSearchProductCard: React.FC<PopularSearchProductCardProps> =
         </CardContent>
         <CardFooter className="flex flex-col items-center p-4">
           <div className="flex items-center gap-2">
-            <p className="text-primary_1 font-bold text-lg">{product.price}</p>
+            <p className="text-primary_1 font-bold text-lg">
+              <CurrencyFormatter price={product.price as any} />
+            </p>
             {product.originalPrice && (
               <p className="text-gray-400 font-normal line-through text-sm">
                 {product.originalPrice}

@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { LikeButton } from '@/components/shared/LikeButton';
 import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface HotSaleProductCardProps {
   product: Product;
@@ -64,11 +65,11 @@ export const HotSaleProductCard = memo(function HotSaleProductCard({
       <div className="p-3 space-y-2">
         <div className="flex items-baseline justify-between">
           <span className="text-primary_1 font-bold text-base">
-            {product.price}
+            <CurrencyFormatter price={product.price as any} />
           </span>
           {product.originalPrice && (
             <span className="text-muted-foreground line-through text-xs">
-              {product.originalPrice}
+              <CurrencyFormatter price={product.originalPrice as any} />
             </span>
           )}
         </div>

@@ -3,12 +3,13 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
-import StarRating from '@/components/shared/StarRating';
+// import StarRating from '@/components/shared/StarRating';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface Product {
   id: number;
   name: string;
-  price: string;
+  price: number;
   imageUrl: string;
   rating: number;
   reviews: number;
@@ -43,8 +44,10 @@ const RecentlyViewedCard: React.FC<RecentlyViewedCardProps> = ({
         </h3>
 
         <div className="flex flex-col items-start gap-1">
-          <p className="text-primary_1 font-bold">{product.price}</p>
-          <div className="flex items-center">
+          <p className="text-primary_1 font-bold">
+            <CurrencyFormatter price={product.price as any} />
+          </p>
+          {/* <div className="flex items-center">
             <StarRating
               initialRating={product.rating}
               maxRating={4}
@@ -54,7 +57,7 @@ const RecentlyViewedCard: React.FC<RecentlyViewedCardProps> = ({
             <span className="ml-1 text-xs text-muted-foreground">
               ({product.reviews})
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </Card>

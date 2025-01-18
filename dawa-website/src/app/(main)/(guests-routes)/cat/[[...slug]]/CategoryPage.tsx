@@ -186,9 +186,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   }, [products]);
 
   const handleFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedOption = event.target.value as FilterOptionType;
-      setFilterOption(selectedOption);
+    (selectedOption: string) => {
+      setFilterOption(selectedOption as FilterOptionType);
 
       let sorted = [...filteredProducts];
       switch (selectedOption) {
@@ -202,6 +201,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
           sorted.sort((a, b) => b.price - a.price);
           break;
         default:
+          // 'default' case, no sorting needed
           break;
       }
 

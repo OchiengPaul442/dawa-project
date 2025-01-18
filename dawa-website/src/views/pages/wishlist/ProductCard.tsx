@@ -16,8 +16,9 @@ import { slugify } from '@/utils/slugify';
 import { useDispatch } from '@redux-store/hooks';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useWishlistActions } from '@core/hooks/useWishlistActions';
-
 import { ProductCardProps } from '@/types/wishList';
+import { format } from 'date-fns';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
@@ -25,18 +26,18 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
   const { removeItem } = useWishlistActions();
 
   const handleShare = useCallback(() => {
+    const url = window.location.href;
     if (navigator.share) {
       navigator
         .share({
           title: product.name,
           text: product.description ?? '',
-          url: window.location.href,
+          url,
         })
-        .then(() => console.log('Successful share'))
         .catch((error) => console.error('Error sharing', error));
     } else {
       navigator.clipboard
-        .writeText(window.location.href)
+        .writeText(url)
         .then(() => alert('Link copied to clipboard!'))
         .catch((error) => console.error('Error copying link', error));
     }
@@ -55,17 +56,17 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-2 sm:p-4">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-          <div className="relative w-full sm:w-48 h-48 flex-shrink-0">
-            <div className="w-full h-full rounded-lg overflow-hidden">
-              <CustomImage
-                src={product.image}
-                alt={product.name}
-                fill
-                style={{ objectFit: 'cover' }}
-              />
-            </div>
+          {/* Product Image */}
+          <div className="relative w-full sm:w-48 h-48 flex-shrink-0 rounded-lg overflow-hidden">
+            <CustomImage
+              src={product.image}
+              alt={product.name}
+              fill
+              style={{ objectFit: 'cover' }}
+            />
           </div>
 
+          {/* Product Details */}
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex justify-between gap-2">
               <div className="space-y-2 flex-1 min-w-0">
@@ -79,6 +80,7 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
                 )}
               </div>
 
+              {/* Action Buttons */}
               <div className="flex sm:flex-col gap-2 flex-shrink-0">
                 <TooltipProvider>
                   <Tooltip>
@@ -114,23 +116,25 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
               </div>
             </div>
 
+            {/* Date & Pricing */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
               <span className="text-gray-500 text-xs sm:text-sm">
-                Added {new Date(product.dateAdded).toLocaleDateString()}
+                Added {format(new Date(product.dateAdded), 'MMMM d, yyyy')}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xl sm:text-2xl font-semibold text-primary_1">
-                {product.price}
+                <CurrencyFormatter price={product.price as any} />
               </span>
               {product.originalPrice && (
                 <span className="text-sm text-gray-400 line-through">
-                  {product.originalPrice}
+                  <CurrencyFormatter price={product.originalPrice as any} />
                 </span>
               )}
             </div>
 
+            {/* View Details Button */}
             <div className="pt-2 flex items-center justify-between">
               <Button
                 variant="outline"
@@ -149,5 +153,4 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
 });
 
 ProductCard.displayName = 'ProductCard';
-
 export default ProductCard;

@@ -8,6 +8,7 @@ import { LikeButton } from '@/components/shared/LikeButton';
 import StarRating from '@/components/shared/StarRating';
 import CustomImage from '@/components/shared/CustomImage';
 import { Product } from '@/types/product';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface Top10ProductCardProps {
   product: Product;
@@ -62,7 +63,7 @@ const Top10ProductCard = memo(function Top10ProductCard({
           {product.price}
           {product.originalPrice && (
             <span className="text-muted-foreground font-normal line-through text-sm ml-2">
-              {product.originalPrice}
+              <CurrencyFormatter price={product.originalPrice as any} />
             </span>
           )}
         </p>

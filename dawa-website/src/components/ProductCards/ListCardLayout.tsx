@@ -10,6 +10,7 @@ import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface Product {
   id: string;
@@ -93,7 +94,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
                 </span>
               )}
               <span className="text-primary_1 text-xl font-bold">
-                UGX {product.price.toLocaleString()}
+                <CurrencyFormatter price={product.price as any} />
               </span>
             </div>
 

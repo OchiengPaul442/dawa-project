@@ -8,6 +8,7 @@ import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
 import { LikeButton } from '@/components/shared/LikeButton';
+import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 
 interface ProductCardProps {
   product: {
@@ -59,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
             {product.name}
           </h3>
           <p className="text-primary_1 font-semibold text-sm">
-            UGX {product.price.toLocaleString()}
+            <CurrencyFormatter price={product.price as any} />
           </p>
         </div>
       </CardFooter>
