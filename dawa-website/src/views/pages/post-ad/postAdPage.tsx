@@ -146,7 +146,7 @@ export default function PostAdPage() {
   };
 
   return (
-    <div className="container mx-auto min-h-screen py-10 px-4">
+    <div className="container mx-auto min-h-screen py-10">
       <div className="max-w-3xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="border-b bg-gray-50/50">

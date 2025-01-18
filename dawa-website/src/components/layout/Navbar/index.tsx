@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaUserCircle } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
@@ -37,12 +37,17 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const pathname = usePathname();
   const { user, loading, logout } = useAuth();
   const { scrollDirection } = useScrollDirection();
+  const [showBackArrow, setShowBackArrow] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    setShowBackArrow(window.history.length > 1);
+  }, [pathname, router]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -216,10 +221,12 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
       <div className={`lg:hidden bg-white`}>
         <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           {/* left arrow */}
-          <ChevronLeft
-            className="w-8 h-8  text-primary_1 mr-3 cursor-pointer"
-            onClick={() => router.back()}
-          />
+          {showBackArrow === true && (
+            <ChevronLeft
+              className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
+              onClick={() => router.back()}
+            />
+          )}
 
           {/* search */}
           <div className="relative w-full">

@@ -1,16 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Home, Bookmark, PlusCircle, MessageSquare, User } from 'lucide-react';
+import { Home, PlusCircle, MessageSquare, User } from 'lucide-react';
 import { useScrollDirection } from '@core/hooks/useScrollDirection';
 import { useAuth } from '@core/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from '@redux-store/hooks';
+import { Heart } from 'lucide-react';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
-  { icon: Bookmark, label: 'Wishlist', href: '/wishlist' },
+  { icon: Heart, label: 'Wishlist', href: '/wishlist' },
   { icon: PlusCircle, label: 'Sell', href: '/post-ad' },
   { icon: MessageSquare, label: 'Messages', href: '/messages' },
   { icon: User, label: 'Profile', href: '/account/adverts' },

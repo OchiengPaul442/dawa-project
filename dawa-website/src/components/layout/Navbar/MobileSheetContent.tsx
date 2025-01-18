@@ -76,10 +76,10 @@ const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
           </div>
         )}
 
-        <Separator />
+        {/* <Separator /> */}
 
         {/* Categories Accordion */}
-        <Accordion type="single" collapsible className="w-full">
+        {/* <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="categories" className="border-none">
             <AccordionTrigger className="py-3 hover:no-underline">
               <span className="text-lg font-semibold">Browse Categories</span>
@@ -103,7 +103,7 @@ const MobileSheetContent: React.FC<MobileSheetContentProps> = ({ onClose }) => {
               </div>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
 
         <Separator />
 

@@ -7,7 +7,7 @@ import { categories, productCarouselItems } from '@/lib/mock_data';
 import { ProductCarousel } from '../carousels/product-carousel';
 import { PostAdvertCTA } from './post-advert-cta';
 import { SafetyTips } from './safety-tips';
-import { MobileCategoryGrid } from './MobileCategoryGrid';
+import MobileCategoryGrid from './MobileCategoryGrid';
 
 export function CategoriesMenu() {
   const [isHovering, setIsHovering] = useState(false);
@@ -21,7 +21,7 @@ export function CategoriesMenu() {
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Mobile Categories Grid */}
         <div className="lg:hidden">
-          <MobileCategoryGrid categories={categories} />
+          <MobileCategoryGrid />
         </div>
 
         {/* Desktop Categories and Carousel Section */}
