@@ -111,16 +111,24 @@ export default function PostAdPage() {
       formData.append('item_name', data.item_name);
       formData.append('item_price', String(data.item_price));
       formData.append('item_description', data.item_description);
-      formData.append('item_negotiable', String(data.negotiation));
+      formData.append(
+        'item_negotiable',
+        String(data.negotiation === true ? 'True' : 'False'),
+      );
       data.images.forEach((image) => formData.append('images', image));
 
-      await addProduct(formData as any);
+      const res = await addProduct(formData as any);
 
-      reset();
-      alert('Your ad has been posted successfully!');
-      setSuccessMessage('Your ad has been posted successfully!');
-      setTimeout(() => setSuccessMessage(null), 5000);
-      setCurrentStep(1); // Optionally reset to step 1
+      if (res.status === 201) {
+        reset();
+        alert('Your ad has been posted successfully!');
+        setSuccessMessage('Your ad has been posted successfully!');
+        setTimeout(() => setSuccessMessage(null), 5000);
+        setCurrentStep(1);
+      } else {
+        setSuccessMessage('Failed to post ad. Please try again later.');
+        setTimeout(() => setSuccessMessage(null), 5000);
+      }
     } catch (err) {
       console.error('Failed to add product:', err);
     }
