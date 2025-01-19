@@ -155,10 +155,10 @@ export default function PostAdPage() {
   };
 
   return (
-    <div className="min-h-screen py-10">
+    <div>
       <div className="max-w-3xl mx-auto">
-        <Card className="shadow-lg">
-          <CardHeader className="border-b bg-gray-50/50">
+        <Card>
+          <CardHeader className="border-b bg-gray-100/50">
             <CardTitle className="text-2xl font-bold text-center">
               Post Your Free Ad
             </CardTitle>

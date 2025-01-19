@@ -56,7 +56,7 @@ const WishlistPage = () => {
   }, []);
 
   return (
-    <div className="my-8">
+    <>
       <WishlistHeader
         totalItems={sortedProducts.length}
         sortBy={sortBy}
@@ -78,7 +78,7 @@ const WishlistPage = () => {
           <p className="text-gray-500">Your wishlist is empty.</p>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

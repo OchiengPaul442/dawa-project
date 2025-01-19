@@ -1,10 +1,19 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import Link from 'next/link';
+import { ChevronRight, ChevronsRight } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
 import { useSelector } from '@/redux-store/hooks';
 import { selectCategories } from '@/redux-store/slices/categories/categories';
+import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ExtendedSubcategory {
   subcategory_name: string;
@@ -65,48 +74,80 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     if (selectedCategory && selectedSubcategory) {
       items.push({
         name: `${selectedSubcategory.subcategory_name} (${selectedSubcategory.subcategory_item_count})`,
-        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(
-          selectedSubcategory.subcategory_name,
-        )}`,
+        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(selectedSubcategory.subcategory_name)}`,
       });
     }
 
     return items;
   }, [categories, categoryName, subcategoryName]);
 
-  return (
-    <nav
-      className="flex flex-wrap items-center text-sm mb-6"
-      aria-label="Breadcrumb"
-    >
-      <ul className="flex items-center space-x-2">
+  const renderBreadcrumbContent = () => (
+    <ScrollArea className="w-full">
+      <ul className="flex items-center space-x-1 whitespace-nowrap">
         {breadcrumbItems.map((item, index) => {
           const isLastItem =
             index === breadcrumbItems.length - 1 && !productName;
           return (
             <li key={index} className="flex items-center">
               {isLastItem ? (
-                <span className="text-gray-500 cursor-default">
+                <span
+                  className="text-gray-500 cursor-default truncate max-w-[150px]"
+                  title={item.name}
+                >
                   {item.name}
                 </span>
               ) : (
-                <Link
-                  href={item.href}
-                  className="hover:underline text-primary_1 font-medium"
-                >
-                  {item.name}
-                </Link>
-              )}
-              {(index < breadcrumbItems.length - 1 || productName) && (
-                <span className="text-gray-400 mx-2">/</span>
+                <>
+                  <Link
+                    href={item.href}
+                    className="hover:underline text-primary_1 font-medium truncate max-w-[150px]"
+                    title={item.name}
+                  >
+                    {item.name}
+                  </Link>
+                  <ChevronRight className="h-4 w-4 text-gray-400 mx-1 flex-shrink-0" />
+                </>
               )}
             </li>
           );
         })}
         {productName && (
-          <li className="flex items-center text-gray-800">{productName}</li>
+          <li className="flex items-center">
+            <ChevronRight className="h-4 w-4 text-gray-400 mx-1 flex-shrink-0" />
+            <span
+              className="text-gray-800 truncate max-w-[150px]"
+              title={productName}
+            >
+              {productName}
+            </span>
+          </li>
         )}
       </ul>
+    </ScrollArea>
+  );
+
+  return (
+    <nav className="mb-6" aria-label="Breadcrumb">
+      <div className="hidden sm:block">{renderBreadcrumbContent()}</div>
+      <div className="sm:hidden">
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-between"
+            >
+              <span className="truncate mr-2">
+                {productName || subcategoryName || categoryName || 'Home'}
+              </span>
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-2">
+            {renderBreadcrumbContent()}
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </nav>
   );
 };

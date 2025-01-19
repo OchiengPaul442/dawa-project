@@ -1,4 +1,5 @@
 import Layout from '@/components/layout';
+import mainConfig from '@/configs/mainConfigs';
 import AuthGuard from '@hocs/AuthGuard';
 export default function WishListLayout({
   children,
@@ -8,7 +9,9 @@ export default function WishListLayout({
   return (
     <AuthGuard>
       <Layout newsletterProps={{ container: false, hide: true }}>
-        <main className="max-w-7xl mx-auto min-h-screen px-2">{children}</main>
+        <main className={`${mainConfig.maxWidthClass} min-h-dvh`}>
+          {children}
+        </main>
       </Layout>
     </AuthGuard>
   );

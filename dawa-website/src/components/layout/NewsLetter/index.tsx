@@ -3,6 +3,7 @@ import EnvelopIcons from '@public/assets/icons/envelops.svg';
 import React from 'react';
 
 import Button from '../../shared/Button';
+import mainConfig from '@/configs/mainConfigs';
 
 const Newsletter = ({
   container = false,
@@ -16,7 +17,7 @@ const Newsletter = ({
       className={`bg-primary_1 py-12 mt-64 relative overflow-hidden ${hide ? 'hidden' : ''} ${container ? 'rounded-2xl container mx-auto' : ''}`}
     >
       <div
-        className={`${container ? '' : 'container mx-auto'} flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-16 space-y-4 md:space-y-0`}
+        className={`${container ? '' : mainConfig.maxWidthClass} flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0`}
       >
         {/* Left Section */}
         <div className="flex sm:flex-row flex-col items-center sm:items-start w-full space-x-4 text-white md:w-1/2 relative">

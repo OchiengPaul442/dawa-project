@@ -5,6 +5,7 @@ import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
 import { selectChat, markAsRead } from '@redux-store/slices/chatApp/chatSlice';
 import { useDispatch, useSelector } from '@/redux-store/hooks';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function ChatApp() {
   const dispatch = useDispatch();
@@ -33,25 +34,27 @@ export default function ChatApp() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-6xl mx-auto h-[80vh] flex flex-col md:flex-row">
-        <ContactList
-          contacts={contacts}
-          chats={chats}
-          currentUserId={currentUserId}
-          selectedContactId={
-            selectedChat?.participants.find(
-              (id: any) => id !== currentUserId,
-            ) || null
-          }
-          onSelectContact={handleSelectContact}
-        />
-        <ChatArea
-          chat={selectedChat}
-          currentUserId={currentUserId}
-          users={users}
-        />
-      </div>
-    </div>
+    <Card>
+      <CardContent className="p-0">
+        <div className="rounded-xl overflow-hidden max-w-7xl mx-auto h-[80vh] flex flex-col md:flex-row">
+          <ContactList
+            contacts={contacts}
+            chats={chats}
+            currentUserId={currentUserId}
+            selectedContactId={
+              selectedChat?.participants.find(
+                (id: any) => id !== currentUserId,
+              ) || null
+            }
+            onSelectContact={handleSelectContact}
+          />
+          <ChatArea
+            chat={selectedChat}
+            currentUserId={currentUserId}
+            users={users}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

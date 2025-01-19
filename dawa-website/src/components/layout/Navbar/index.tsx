@@ -22,6 +22,7 @@ import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { ChevronLeft } from 'lucide-react';
 import MainConfigs from '@configs/mainConfigs';
+import mainConfig from '@configs/mainConfigs';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
@@ -76,19 +77,12 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   };
 
   return (
-    <motion.nav
-      className={`${
-        isSticky ? 'fixed top-0 left-0 right-0 z-50 bg-white shadow-md' : ''
-      }`}
-      initial={{ y: 0 }}
-      animate={{ y: scrollDirection === 'down' ? '-100%' : 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <nav className="mb-8">
       <div className="bg-white hidden sm:block">
         <div
-          className={`container mx-auto flex items-center justify-between ${
+          className={`${mainConfig.maxWidthClass} flex items-center justify-between ${
             isSticky ? 'py-2' : 'py-4'
-          } px-4 transition-all duration-300 ease-in-out`}
+          } transition-all duration-300 ease-in-out`}
         >
           <div className="lg:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -235,7 +229,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </div>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 };
 

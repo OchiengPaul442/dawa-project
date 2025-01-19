@@ -35,16 +35,16 @@ const menuItems = [
     icon: FileText,
     label: 'My Adverts',
   },
-  {
-    href: '/account/followers',
-    icon: Users,
-    label: 'Followers',
-  },
-  {
-    href: '/account/feedback',
-    icon: MessageSquare,
-    label: 'Feedback',
-  },
+  // {
+  //   href: '/account/followers',
+  //   icon: Users,
+  //   label: 'Followers',
+  // },
+  // {
+  //   href: '/account/feedback',
+  //   icon: MessageSquare,
+  //   label: 'Feedback',
+  // },
   {
     href: '/account/settings',
     icon: Settings,

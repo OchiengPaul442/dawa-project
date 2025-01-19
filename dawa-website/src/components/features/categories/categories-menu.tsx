@@ -17,7 +17,7 @@ export function CategoriesMenu() {
   };
 
   return (
-    <div className="w-full container mx-auto px-4 pt-8">
+    <div className="w-full">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Mobile Categories Grid */}
         <div className="lg:hidden">

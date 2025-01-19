@@ -12,12 +12,15 @@ import {
 } from 'react-icons/fa';
 import { useAuth } from '@core/hooks/use-auth';
 import FooterLinkSection from './FooterLinkSection';
+import mainConfig from '@/configs/mainConfigs';
 
 const Footer = () => {
   const { user } = useAuth();
   return (
     <footer className="bg-white text-gray-700">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 py-12 gap-8">
+      <div
+        className={`${mainConfig.maxWidthClass} grid grid-cols-1 md:grid-cols-4 py-12 gap-8`}
+      >
         {/* Logo and Description */}
         <div className="flex flex-col items-start text-left">
           <Link href="/">
@@ -69,7 +72,7 @@ const Footer = () => {
             { href: '/legal/privacy', label: 'Privacy Policy' },
             { href: '/legal/billing', label: 'Billing Policy' },
             { href: '/faqs', label: 'FAQs' },
-            { href: '/subscriptions', label: 'Subscriptions' },
+            // { href: '/subscriptions', label: 'Subscriptions' },
           ]}
         />
 

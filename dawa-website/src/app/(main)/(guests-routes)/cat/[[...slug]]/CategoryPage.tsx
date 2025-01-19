@@ -217,7 +217,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <>
       {/* Use the refactored Breadcrumbs component */}
       <Breadcrumbs
         categoryName={selectedCategory.category_name}
@@ -303,7 +303,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
           )}
         </main>
       </div>
-    </div>
+    </>
   );
 };
 

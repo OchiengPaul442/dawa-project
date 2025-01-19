@@ -25,7 +25,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
 
   if (isError) {
     return (
-      <div className="container mx-auto py-10 px-5 text-center">
+      <div className="text-center">
         <p className="text-red-600">
           Failed to load product details. Please try again later.
         </p>
@@ -35,7 +35,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
 
   if (!productData || slug.length === 0) {
     return (
-      <div className="container mx-auto py-10 px-5 text-center">
+      <div className=" text-center">
         <p className="text-gray-500">
           Product not found. Please check the URL or browse our catalog.
         </p>
@@ -47,7 +47,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
   }
 
   return (
-    <section className="container mx-auto h-screen py-10 px-5">
+    <>
       <Breadcrumbs
         categoryName={productData.category}
         subcategoryName={productData.subcategory}
@@ -57,7 +57,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
       <div>
         <ProductDetails product={productData} />
       </div>
-    </section>
+    </>
   );
 };
 
