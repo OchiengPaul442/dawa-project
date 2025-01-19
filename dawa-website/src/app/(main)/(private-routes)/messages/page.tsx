@@ -1,7 +1,7 @@
-import MessagePage from '@views/pages/messages/MessagePage';
+import ChatApp from '@/views/pages/messages/ChatApp';
 
 const page = () => {
-  return <MessagePage />;
+  return <ChatApp />;
 };
 
 export default page;

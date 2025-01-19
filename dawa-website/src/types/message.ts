@@ -11,12 +11,22 @@ export interface Item {
 
 export interface Message {
   id: string;
-  item: Item;
-  sender: User;
-  receiver: User;
   message: string;
-  message_read: boolean;
+  sender: {
+    username: string;
+  };
   created_at: string;
+  message_read: boolean;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  image: string | null;
+  price: number;
+  lastMessage: string;
+  unreadCount: number;
+  timestamp: string;
 }
 
 export type FetchMessagesFunction = () => Promise<Message[]>;

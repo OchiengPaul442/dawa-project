@@ -4,6 +4,7 @@ import categoriesReducer from './slices/categories/categories';
 import categoryReducer from './slices/categories/categorySlice';
 import productReducer from './slices/products/productSlice';
 import wishlistReducer from './slices/wishlist/wishlistSlice';
+import chatReducer from './slices/chatApp/chatSlice';
 
 const rootReducer = combineReducers({
   authDialog: authDialogReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   product: productReducer,
   wishlist: wishlistReducer,
+  chat: chatReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
