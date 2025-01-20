@@ -1,58 +1,53 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import NextImage, { ImageProps } from 'next/image';
+import type React from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import NextImage, { type ImageProps as NextImageProps } from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
-import DefaultImage from '@public/assets/images/default_image.webp';
 import { cn } from '@/lib/utils';
 
-interface CustomImageProps extends Omit<ImageProps, 'src'> {
+interface CustomImageProps extends Omit<NextImageProps, 'src'> {
   src?: string | null;
   fallbackSrc?: string;
   className?: string;
+  containerClassName?: string;
 }
+
+const DEFAULT_FALLBACK_IMAGE = '/assets/images/default_image.webp';
 
 const CustomImage: React.FC<CustomImageProps> = ({
   className,
-  fallbackSrc = DefaultImage.src,
+  containerClassName,
+  fallbackSrc = DEFAULT_FALLBACK_IMAGE,
   src,
   alt = '',
+  quality = 85, // Increased default quality
   ...props
 }) => {
   const [imgSrc, setImgSrc] = useState<string>(src || fallbackSrc);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const mountedRef = useRef(false);
-  const prevSrcRef = useRef<string | null | undefined>(src);
+  const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (src !== prevSrcRef.current) {
-      prevSrcRef.current = src;
+    if (src !== imgSrc) {
       setImgSrc(src || fallbackSrc);
       setIsLoading(true);
+      setHasError(false);
     }
   }, [src, fallbackSrc]);
 
   const handleLoadingComplete = useCallback(() => {
-    if (mountedRef.current) {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   }, []);
 
   const handleError = useCallback(() => {
-    if (mountedRef.current) {
-      if (imgSrc !== fallbackSrc) {
-        setImgSrc(fallbackSrc);
-        setIsLoading(true);
-      } else {
-        setIsLoading(false);
-      }
+    if (imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc);
+      setIsLoading(true);
+      setHasError(false);
+    } else {
+      setIsLoading(false);
+      setHasError(true);
     }
   }, [fallbackSrc, imgSrc]);
 
@@ -60,24 +55,29 @@ const CustomImage: React.FC<CustomImageProps> = ({
     <div
       className={cn(
         'relative w-full h-full overflow-hidden rounded-lg',
-        className,
+        containerClassName,
       )}
     >
-      {isLoading && <Skeleton className="absolute inset-0 w-full h-full" />}
-      <NextImage
-        src={imgSrc}
-        alt={alt}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        style={{ objectFit: 'cover' }}
-        className={cn(
-          'transition-opacity duration-300 rounded-lg',
-          isLoading ? 'opacity-0' : 'opacity-100',
-        )}
-        onLoadingComplete={handleLoadingComplete}
-        onError={handleError}
-        {...props}
-      />
+      {isLoading && (
+        <Skeleton className="absolute inset-0 w-full h-full rounded-lg" />
+      )}
+      {!hasError && (
+        <NextImage
+          src={imgSrc}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          quality={quality}
+          className={cn(
+            'object-cover object-center w-full h-full transition-opacity duration-300 rounded-lg',
+            isLoading ? 'opacity-0' : 'opacity-100',
+            className,
+          )}
+          onLoadingComplete={handleLoadingComplete}
+          onError={handleError}
+          {...props}
+        />
+      )}
     </div>
   );
 };

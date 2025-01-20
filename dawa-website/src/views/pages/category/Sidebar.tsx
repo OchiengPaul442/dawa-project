@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import type React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent } from '@/components/ui/card';
 import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
 import SidebarSkeleton from './SidebarSkeleton';
@@ -73,7 +75,6 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
-  // Retrieve categories from Redux
   const categories = useSelector(selectCategories);
   const dispatch = useDispatch();
 
@@ -175,7 +176,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [handleItemClick, dispatch],
   );
 
-  // Fallback if categories are not yet available
   if (!categories) {
     return <SidebarSkeleton />;
   }
@@ -185,42 +185,42 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       className="relative w-full lg:w-[288px] z-30"
       onMouseLeave={handleSidebarMouseLeave}
     >
-      {/* Main Category List */}
-      <div
-        className={`bg-white rounded-md border sticky top-[100px]
-          ${hoveredCategory ? 'rounded-r-none border-r-primary_1' : 'rounded-md border-gray-200'}
-        `}
+      <Card
+        className={`sticky top-[100px] ${hoveredCategory ? 'rounded-r-none border-r-primary_1' : ''}`}
       >
-        <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-          {categories.length > 0 ? (
-            <div className="p-4 space-y-1">
-              {categories.map((category) =>
-                renderCategoryItem(category as any),
-              )}
-            </div>
-          ) : (
-            <div className="p-4 text-gray-500">No categories found.</div>
-          )}
-        </ScrollArea>
-      </div>
+        <CardContent className="p-0">
+          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
+            {categories.length > 0 ? (
+              <div className="p-4 space-y-1">
+                {categories.map((category) =>
+                  renderCategoryItem(category as Category),
+                )}
+              </div>
+            ) : (
+              <div className="p-4 text-gray-500">No categories found.</div>
+            )}
+          </ScrollArea>
+        </CardContent>
+      </Card>
 
-      {/* Subcategory List (visible on hover, large screens only) */}
       {isLargeScreen && hoveredCategory && (
-        <div
-          className="absolute bg-white rounded-r-md border-r border-y min-w-[288px] left-[288px] top-0 z-30"
+        <Card
+          className="absolute min-w-[288px] left-[288px] rounded-l-none top-0 z-30"
           onMouseEnter={() => handleSubcategoryMouseEnter(hoveredCategory)}
         >
-          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-            <div className="p-4 space-y-1">
-              {hoveredCategory.subcategories?.map((subcategory) =>
-                renderSubcategoryItem(
-                  subcategory,
-                  hoveredCategory.category_name,
-                ),
-              )}
-            </div>
-          </ScrollArea>
-        </div>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
+              <div className="p-4 space-y-1">
+                {hoveredCategory.subcategories?.map((subcategory) =>
+                  renderSubcategoryItem(
+                    subcategory,
+                    hoveredCategory.category_name,
+                  ),
+                )}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
