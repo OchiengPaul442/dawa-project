@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { FAQCategory } from '@/data/faqs';
 import { FAQ_Category, Question } from '@/types/faq';
+import mainConfig from '@/configs/mainConfigs';
 
 export default function FAQPage() {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -72,7 +73,7 @@ export default function FAQPage() {
   return (
     <div className="relative">
       <div className="bg-primary_1">
-        <div className="relative mx-auto max-w-7xl px-4 py-12">
+        <div className={`relative ${mainConfig.maxWidthClass} -mt-8 py-12`}>
           <div className="mb-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-white">FAQ</h1>
             <p className="mt-3 text-lg md:text-xl text-white/90">
@@ -100,7 +101,7 @@ export default function FAQPage() {
         </div>
       </div>
       <div className="h-24 bg-white" />
-      <div className="relative mx-auto max-w-7xl px-4 py-12">
+      <div className={`relative ${mainConfig.maxWidthClass} py-12`}>
         <Sheet open={isCategorySheetOpen} onOpenChange={setIsCategorySheetOpen}>
           <SheetTrigger asChild>
             <Button
