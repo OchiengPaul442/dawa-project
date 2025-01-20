@@ -11,6 +11,7 @@ import { useAuth } from '@/@core/hooks/use-auth';
 import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 import { format } from 'date-fns';
+import { mutate } from 'swr';
 
 interface ReviewsProps {
   product: ProductType;
@@ -69,6 +70,10 @@ const Reviews: React.FC<ReviewsProps> = ({ product }) => {
       }
 
       setReviews([...reviews, review]);
+
+      // Trigger SWR to refetch product details for this specific product
+      mutate(['/getitemdetails', product.id]);
+
       setNewReview('');
       setSubmitStatus({
         type: 'success',

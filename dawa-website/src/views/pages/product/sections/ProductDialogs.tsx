@@ -52,15 +52,13 @@ export const ProductDialogs: React.FC<ProductDialogsProps> = ({
       onOpenChange={() => toggleDialog('safety')}
       safetyTips={safetyTips}
     />
+
     <MakeOfferDialog
       open={dialogStates.makeOffer}
       onOpenChange={() => toggleDialog('makeOffer')}
+      receiverId={product.seller.seller_id}
+      itemId={product.id}
       currentPrice={product.price}
-      onSubmitOffer={(price) => {
-        console.log('Offer submitted:', price);
-        alert('Your offer has been sent to the seller.');
-        toggleDialog('makeOffer');
-      }}
     />
   </>
 );

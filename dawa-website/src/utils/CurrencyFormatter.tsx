@@ -1,3 +1,4 @@
+import mainConfig from '@/configs/mainConfigs';
 import React from 'react';
 
 // Define the props interface
@@ -11,8 +12,8 @@ interface CurrencyFormatterProps {
 // CurrencyFormatter component with TypeScript
 export const CurrencyFormatter: React.FC<CurrencyFormatterProps> = ({
   price,
-  currency = 'UGX',
-  locale = 'en-UG',
+  currency = mainConfig.usedCurrency,
+  locale = mainConfig.usedLocale,
   className = '',
 }) => {
   return (
@@ -21,5 +22,16 @@ export const CurrencyFormatter: React.FC<CurrencyFormatterProps> = ({
         price,
       )}
     </span>
+  );
+};
+
+// similar function but for it just formats the value entered
+export const formatCurrency = (
+  price: number,
+  currency: string = mainConfig.usedCurrency,
+  locale: string = mainConfig.usedLocale,
+): string => {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(
+    price,
   );
 };

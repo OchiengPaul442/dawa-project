@@ -16,10 +16,9 @@ import { useAddNewProduct } from '@core/hooks/useProductData';
 import { locations } from '@/data/locations';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import Loader from '@/components/Loader';
-
 import { selectCategories } from '@redux-store/slices/categories/categories';
 import { useSelector } from '@/redux-store/hooks';
+import { mutate } from 'swr';
 
 /** -------------------------------
  *  Define Types & Validation
@@ -87,7 +86,7 @@ export default function PostAdPage() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
-    mode: 'onChange', // Validate on change, blur, and submit
+    mode: 'onChange',
     defaultValues: {
       item_subcategory_id: '',
       location: '',
@@ -125,6 +124,9 @@ export default function PostAdPage() {
         setSuccessMessage('Your ad has been posted successfully!');
         setTimeout(() => setSuccessMessage(null), 5000);
         setCurrentStep(1);
+
+        // Refetch trending products after successful ad post
+        mutate('products');
       } else {
         setSuccessMessage('Failed to post ad. Please try again later.');
         setTimeout(() => setSuccessMessage(null), 5000);

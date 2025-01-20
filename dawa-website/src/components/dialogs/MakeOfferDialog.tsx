@@ -1,28 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { AlertCircle } from 'lucide-react';
+import { useSendMessage } from '@core/hooks/useProductData';
+import { formatCurrency } from '@/utils/CurrencyFormatter';
 
 interface MakeOfferDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  receiverId: string;
+  itemId: string;
   currentPrice: string | number;
-  onSubmitOffer: (price: number) => void;
 }
 
-export default function MakeOfferDialog({
+interface MakeOfferFormValues {
+  price: number;
+}
+
+const schema = yup
+  .object({
+    price: yup
+      .number()
+      .typeError('Price must be a valid number')
+      .positive('Price must be greater than zero')
+      .required('Price is required'),
+  })
+  .required();
+
+const MakeOfferDialog: React.FC<MakeOfferDialogProps> = ({
   open,
   onOpenChange,
+  receiverId,
+  itemId,
   currentPrice,
-  onSubmitOffer,
-}: MakeOfferDialogProps) {
+}) => {
   // Ensure `currentPrice` is a number and fallback to 0 if invalid
   const basePrice =
     typeof currentPrice === 'string'
@@ -31,91 +56,129 @@ export default function MakeOfferDialog({
         ? currentPrice
         : 0;
 
-  const [customPrice, setCustomPrice] = useState('');
+  const { sendMessage, isSending, error } = useSendMessage();
 
-  // Calculate suggested prices as percentages below the current price
-  const getSuggestedPrices = (price: number) => {
-    if (price <= 0) return [];
-    return [
-      Math.round(price * 0.95), // 5% below
-      Math.round(price * 0.9), // 10% below
-      Math.round(price * 0.85), // 15% below
-      Math.round(price * 0.8), // 20% below
-    ];
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<MakeOfferFormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      price: 0,
+    },
+  });
 
-  const suggestedPrices = getSuggestedPrices(basePrice);
+  const [suggestedPrices] = useState<number[]>([
+    Math.round(basePrice * 0.95), // 5% below
+    Math.round(basePrice * 0.9), // 10% below
+    Math.round(basePrice * 0.85), // 15% below
+    Math.round(basePrice * 0.8), // 20% below
+  ]);
 
-  const handleSubmit = () => {
-    const price = parseInt(customPrice);
-    if (price > 0) {
-      onSubmitOffer(price);
+  const onSubmit = async (data: MakeOfferFormValues) => {
+    const { price } = data;
+    const formattedPrice = formatCurrency(price);
+
+    // Generate a professional offer message
+    const message = `Hello,
+
+I am interested in your product and would like to offer ${formattedPrice}. Please let me know if this offer is acceptable to you.
+
+Thank you`;
+
+    try {
+      await sendMessage({
+        receiver_id: receiverId,
+        item_id: itemId,
+        message,
+      });
+      reset();
       onOpenChange(false);
-      setCustomPrice('');
+      alert('Your offer has been sent successfully!');
+    } catch (err: any) {
+      console.error('Error sending offer:', err);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
+  const handleSuggestedPriceClick = (price: number) => {
+    reset({ price });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Make an offer</DialogTitle>
+          <DialogTitle className="text-center">Make an Offer</DialogTitle>
+          <DialogDescription className="text-center mb-4">
+            Submit your offer for the product.
+          </DialogDescription>
         </DialogHeader>
 
-        {/* Current Price Display */}
-        <p className="text-center text-sm text-gray-500 mb-4">
-          Current Price: UGX {basePrice.toLocaleString()}
-        </p>
-
-        {/* Suggested Offers */}
-        {suggestedPrices.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 py-4">
-            {suggestedPrices.map((price, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                onClick={() => setCustomPrice(price.toString())}
-                className="w-full"
-              >
-                UGX {price.toLocaleString()}
-              </Button>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-500 text-center mb-4">
-            No suggestions available.
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Current Price Display */}
+          <p className="text-center text-sm text-gray-500">
+            Current Price: UGX {basePrice.toLocaleString()}
           </p>
-        )}
 
-        {/* Input Field with UGX prefix */}
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md">
-            UGX
-          </span>
-          <Input
-            type="number"
-            placeholder="Enter your price"
-            value={customPrice}
-            onChange={(e) => setCustomPrice(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-1"
-            min={1}
-          />
+          {/* Suggested Offers */}
+          {suggestedPrices.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              {suggestedPrices.map((price, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  onClick={() => handleSuggestedPriceClick(price)}
+                  className="w-full"
+                >
+                  UGX {price.toLocaleString()}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {/* Custom Price Input */}
+          <div className="space-y-2">
+            <Label htmlFor="price">Your Offer Price (UGX)</Label>
+            <div className="flex items-center">
+              <span className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-l-md">
+                UGX
+              </span>
+              <Input
+                id="price"
+                type="number"
+                placeholder="Enter your offer price"
+                {...register('price')}
+                className="flex-1 border-t-0 border-b-0 border-l-0 rounded-none focus:border-primary_1"
+                min={1}
+              />
+            </div>
+            {errors.price && (
+              <p className="text-red-500 text-sm">{errors.price.message}</p>
+            )}
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="flex items-center text-red-500 text-sm">
+              <AlertCircle className="w-5 h-5 mr-2" />
+              <span>{typeof error === 'string' ? error : error.message}</span>
+            </div>
+          )}
+
+          {/* Submit Button */}
           <Button
-            onClick={handleSubmit}
-            className="bg-primary_1 hover:bg-primary_1/90"
-            disabled={!customPrice || parseInt(customPrice) <= 0}
+            type="submit"
+            className="w-full bg-primary_1 hover:bg-primary_1/90 flex items-center justify-center"
+            disabled={isSending}
           >
-            Send
+            {isSending ? 'Sending Offer...' : 'Send Offer'}
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default MakeOfferDialog;
