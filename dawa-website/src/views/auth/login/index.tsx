@@ -4,7 +4,7 @@ import Login_form from '@/components/forms/login_form';
 
 const LoginPage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center bg-gray-50 py-4 lg:py-20">
+    <div className="flex items-center justify-center">
       <div className="flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-2xl overflow-hidden shadow-md border-primary_1 border">
         <Login_form />
         <div

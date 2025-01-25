@@ -3,7 +3,7 @@ import Register_form from '@/components/forms/registration_form';
 
 const SignupPage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center bg-gray-50 py-4 lg:py-20">
+    <div className="flex items-center justify-center">
       <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-3xl shadow-md border-primary_1 border overflow-hidden">
         <div
           className="hidden md:block w-[40%] bg-cover bg-center"
