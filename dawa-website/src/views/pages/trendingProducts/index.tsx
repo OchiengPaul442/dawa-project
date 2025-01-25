@@ -7,19 +7,12 @@ import { toggleWishlistItem } from '@/app/server/wishList/api';
 import ProductCard from '@/components/ProductCards/GridCardLayout';
 import CustomPagination from '@/components/shared/CustomPagination';
 import Loader from '@/components/Loader';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  images: any[];
-  liked: boolean;
-}
+import { SimilarItem } from '@/types/product';
 
 const ITEMS_PER_PAGE = 16;
 
 const ProductPage: React.FC = () => {
-  const { productsData, isLoading, isError, mutate } = useTrendingProducts();
+  const { productsData, isLoading, isError } = useTrendingProducts();
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = useCallback((page: number) => {
@@ -55,7 +48,7 @@ const ProductPage: React.FC = () => {
       </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {currentProducts.map((product: Product) => (
+        {currentProducts.map((product: SimilarItem) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
