@@ -113,7 +113,6 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         })}
         {productName && (
           <li className="flex items-center">
-            <ChevronRight className="h-4 w-4 text-gray-400 mx-1 flex-shrink-0" />
             <span
               className="text-gray-800 truncate max-w-[150px]"
               title={productName}

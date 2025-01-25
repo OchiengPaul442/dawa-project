@@ -8,23 +8,18 @@ import { BottomNav } from './Navbar/BottomNav';
 
 interface LayoutProps {
   children: ReactNode;
-  newsletterProps?: {
-    container?: boolean;
-    hide?: boolean;
-  };
+
+  addFooter?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, newsletterProps }) => {
+const Layout: React.FC<LayoutProps> = ({ children, addFooter = true }) => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation Bar */}
       <NavBar />
 
       {/* Main Content */}
-      <main className="flex-grow">{children}</main>
-
-      {/* Newsletter Section */}
-      {newsletterProps && <Newsletter {...newsletterProps} />}
+      <main className="flex-grow mb-20">{children}</main>
 
       {/* Scroll to Top Button */}
       <ScrollToTopButton />
@@ -32,8 +27,8 @@ const Layout: React.FC<LayoutProps> = ({ children, newsletterProps }) => {
       {/* Bottom Navigation Bar */}
       <BottomNav />
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer Section */}
+      {addFooter && <Footer />}
     </div>
   );
 };

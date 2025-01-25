@@ -11,21 +11,10 @@ import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  rating?: number;
-  reviews?: number;
-  imageUrl: string;
-  sku?: string;
-  features?: string[];
-}
+import { SimilarItem } from '@/types/product';
 
 interface ListLayoutProps {
-  product: Product;
+  product: SimilarItem;
 }
 
 const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
@@ -37,12 +26,14 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
     router.push(`/prod/${slugify(product.name)}`);
   }, [router, dispatch, product.id, product.name]);
 
+  const image = product.images[0]?.image_url || '/placeholder.jpg';
+
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg w-full">
       <div className="flex flex-col sm:flex-row">
         <div className="relative w-full sm:w-48 md:w-64 aspect-square sm:aspect-auto sm:h-48 md:h-64">
           <CustomImage
-            src={product.imageUrl}
+            src={image}
             alt={product.name}
             fill
             className="object-cover"
@@ -69,10 +60,6 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
             )}
 
             <h3 className="font-semibold text-lg truncate">{product.name}</h3>
-
-            {product.sku && (
-              <p className="text-sm text-muted-foreground">SKU {product.sku}</p>
-            )}
 
             {product.features && (
               <ul className="text-sm text-muted-foreground mt-2 space-y-1">

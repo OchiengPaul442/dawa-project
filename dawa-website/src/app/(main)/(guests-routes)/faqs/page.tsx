@@ -3,7 +3,7 @@ import FAQPage from '@views/pages/faqs/FAQPage';
 
 const page = () => {
   return (
-    <Layout newsletterProps={{ container: false, hide: true }}>
+    <Layout>
       <FAQPage />
     </Layout>
   );

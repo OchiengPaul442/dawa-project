@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import {
   getTrendingProductsList,
-  getCategoriesList,
+  getPromotedProductsList,
   getCategoryData,
   addNewProduct,
   getProductDetails,
@@ -128,6 +128,21 @@ export const useProductDetails = (itemId: any) => {
     mutate,
   };
 };
+
+export function usePromotedProducts() {
+  const { data, error, isLoading, mutate } = useSWR(
+    'promotedProducts',
+    getPromotedProductsList,
+    swrOptions,
+  );
+
+  return {
+    productsData: data?.data || [],
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
 
 export function useReportAbuse() {
   const { trigger, isMutating, error } = useSWRMutation<

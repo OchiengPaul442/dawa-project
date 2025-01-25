@@ -2,12 +2,12 @@
   {
     "id": 1,
     "category_name": "Vehicles",
-    "category_item_count": 1,
+    "category_item_count": 2,
     "subcategories": [
       {
         "id": 1,
         "subcategory_name": "Cars",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 2,
@@ -39,12 +39,12 @@
   {
     "id": 2,
     "category_name": "Property",
-    "category_item_count": 1,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 7,
         "subcategory_name": "Houses & Apartments for Sale",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 2
       },
       {
         "id": 8,
@@ -224,7 +224,7 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 1,
+    "category_item_count": 2,
     "subcategories": [
       {
         "id": 37,
@@ -244,7 +244,7 @@
       {
         "id": 40,
         "subcategory_name": "Jewelry",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 41,

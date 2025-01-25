@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { categories, productCarouselItems } from '@/lib/mock_data';
+import { productCarouselItems } from '@/lib/mock_data';
 import { ProductCarousel } from '../carousels/product-carousel';
 import { PostAdvertCTA } from './post-advert-cta';
 import { SafetyTips } from './safety-tips';

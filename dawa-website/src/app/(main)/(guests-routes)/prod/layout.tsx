@@ -7,7 +7,7 @@ export default function ProdLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Layout newsletterProps={{ container: false }}>
+    <Layout addFooter={false}>
       <main className={`${mainConfig.maxWidthClass} min-h-dvh`}>
         {children}
       </main>

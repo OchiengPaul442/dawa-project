@@ -5,5 +5,5 @@ export default function ProdLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Layout newsletterProps={{ container: false }}>{children}</Layout>;
+  return <Layout addFooter={false}>{children}</Layout>;
 }

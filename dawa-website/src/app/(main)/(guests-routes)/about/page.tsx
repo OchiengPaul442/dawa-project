@@ -3,7 +3,7 @@ import About_Page from '@views/pages/about/AboutPage';
 
 const AboutPage = () => {
   return (
-    <Layout newsletterProps={{ container: true }}>
+    <Layout addFooter={false}>
       <About_Page />
     </Layout>
   );

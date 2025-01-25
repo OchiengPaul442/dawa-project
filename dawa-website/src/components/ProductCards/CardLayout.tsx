@@ -3,26 +3,10 @@
 import React from 'react';
 import ImportedProductCard from './GridCardLayout';
 import ListLayout from './ListCardLayout';
-
-interface Image {
-  image_id: string;
-  image_url: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  rating?: number;
-  reviews?: number;
-  images: Image[];
-  sku?: string;
-  features?: string[];
-}
+import { SimilarItem } from '@/types/product';
 
 interface CardLayoutProps {
-  product: Product;
+  product: SimilarItem;
   viewType: 'grid' | 'list';
 }
 
@@ -36,8 +20,6 @@ const CardLayout: React.FC<CardLayoutProps> = ({ product, viewType }) => {
   // Prepare a common object for both layouts
   const transformedProduct = {
     ...product,
-    // Ensure there's always an imageUrl even if images is empty
-    imageUrl: product.images[0]?.image_url || '',
   };
 
   if (viewType === 'grid') {

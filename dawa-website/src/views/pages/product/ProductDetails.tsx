@@ -1,20 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/@core/hooks/use-auth';
 import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
-import useWindowSize from '@/@core/hooks/useWindowSize';
 import { ProductInfo } from './sections/ProductInfo';
 import { SellerInfo } from './sections/SellerInfo';
 import { ActionButtons } from './sections/ActionButtons';
 import { Sidebar } from './sections/Sidebar';
 import { ProductDialogs } from './sections/ProductDialogs';
-import { ProductType } from '@/types/product';
+import type { ProductType } from '@/types/product';
 import { useRouter } from 'next/navigation';
 import ImageCarousel from './ImageCarousel';
 import ProductTabs from './ProductTabs';
 import ShareSection from './ShareSection';
+import SimilarProducts from './sections/SimilarProducts';
 
 interface ProductDetailsProps {
   product: ProductType;
@@ -51,12 +52,12 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   return (
     <>
-      <section>
-        {/* Main grid container with sidebar - reduced sidebar width from 300px to 250px */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main grid container with sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,250px] gap-6">
           {/* Left column - main content */}
           <div className="space-y-8">
-            {/* Images and details in grid row - adjusted ratio to give more space to images */}
+            {/* Images and details in grid row */}
             <div className="grid grid-cols-1 lg:grid-cols-[3fr,2fr] gap-8">
               {/* Product images section */}
               <div className="w-full">
@@ -72,10 +73,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               {/* Product details section */}
               <div className="space-y-6">
                 <ProductInfo product={product} />
-                <SellerInfo
-                  seller={product.seller}
-                  reviews={product.reviews as any}
-                />
+                <SellerInfo seller={product.seller} reviews={product.reviews} />
                 <ActionButtons
                   onContact={() => toggleDialog('contact')}
                   onMessage={() => handleAction(() => toggleDialog('message'))}
@@ -91,6 +89,9 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               <ShareSection title={product.name} />
               <ProductTabs product={product} />
             </div>
+
+            {/* Similar Products Section */}
+            <SimilarProducts similarItems={product.similar_items} />
           </div>
 
           {/* Right column - sidebar */}
@@ -104,6 +105,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </div>
         </div>
       </section>
+
       <ProductDialogs
         product={product}
         dialogStates={dialogStates}

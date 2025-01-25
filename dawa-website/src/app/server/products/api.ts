@@ -50,6 +50,17 @@ export const getProductDetails = async (body: any): Promise<any> => {
   }
 };
 
+//get promoted products
+export const getPromotedProductsList = async (): Promise<any> => {
+  try {
+    const response = await openApiClient.get('/getitemspromoted/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching promoted products:', error);
+    throw error;
+  }
+};
+
 // Add a new product
 export const addNewProduct = async (
   url: string,

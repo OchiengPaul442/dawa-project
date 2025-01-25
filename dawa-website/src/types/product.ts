@@ -30,6 +30,11 @@ export interface SellerType {
   seller_email: string;
 }
 
+export interface Image {
+  image_id: string;
+  image_url: string;
+}
+
 export interface ProductType {
   id: string;
   name: string;
@@ -40,14 +45,20 @@ export interface ProductType {
   description: string;
   subcategory: string;
   category: string;
-  images: {
-    image_id: string;
-    image_url: string;
-  }[];
+  images: Image[];
   seller: SellerType;
   reviews: any[];
+  similar_items: any[];
+  rating: number;
+  features: string[];
+
+  originalPrice: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface SimilarItem extends ProductType {
+  image: string;
 }
 
 export interface Review {

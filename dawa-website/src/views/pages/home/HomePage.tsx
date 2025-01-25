@@ -1,4 +1,3 @@
-import RecentlyViewedCarousel from '@/components/features/carousels/RecentlyViewedCarousel';
 import { CategoriesMenu } from '@/components/features/categories/categories-menu';
 import mainConfig from '@/configs/mainConfigs';
 import ProductPage from '@/views/pages/trendingProducts';
@@ -22,9 +21,6 @@ export default function HomePage() {
             <ProductPage />
           </div>
         </div>
-      </section>
-      <section>
-        <RecentlyViewedCarousel />
       </section>
     </div>
   );

@@ -9,15 +9,10 @@ import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
 import { LikeButton } from '@/components/shared/LikeButton';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
+import { SimilarItem } from '@/types/product';
 
 interface ProductCardProps {
-  product: {
-    id: string;
-    name: string;
-    price: number;
-    originalPrice?: number;
-    images: { image_url: string }[];
-  };
+  product: SimilarItem;
 }
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
@@ -30,7 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   }, [router, dispatch, product.id, product.name]);
 
   // get the first item from the images array
-  const image = product.images[0]?.image_url || '/placeholder.jpg';
+  const image = product.images[0]?.image_url || '';
 
   return (
     <Card

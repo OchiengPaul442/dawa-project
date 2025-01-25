@@ -11,64 +11,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
 import SidebarSkeleton from './SidebarSkeleton';
-
-import {
-  Truck,
-  Home,
-  Phone,
-  Tv,
-  Sofa,
-  Palette,
-  Wrench,
-  ShoppingBag,
-  Activity,
-  Briefcase,
-  Heart,
-} from 'lucide-react';
+import { categoryIconMap, subcategoryIconMap, DefaultIcon } from './icon-maps';
 
 import {
   setSelectedCategory,
   setSelectedSubcategory,
 } from '@redux-store/slices/categories/categorySlice';
 import { selectCategories } from '@redux-store/slices/categories/categories';
-
-const DefaultIcon = ShoppingBag;
-
-const categoryIconMap: Record<string, React.ElementType> = {
-  Vehicles: Truck,
-  Property: Home,
-  'Phones & Tablets': Phone,
-  Electronics: Tv,
-  'Home, Appliances & Furniture': Sofa,
-  'Health & Beauty': Palette,
-  Fashion: ShoppingBag,
-  'Sports, Arts & Outdoors': Activity,
-  'Seeking Work CVs': Briefcase,
-  Services: Wrench,
-  Jobs: Briefcase,
-  'Babies & Kids': ShoppingBag,
-  Pets: Heart,
-  'Agriculture & Food': Wrench,
-  'Commercial Equipment & Tools': Wrench,
-  'Repair & Construction': Wrench,
-};
-
-const subcategoryIconMap: Record<string, React.ElementType> = {
-  Cars: Truck,
-  'Motorcycles & Scooters': Truck,
-  'Trucks & Trailers': Truck,
-  'Houses & Apartments for Sale': Home,
-  'Houses & Apartments for Rent': Home,
-  'Land & Plots for Sale': Home,
-  'Land & Plots for Rent': Home,
-  'Mobile Phones': Phone,
-  Tablets: Phone,
-  TVs: Tv,
-  Furniture: Sofa,
-  Makeup: Palette,
-  'Repair Services': Wrench,
-  'Other Services': Wrench,
-};
 
 interface SidebarProps {
   onSelect?: () => void;
@@ -100,10 +49,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     },
     [isLargeScreen],
   );
-
-  const handleSubcategoryMouseEnter = useCallback((category: Category) => {
-    setHoveredCategory(category);
-  }, []);
 
   const handleSidebarMouseLeave = useCallback(() => {
     setHoveredCategory(null);
@@ -166,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         >
           <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center">
             <Icon className="h-4 w-4 mr-2" />
-            <span className="font-medium truncate max-w-[180px]">
+            <span className="text-sm font-medium truncate max-w-[180px]">
               {subcategory.subcategory_name}
             </span>
           </div>
@@ -182,46 +127,47 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
 
   return (
     <div
-      className="relative w-full lg:w-[288px] z-30"
+      className="relative w-full lg:w-[288px]"
       onMouseLeave={handleSidebarMouseLeave}
     >
-      <Card
-        className={`sticky top-[100px] ${hoveredCategory ? 'rounded-r-none border-r-primary_1' : ''}`}
-      >
-        <CardContent className="p-0">
-          <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-            {categories.length > 0 ? (
-              <div className="p-4 space-y-1">
-                {categories.map((category) =>
-                  renderCategoryItem(category as Category),
-                )}
-              </div>
-            ) : (
-              <div className="p-4 text-gray-500">No categories found.</div>
-            )}
-          </ScrollArea>
-        </CardContent>
-      </Card>
-
-      {isLargeScreen && hoveredCategory && (
+      <div className="sticky top-[100px] flex">
+        {/* Category Sidebar */}
         <Card
-          className="absolute min-w-[288px] left-[288px] rounded-l-none top-0 z-30"
-          onMouseEnter={() => handleSubcategoryMouseEnter(hoveredCategory)}
+          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
         >
           <CardContent className="p-0">
-            <ScrollArea className="h-[calc(100vh-340px)] lg:h-[calc(100vh-390px)]">
-              <div className="p-4 space-y-1">
-                {hoveredCategory.subcategories?.map((subcategory) =>
-                  renderSubcategoryItem(
-                    subcategory,
-                    hoveredCategory.category_name,
-                  ),
-                )}
-              </div>
+            <ScrollArea className="h-[700px]">
+              {categories.length > 0 ? (
+                <div className="p-4 space-y-1">
+                  {categories.map((category) =>
+                    renderCategoryItem(category as Category),
+                  )}
+                </div>
+              ) : (
+                <div className="p-4 text-gray-500">No categories found.</div>
+              )}
             </ScrollArea>
           </CardContent>
         </Card>
-      )}
+
+        {/* Subcategory Sidebar */}
+        {isLargeScreen && hoveredCategory && (
+          <Card className="w-[288px] rounded-l-none border-l-0">
+            <CardContent className="p-0">
+              <ScrollArea className="h-[700px]">
+                <div className="p-4 space-y-1">
+                  {hoveredCategory.subcategories?.map((subcategory) =>
+                    renderSubcategoryItem(
+                      subcategory,
+                      hoveredCategory.category_name,
+                    ),
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
