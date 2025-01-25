@@ -6,7 +6,7 @@ import HomePage from '@views/pages/home/HomePage';
 
 const page = () => {
   return (
-    <Layout newsletterProps={{ container: false }}>
+    <Layout>
       <HomePage />
     </Layout>
   );
