@@ -13,18 +13,20 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   return (
     <div className="space-y-4">
       <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
-      <div className="flex items-center space-x-4">
-        <Badge
-          variant={product.item_negotiable ? 'secondary' : 'default'}
-          className="text-sm"
-        >
-          {product.item_negotiable ? 'Negotiable' : 'Fixed Price'}
-        </Badge>
-        <Badge
-          className={`text-sm ${product.status === 'Available' ? 'bg-green-500' : 'bg-red-500'}`}
-        >
-          {product.status}
-        </Badge>
+      <div className="flex justify-between items-center space-x-4">
+        <div className="flex flex-col items-start gap-2">
+          <Badge
+            variant={product.item_negotiable ? 'secondary' : 'default'}
+            className="text-sm"
+          >
+            {product.item_negotiable ? 'Negotiable' : 'Fixed Price'}
+          </Badge>
+          <Badge
+            className={`text-sm ${product.status === 'Available' ? 'bg-green-500' : 'bg-red-500'}`}
+          >
+            {product.status}
+          </Badge>
+        </div>
         <span className="text-sm text-gray-500 flex items-center">
           <CalendarDays className="w-4 h-4 mr-1" />
           Posted {format(new Date(product.created_at), 'MMMM d, yyyy')}
