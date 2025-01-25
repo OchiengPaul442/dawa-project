@@ -8,7 +8,7 @@ export default function WishListLayout({
 }) {
   return (
     <AuthGuard>
-      <Layout newsletterProps={{ container: false, hide: true }}>
+      <Layout addFooter={false}>
         <main className={`${mainConfig.maxWidthClass} min-h-dvh`}>
           {children}
         </main>

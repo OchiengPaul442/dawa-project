@@ -1,133 +1,98 @@
 'use client';
-import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
+
+import type React from 'react';
 import Link from 'next/link';
-import React from 'react';
-import {
-  FaFacebook,
-  FaHeadset,
-  FaInstagram,
-  FaLinkedin,
-  FaTwitter,
-  FaYoutube,
-} from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { useAuth } from '@core/hooks/use-auth';
 import FooterLinkSection from './FooterLinkSection';
-import mainConfig from '@/configs/mainConfigs';
+import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
+import NewsletterForm from '@/components/forms/NewsletterForm';
 
-const Footer = () => {
+const Footer: React.FC = () => {
   const { user } = useAuth();
+
+  const quickLinks = [
+    { href: '/about', label: 'About Us' },
+    { href: '/contact-us', label: 'Contact Us' },
+    { href: '/cat', label: 'Categories' },
+    ...(user
+      ? []
+      : [
+          { href: '/login', label: 'Login' },
+          { href: '/register', label: 'Sign Up' },
+        ]),
+  ];
+
+  const customerLinks = [
+    { href: '/legal/terms', label: 'Terms of Service' },
+    { href: '/legal/privacy', label: 'Privacy Policy' },
+    { href: '/legal/billing', label: 'Billing Policy' },
+    { href: '/faqs', label: 'FAQs' },
+  ];
+
   return (
-    <footer className="bg-white text-gray-700">
-      <div
-        className={`${mainConfig.maxWidthClass} grid grid-cols-1 md:grid-cols-4 py-12 gap-8`}
-      >
-        {/* Logo and Description */}
-        <div className="flex flex-col items-start text-left">
-          <Link href="/">
-            <Logo className="w-auto h-24 -ml-8 -mb-5 mt-[-34px]" />
-          </Link>
-          <p className="mb-4 text-gray-600 max-w-xs">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
-          <div className="flex space-x-3">
-            <SocialIconLink href="#" ariaLabel="Youtube" icon={<FaYoutube />} />
-            <SocialIconLink
-              href="#"
-              ariaLabel="LinkedIn"
-              icon={<FaLinkedin />}
-            />
-            <SocialIconLink href="#" ariaLabel="Twitter" icon={<FaTwitter />} />
-            <SocialIconLink
-              href="#"
-              ariaLabel="Facebook"
-              icon={<FaFacebook />}
-            />
-            <SocialIconLink
-              href="#"
-              ariaLabel="Instagram"
-              icon={<FaInstagram />}
-            />
-          </div>
-        </div>
-
-        {/* Quick Links */}
-        <FooterLinkSection
-          title="Quick Links"
-          links={[
-            { href: '/about', label: 'About us' },
-            { href: '/contact-us', label: 'Contact us' },
-            { href: '/cat', label: 'Categories' },
-            { href: '/login', label: 'Login' },
-            { href: '/register', label: 'Sign Up' },
-          ]}
-          isAuthenticated={user !== null}
-        />
-
-        {/* Customer Area */}
-        <FooterLinkSection
-          title="Customer Area"
-          links={[
-            { href: '/legal/terms', label: 'Terms' },
-            { href: '/legal/privacy', label: 'Privacy Policy' },
-            { href: '/legal/billing', label: 'Billing Policy' },
-            { href: '/faqs', label: 'FAQs' },
-            // { href: '/subscriptions', label: 'Subscriptions' },
-          ]}
-        />
-
-        {/* Contact */}
-        <div className="text-left">
-          <h3 className="text-lg font-bold mb-3 text-black">Contact</h3>
-          <p className="mb-4 text-gray-600 max-w-xs">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut.
-          </p>
-          <div className="flex items-center space-x-2">
-            <FaHeadset className="text-gray-600 text-2xl" />
-            <div>
-              <p className="text-sm">Have any question?</p>
-              <a href="tel:+256702108552" className="text-primary_1 font-bold">
-                +256 702 108 552
-              </a>
+    <footer className="bg-gray-50 text-gray-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Logo and Description */}
+          <div className="lg:col-span-2 space-y-6">
+            <Link href="/">
+              <Logo className="w-auto h-16" />
+            </Link>
+            <p className="text-sm">
+              Your trusted partner for all your e-commerce needs. We provide
+              high-quality products and exceptional customer service.
+            </p>
+            <div className="flex space-x-4">
+              <SocialIcon href="#" icon={<FaFacebook />} label="Facebook" />
+              <SocialIcon href="#" icon={<FaInstagram />} label="Instagram" />
+              <SocialIcon href="#" icon={<FaTwitter />} label="Twitter" />
+              <SocialIcon href="#" icon={<FaLinkedin />} label="LinkedIn" />
             </div>
+          </div>
+
+          {/* Quick Links */}
+          <FooterLinkSection title="Quick Links" links={quickLinks} />
+
+          {/* Customer Area */}
+          <FooterLinkSection title="Customer Area" links={customerLinks} />
+
+          {/* Newsletter Subscription */}
+          <div className="lg:col-span-2">
+            <NewsletterForm />
           </div>
         </div>
       </div>
 
       {/* Footer Bottom */}
-      <div className="mt-8 text-center border-t border-gray-200 py-4 text-sm text-gray-500">
-        <p>DAWA &copy; {new Date().getFullYear()} All Rights Reserved</p>
+      <div className="border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center">
+          <div></div>
+          <p className="text-sm text-gray-500">
+            &copy; {new Date().getFullYear()} DAWA. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );
 };
 
-interface SocialIconLinkProps {
+interface SocialIconProps {
   href: string;
-  ariaLabel: string;
   icon: React.ReactNode;
+  label: string;
 }
 
-const SocialIconLink: React.FC<SocialIconLinkProps> = ({
-  href,
-  ariaLabel,
-  icon,
-}) => (
+const SocialIcon: React.FC<SocialIconProps> = ({ href, icon, label }) => (
   <a
     href={href}
-    aria-label={ariaLabel}
+    aria-label={label}
     target="_blank"
     rel="noopener noreferrer"
-    className="p-2 rounded-md text-[#4E4E4E] opacity-45 hover:opacity-100 bg-gray-200 hover:bg-primary_2 hover:text-primary_1 transition-colors duration-200"
+    className="text-gray-400 hover:text-primary_1 transition-colors duration-200"
   >
     {icon}
   </a>
 );
-
-interface FooterLinkSectionProps {
-  title: string;
-  links: { href: string; label: string }[];
-}
 
 export default Footer;
