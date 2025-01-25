@@ -4,6 +4,7 @@ import ReactPlayer from 'react-player';
 import Image from 'next/image';
 import { MdOutlineStar, MdPlayArrow } from 'react-icons/md';
 import PuffLoader from 'react-spinners/PuffLoader';
+import mainConfig from '@/configs/mainConfigs';
 
 const VideoSection = () => {
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -20,7 +21,7 @@ const VideoSection = () => {
 
   return (
     <div className="bg-gray-50 py-16">
-      <div className="max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <div className={`${mainConfig.maxWidthClass} text-center`}>
         {/* Icon Section */}
         <div className="flex justify-center mb-6">
           <div className="flex items-center justify-center w-12 h-12 rounded-full border border-primary_1">
@@ -42,7 +43,7 @@ const VideoSection = () => {
       </div>
 
       {/* Video Section */}
-      <div className="mt-10 relative w-full container mx-auto">
+      <div className={`mt-10 relative w-full ${mainConfig.maxWidthClass}`}>
         {/* Placeholder Image */}
         {!isPlaying && (
           <div className="relative group rounded-xl overflow-hidden shadow-lg">

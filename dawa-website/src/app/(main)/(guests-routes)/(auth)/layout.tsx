@@ -7,7 +7,7 @@ export default function CategoryLayout({
 }) {
   return (
     <GuestOnlyRoute>
-      <Layout newsletterProps={{ container: true }}>{children}</Layout>
+      <Layout addFooter={false}>{children}</Layout>
     </GuestOnlyRoute>
   );
 }

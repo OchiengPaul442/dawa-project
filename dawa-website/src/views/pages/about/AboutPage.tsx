@@ -1,6 +1,7 @@
 'use client';
 import VideoSection from './VideoSection';
 import CustomImage from '@/components/shared/CustomImage';
+import mainConfig from '@/configs/mainConfigs';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import {
   MdOutlineStar,
@@ -12,7 +13,7 @@ import {
 const AboutPage = () => {
   return (
     <div className="flex flex-col gap-64">
-      <section className="container mx-auto px-4 sm:px-6 lg:px-0 py-12">
+      <section className={`${mainConfig.maxWidthClass} w-full`}>
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
           {/* Text Section */}
           <div className="flex-1">
@@ -62,11 +63,9 @@ const AboutPage = () => {
         </div>
       </section>
       {/* Video Section */}
-      <section>
-        <VideoSection />
-      </section>
+      <VideoSection />
       {/* Core Values Section */}
-      <section className="container mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <section className={`${mainConfig.maxWidthClass} text-center`}>
         <h2 className="text-3xl font-bold text-gray-900">Our Company Core</h2>
         <p className="mt-4 text-gray-600 text-lg leading-relaxed max-w-4xl mx-auto">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
@@ -97,7 +96,7 @@ const AboutPage = () => {
           ))}
         </div>
       </section>
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className={`${mainConfig.maxWidthClass}`}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Image Section */}
           <div className="relative w-full h-[300px] lg:h-[400px] rounded-xl overflow-hidden">
@@ -123,7 +122,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className={`${mainConfig.maxWidthClass}`}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Text Section */}
           <div className="flex flex-col justify-center">

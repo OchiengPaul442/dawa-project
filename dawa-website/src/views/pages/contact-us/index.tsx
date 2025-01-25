@@ -9,12 +9,13 @@ import {
   FaYoutube,
   FaLinkedin,
 } from 'react-icons/fa';
+import mainConfig from '@/configs/mainConfigs';
 
 const ContactPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       {/* Container */}
-      <div className="max-w-7xl mx-auto">
+      <div className={`${mainConfig.maxWidthClass}`}>
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-gray-900">Contact Us</h1>
