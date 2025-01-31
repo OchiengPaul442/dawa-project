@@ -1,100 +1,206 @@
-import { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+// ChatArea.tsx
+'use client';
+
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageSquare } from 'lucide-react';
-import type { Chat, User } from '@/data/chat';
-import { sendMessage } from '@redux-store/slices/chatApp/chatSlice';
+import { MessageSquare, Check, AlertCircle } from 'lucide-react';
+import type {
+  User,
+  Message,
+  MessageGroup,
+  OptimisticMessage,
+} from '@/types/message';
+import { useChat } from './ChatContext';
 import { MessageInput } from './MessageInput';
 import { EmptyState } from './EmptyState';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatAreaProps {
-  chat: Chat | undefined;
-  currentUserId: string;
-  users: User[];
+  selectedItemId: string | null;
+  currentUser: User | null;
 }
 
-export function ChatArea({ chat, currentUserId, users }: ChatAreaProps) {
-  const dispatch = useDispatch();
+const MessageItem: React.FC<{
+  message: Message | OptimisticMessage;
+  currentUserId: string;
+}> = React.memo(({ message, currentUserId }) => {
+  const isCurrentUser =
+    message.sender.id.toString() === currentUserId.toString();
+  const isOptimistic = 'status' in message;
+  const isSelfMessage =
+    message.sender.id.toString() === message.receiver.id.toString();
+  const showAvatar = !isCurrentUser && !isSelfMessage;
+
+  return (
+    <div
+      className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} items-end mb-4`}
+    >
+      {showAvatar && (
+        <div className="flex-shrink-0 mr-2">
+          <Avatar className="h-6 w-6 rounded-full">
+            <AvatarImage
+              src={`/placeholder.svg?text=${message.sender.username?.[0] || '?'}`}
+              alt={message.sender.username || 'User'}
+            />
+            <AvatarFallback className="bg-primary_1 text-white text-xs">
+              {message.sender.username?.[0]?.toUpperCase() || '?'}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      )}
+      <div
+        className={`px-4 py-2 rounded-2xl max-w-[85%] ${
+          isCurrentUser
+            ? 'bg-primary_2 text-gray-900'
+            : 'bg-gray-100 text-gray-900'
+        } ${isOptimistic && message.status === 'sending' ? 'opacity-70' : ''}`}
+      >
+        {isSelfMessage && (
+          <p className="text-xs text-gray-500 mb-1">Note to self</p>
+        )}
+        <p className="text-sm whitespace-pre-wrap break-words">
+          {message.message}
+        </p>
+        <div className="flex items-center justify-end gap-1">
+          <p className="text-[10px] text-gray-500">
+            {format(new Date(message.created_at), 'HH:mm')}
+          </p>
+          {isOptimistic &&
+            (message.status === 'sent' ? (
+              <Check size={12} className="text-green-500" />
+            ) : message.status === 'error' ? (
+              <AlertCircle size={12} className="text-red-500" />
+            ) : null)}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+MessageItem.displayName = 'MessageItem';
+
+export function ChatArea({ selectedItemId, currentUser }: ChatAreaProps) {
+  const { messageGroups, sendMessage } = useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const selectedGroup = useMemo(() => {
+    return messageGroups.find(
+      (group) => group.item_id.toString() === selectedItemId,
+    );
+  }, [messageGroups, selectedItemId]);
+
+  // Determine the other participant in the chat.
+  const otherUser = useMemo(() => {
+    if (!currentUser || !selectedGroup || !selectedGroup.messages.length)
+      return null;
+    const firstMessage = selectedGroup.messages[0];
+    if (
+      firstMessage.sender.id.toString() === firstMessage.receiver.id.toString()
+    )
+      return currentUser;
+    return firstMessage.sender.id.toString() === currentUser.id.toString()
+      ? firstMessage.receiver
+      : firstMessage.sender;
+  }, [selectedGroup, currentUser]);
+
+  const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [chat?.messages]);
+  }, []);
 
-  if (!chat) {
+  useEffect(() => {
+    scrollToBottom();
+  }, [scrollToBottom, selectedGroup]);
+
+  const handleSendMessage = useCallback(
+    (content: string) => {
+      if (content.trim() && selectedItemId && currentUser && otherUser) {
+        sendMessage({
+          receiver_id: otherUser.id,
+          item_id: selectedItemId,
+          message: content,
+        });
+        scrollToBottom();
+      }
+    },
+    [sendMessage, selectedItemId, currentUser, otherUser, scrollToBottom],
+  );
+
+  if (!selectedItemId || !selectedGroup) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-50/50">
         <EmptyState
           icon={MessageSquare}
           title="Your Messages"
-          description="Select a conversation to start messaging"
+          description="Select a chat to view your messages"
         />
       </div>
     );
   }
 
-  const otherUser = users.find(
-    (user) => user.id !== currentUserId && chat.participants.includes(user.id),
-  );
+  if (!currentUser || !otherUser) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+        <EmptyState
+          icon={MessageSquare}
+          title="User Not Found"
+          description="There was an error loading the user information"
+        />
+      </div>
+    );
+  }
 
-  const handleSendMessage = (content: string) => {
-    if (otherUser) {
-      dispatch(sendMessage({ content, receiverId: otherUser.id }));
-    }
-  };
+  if (!selectedGroup.messages.length) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+        <EmptyState
+          icon={MessageSquare}
+          title="No Messages"
+          description="Start a conversation by sending a message"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col bg-white">
       <div className="px-4 py-3 border-b border-gray-100 flex items-center space-x-3">
         <Avatar className="h-9 w-9 rounded-full">
           <AvatarImage
-            src={otherUser?.avatar || '/placeholder.svg'}
-            alt={otherUser?.name}
+            src={`/placeholder.svg?text=${otherUser.username?.[0] || '?'}`}
+            alt={otherUser.username || 'User'}
           />
           <AvatarFallback className="bg-primary_1 text-white">
-            {otherUser?.name[0].toUpperCase()}
+            {otherUser.username?.[0]?.toUpperCase() || '?'}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <h2 className="text-sm font-semibold text-gray-900 truncate">
-            {otherUser?.name}
+            {otherUser.id === currentUser.id
+              ? 'Note to self'
+              : otherUser.username || 'Unknown User'}
           </h2>
+          <p className="text-xs text-gray-500 truncate">
+            {selectedGroup.item_name}
+          </p>
         </div>
       </div>
-
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-        <div className="space-y-3">
-          {chat.messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.senderId === currentUserId ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[85%] px-4 py-2 rounded-2xl ${
-                  message.senderId === currentUserId
-                    ? 'bg-primary_1 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                <p className="text-sm">{message.content}</p>
-                <p
-                  className={`text-[10px] mt-1 ${
-                    message.senderId === currentUserId
-                      ? 'text-white/70'
-                      : 'text-gray-500'
-                  }`}
-                >
-                  {format(new Date(message.timestamp), 'HH:mm')}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
+      <div className="flex-1 overflow-hidden" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-3">
+            {selectedGroup.messages.map((message) => (
+              <MessageItem
+                key={message.id}
+                message={message}
+                currentUserId={currentUser.id.toString()}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
   );

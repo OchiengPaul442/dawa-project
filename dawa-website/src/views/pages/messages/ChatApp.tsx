@@ -1,58 +1,51 @@
+// ChatApp.tsx
 'use client';
 
-import { useEffect } from 'react';
+import React from 'react';
+import { useChat } from './ChatContext';
 import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
-import { selectChat, markAsRead } from '@redux-store/slices/chatApp/chatSlice';
-import { useDispatch, useSelector } from '@/redux-store/hooks';
 import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 export default function ChatApp() {
-  const dispatch = useDispatch();
-  const { users, chats, currentUserId, selectedChatId } = useSelector(
-    (state) => state.chat,
-  ) as any;
+  const {
+    messageGroups,
+    selectedItemId,
+    currentUser,
+    selectItem,
+    isLoading,
+    isAuthenticated,
+  } = useChat();
 
-  const selectedChat = chats.find((chat: any) => chat.id === selectedChatId);
-  const contacts = users.filter((user: any) => user.id !== currentUserId);
-
-  useEffect(() => {
-    if (selectedChatId) {
-      dispatch(markAsRead(selectedChatId));
-    }
-  }, [selectedChatId, dispatch]);
-
-  const handleSelectContact = (userId: string) => {
-    const chat = chats.find(
-      (chat: any) =>
-        chat.participants.includes(userId) &&
-        chat.participants.includes(currentUserId),
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <p className="text-gray-500">Please sign in to access messages</p>
+      </div>
     );
-    if (chat) {
-      dispatch(selectChat(chat.id));
-    }
-  };
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <Loader2 className="w-8 h-8 text-primary_1 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <Card>
       <CardContent className="p-0">
         <div className="rounded-xl overflow-hidden max-w-7xl mx-auto h-[80vh] flex flex-col md:flex-row">
           <ContactList
-            contacts={contacts}
-            chats={chats}
-            currentUserId={currentUserId}
-            selectedContactId={
-              selectedChat?.participants.find(
-                (id: any) => id !== currentUserId,
-              ) || null
-            }
-            onSelectContact={handleSelectContact}
+            messageGroups={messageGroups}
+            selectedItemId={selectedItemId}
+            currentUser={currentUser}
+            onSelectItem={selectItem}
+            isLoading={isLoading}
           />
-          <ChatArea
-            chat={selectedChat}
-            currentUserId={currentUserId}
-            users={users}
-          />
+          <ChatArea selectedItemId={selectedItemId} currentUser={currentUser} />
         </div>
       </CardContent>
     </Card>
