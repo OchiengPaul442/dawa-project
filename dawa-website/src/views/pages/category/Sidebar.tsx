@@ -1,18 +1,15 @@
 'use client';
 
-import type React from 'react';
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
 import SidebarSkeleton from './SidebarSkeleton';
 import { categoryIconMap, subcategoryIconMap, DefaultIcon } from './icon-maps';
-
 import {
   setSelectedCategory,
   setSelectedSubcategory,
@@ -27,20 +24,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   const categories = useSelector(selectCategories);
   const dispatch = useDispatch();
 
+  // Store the currently hovered category.
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  // Determine if screen is large enough (e.g., 1024px or more).
+  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
 
+  // Update isLargeScreen on window resize.
   useEffect(() => {
-    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Close the sidebar if an item is selected.
   const handleItemClick = useCallback(() => {
-    onSelect?.();
+    if (onSelect) onSelect();
   }, [onSelect]);
 
+  // Set hovered category when mouse enters (only on large screens).
   const handleCategoryMouseEnter = useCallback(
     (category: Category) => {
       if (isLargeScreen) {
@@ -50,10 +54,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [isLargeScreen],
   );
 
+  // Reset hovered category when the mouse leaves the sidebar.
   const handleSidebarMouseLeave = useCallback(() => {
     setHoveredCategory(null);
   }, []);
 
+  // Render a single category item.
   const renderCategoryItem = useCallback(
     (category: Category) => {
       const Icon = categoryIconMap[category.category_name] || DefaultIcon;
@@ -70,8 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         >
           <div
             className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between
-              ${isActive ? 'bg-gray-100 text-primary_1' : 'hover:bg-gray-50 hover:text-primary_1'}
-            `}
+              ${isActive ? 'bg-gray-100 text-primary_1' : 'hover:bg-gray-50 hover:text-primary_1'}`}
             onMouseEnter={() => handleCategoryMouseEnter(category)}
           >
             <div className="flex items-center gap-2 w-full truncate">
@@ -96,6 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     ],
   );
 
+  // Render a single subcategory item.
   const renderSubcategoryItem = useCallback(
     (subcategory: Subcategory, categoryName: string) => {
       const Icon =
@@ -139,8 +145,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             <ScrollArea className="h-[700px]">
               {categories.length > 0 ? (
                 <div className="p-4 space-y-1">
-                  {categories.map((category) =>
-                    renderCategoryItem(category as Category),
+                  {categories.map((category: any) =>
+                    renderCategoryItem(category),
                   )}
                 </div>
               ) : (
@@ -149,7 +155,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             </ScrollArea>
           </CardContent>
         </Card>
-
         {/* Subcategory Sidebar */}
         {isLargeScreen && hoveredCategory && (
           <Card className="w-[288px] rounded-l-none border-l-0">
@@ -158,7 +163,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
                 <div className="p-4 space-y-1">
                   {hoveredCategory.subcategories?.map((subcategory) =>
                     renderSubcategoryItem(
-                      subcategory,
+                      // Transform the subcategory object to match the expected Subcategory type.
+                      {
+                        id: subcategory.id,
+                        subcategory_name: subcategory.subcategory_name,
+                        name: subcategory.subcategory_name, // Fallback: use subcategory_name as name
+                        count: 0, // Default count; adjust if needed
+                        icon:
+                          subcategoryIconMap[subcategory.subcategory_name] ||
+                          DefaultIcon,
+                        href: '', // Corrected property name from 'hrefts' to 'href'
+                      },
                       hoveredCategory.category_name,
                     ),
                   )}

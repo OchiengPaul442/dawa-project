@@ -1,3 +1,4 @@
+// ProductCard.tsx
 'use client';
 
 import React, { FC, useCallback } from 'react';
@@ -16,7 +17,7 @@ import { slugify } from '@/utils/slugify';
 import { useDispatch } from '@redux-store/hooks';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useWishlistActions } from '@core/hooks/useWishlistActions';
-import { ProductCardProps } from '@/types/wishList';
+import type { ProductCardProps } from '@/types/wishList';
 import { format } from 'date-fns';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 

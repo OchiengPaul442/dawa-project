@@ -1,3 +1,4 @@
+// WishlistPage.tsx
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
@@ -5,6 +6,7 @@ import WishlistHeader from './WishlistHeader';
 import ProductList from './ProductList';
 import Button from '@/components/shared/Button';
 import { useWishlistActions } from '@core/hooks/useWishlistActions';
+import type { Product } from '@/types/wishList';
 
 const WishlistPage = () => {
   const { rawWishlist, isLoading } = useWishlistActions();
@@ -12,13 +14,14 @@ const WishlistPage = () => {
   const [sortBy, setSortBy] = useState<string>('date-added');
   const [visibleProducts, setVisibleProducts] = useState<number>(10);
 
-  const products = useMemo(() => {
+  // Convert item price to number so that arithmetic operations work
+  const products: Product[] = useMemo(() => {
     if (!rawWishlist) return [];
     return rawWishlist.map((item: any) => ({
       id: item.id,
       name: item.item_name,
-      price: item.item_price,
-      originalPrice: '',
+      price: Number(item.item_price), // Convert string to number here
+      originalPrice: 0, // Or use Number(item.original_price) if applicable
       discount: 0,
       image: item.images?.[0]?.image || '',
       rating: 0,
@@ -28,15 +31,15 @@ const WishlistPage = () => {
     }));
   }, [rawWishlist]);
 
-  const sortedProducts = useMemo(() => {
+  const sortedProducts: Product[] = useMemo(() => {
     const copy = [...products];
     switch (sortBy) {
       case 'price-low':
-        return copy.sort((a, b) => parseInt(a.price) - parseInt(b.price));
+        return copy.sort((a, b) => Number(a.price) - Number(b.price));
       case 'price-high':
-        return copy.sort((a, b) => parseInt(b.price) - parseInt(a.price));
+        return copy.sort((a, b) => Number(b.price) - Number(a.price));
       case 'orders':
-        return copy.sort((a, b) => b.orders - a.orders);
+        return copy.sort((a, b) => (b.orders ?? 0) - (a.orders ?? 0));
       case 'date-added':
       default:
         return copy.sort(

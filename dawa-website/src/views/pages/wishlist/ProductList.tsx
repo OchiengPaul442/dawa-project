@@ -1,9 +1,10 @@
+// ProductList.tsx
 'use client';
 
 import React, { FC } from 'react';
 import ProductCard from './ProductCard';
 import SkeletonProductCard from './SkeletonProductCard';
-import { Product } from '@/types/wishList';
+import type { Product } from '@/types/wishList';
 
 interface ProductListProps {
   products: Product[];
