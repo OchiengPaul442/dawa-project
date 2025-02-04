@@ -1,61 +1,52 @@
+// src/types/message.ts
+
 export interface User {
-  id: string;
-  username: string;
+  id: number;
+  full_name: string;
+  profile_picture: string | null;
 }
 
-export interface Item {
-  id: string;
-  name: string;
-  price: number;
+export interface Subject {
+  item_id: number;
+  item_name: string;
 }
 
 export interface Message {
-  id: string;
-  item: Item;
-  sender: User;
-  receiver: User;
+  id: number | string;
+  senderId: number;
+  receiverId: number;
+  itemId: number;
   message: string;
-  message_read: boolean;
-  created_at: string;
+  createdAt: string; // internal name for the API's "created_at"
+  read: boolean;
+}
+
+export interface OptimisticMessage extends Message {
+  status: 'sending' | 'sent' | 'error';
 }
 
 export interface MessageGroup {
-  item_id: string;
-  item_name: string;
-  item_price: number;
+  id: number;
+  subject: Subject; // e.g. { item_id: 25, item_name: 'Worlds Fastest Super cars' }
+  participants: User[]; // e.g. [ {id: 10, ...}, {id: 25, ...} ]
   messages: Message[];
 }
 
+/**
+ * API payload for sending a message.
+ */
 export interface SendMessagePayload {
-  receiver_id: string;
-  item_id: string;
+  receiver_id: number;
+  item_id: number;
   message: string;
-}
-
-// Helper function to get the other user from a message
-export const getOtherUser = (
-  message: Message,
-  currentUserId: string,
-): User | null => {
-  if (!message || !message.sender || !message.receiver) {
-    return null;
-  }
-  return message.sender.id === currentUserId
-    ? message.receiver
-    : message.sender;
-};
-
-export interface OptimisticMessage extends Omit<Message, 'id'> {
-  id: string;
-  status: 'sending' | 'sent' | 'error';
 }
 
 export interface ChatContextType {
   messageGroups: MessageGroup[];
-  selectedItemId: string | null;
+  selectedGroupId: string | null;
   currentUser: User | null;
-  selectItem: (itemId: string) => void;
-  sendMessage: (payload: SendMessagePayload) => Promise<void>;
+  selectGroup: (groupId: string | number) => void;
+  sendMessage: (payload: SendMessagePayload) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
 }

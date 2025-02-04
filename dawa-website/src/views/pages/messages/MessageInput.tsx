@@ -1,4 +1,4 @@
-// MessageInput.tsx
+// src/views/pages/messages/MessageInput.tsx
 'use client';
 
 import React, { useState, useCallback } from 'react';
@@ -38,7 +38,7 @@ export const MessageInput: React.FC<MessageInputProps> = React.memo(
             value={message}
             onChange={handleChange}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary_1 focus:ring-1 focus:ring-primary_1"
+            className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary_1 focus:border-transparent"
           />
           <button
             type="submit"

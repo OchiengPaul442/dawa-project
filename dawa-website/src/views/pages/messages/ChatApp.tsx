@@ -1,4 +1,4 @@
-// ChatApp.tsx
+// src/views/pages/messages/ChatApp.tsx
 'use client';
 
 import React from 'react';
@@ -11,9 +11,9 @@ import { Loader2 } from 'lucide-react';
 export default function ChatApp() {
   const {
     messageGroups,
-    selectedItemId,
+    selectedGroupId,
     currentUser,
-    selectItem,
+    selectGroup,
     isLoading,
     isAuthenticated,
   } = useChat();
@@ -40,12 +40,12 @@ export default function ChatApp() {
         <div className="rounded-xl overflow-hidden max-w-7xl mx-auto h-[80vh] flex flex-col md:flex-row">
           <ContactList
             messageGroups={messageGroups}
-            selectedItemId={selectedItemId}
+            selectedGroupId={selectedGroupId}
             currentUser={currentUser}
-            onSelectItem={selectItem}
+            onSelectGroup={selectGroup}
             isLoading={isLoading}
           />
-          <ChatArea selectedItemId={selectedItemId} currentUser={currentUser} />
+          <ChatArea />
         </div>
       </CardContent>
     </Card>

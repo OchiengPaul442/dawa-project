@@ -11,5 +11,5 @@ export const sendMessage = async (
 
 // Get messages
 export const getMessages = async (): Promise<any> => {
-  return apiRequest('get', '/getmessages/');
+  return apiRequest('get', '/getchatswithmessages/');
 };

@@ -62,6 +62,15 @@ export function useCategoryData({
 }
 
 export function useMessages() {
+  // Configure SWR options to revalidate when the window refocuses or reconnects.
+  const swrOptions = {
+    revalidateOnFocus: true, // re-fetch on window focus
+    revalidateOnReconnect: true, // re-fetch when reconnecting to the network
+    // Optionally, you can add a refreshInterval (in ms) to periodically update the data.
+    // For example, to refresh every 5 seconds, uncomment the next line:
+    // refreshInterval: 5000,
+  };
+
   const { data, error, isLoading, mutate } = useSWR(
     'messages',
     getMessages,

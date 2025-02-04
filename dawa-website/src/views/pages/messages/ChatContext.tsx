@@ -1,4 +1,4 @@
-// ChatContext.tsx
+// src/views/pages/messages/ChatContext.tsx
 'use client';
 
 import React, {
@@ -7,18 +7,17 @@ import React, {
   useState,
   useCallback,
   useMemo,
-  useEffect,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useMessages, useSendMessage } from '@core/hooks/useProductData';
 import { useAuth } from '@core/hooks/use-auth';
 import type {
-  Message,
   MessageGroup,
   User,
   SendMessagePayload,
   OptimisticMessage,
   ChatContextType,
+  Message,
 } from '@/types/message';
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -26,7 +25,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [optimisticMessages, setOptimisticMessages] = useState<
     OptimisticMessage[]
   >([]);
@@ -37,36 +36,57 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   const { messagesData, isLoading: messagesLoading, mutate } = useMessages();
   const { sendMessage: sendMessageMutation } = useSendMessage();
 
-  const selectItem = useCallback((itemId: string | number) => {
-    setSelectedItemId(itemId ? itemId.toString() : null);
+  const selectGroup = useCallback((groupId: string | number) => {
+    setSelectedGroupId(groupId ? groupId.toString() : null);
   }, []);
 
+  // 1. Convert API data to internal form
+  const convertedGroups: MessageGroup[] = useMemo(() => {
+    if (!messagesData) return [];
+    return messagesData.map((group: any) => ({
+      ...group,
+      messages: group.messages.map((msg: any) => ({
+        ...msg,
+        // rename created_at to createdAt
+        createdAt: msg.created_at,
+        // also store itemId for internal usage
+        itemId: group.subject.item_id,
+      })),
+    }));
+  }, [messagesData]);
+
+  // 2. Send a message with optimistic updates
   const sendMessage = useCallback(
     async (payload: SendMessagePayload) => {
       if (!user) return;
 
+      // The current user must be the sender
       const optimisticMessage: OptimisticMessage = {
         id: uuidv4(),
-        item: { id: payload.item_id, name: '', price: 0 },
-        sender: user,
-        receiver: { id: payload.receiver_id, username: '' },
+        itemId: payload.item_id,
+        senderId: user.id,
+        receiverId: payload.receiver_id,
         message: payload.message,
-        message_read: false,
-        created_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        read: false,
         status: 'sending',
       };
 
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
 
       try {
+        // Actually call the API
         await sendMessageMutation(payload);
+        // Update the message’s status upon success
         setOptimisticMessages((prev) =>
           prev.map((msg) =>
             msg.id === optimisticMessage.id ? { ...msg, status: 'sent' } : msg,
           ),
         );
-        mutate(); // Refresh messages
+        // Refresh the data from the server
+        mutate();
       } catch (error) {
+        // Mark the message as error if sending fails
         setOptimisticMessages((prev) =>
           prev.map((msg) =>
             msg.id === optimisticMessage.id ? { ...msg, status: 'error' } : msg,
@@ -78,43 +98,40 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     [user, sendMessageMutation, mutate],
   );
 
-  // (Optional) Real-time update: for example, poll every 5 seconds.
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     mutate();
-  //   }, 5000);
-  //   return () => clearInterval(intervalId);
-  // }, [mutate]);
-
-  const combinedMessageGroups = useMemo(() => {
-    if (!messagesData) return [];
-    return messagesData.map((group: MessageGroup) => {
+  // 3. Merge optimistic messages with real data
+  const combinedMessageGroups: MessageGroup[] = useMemo(() => {
+    if (!convertedGroups) return [];
+    return convertedGroups.map((group: MessageGroup) => {
+      // Filter optimistic messages that belong to this group’s item ID
       const optimisticForGroup = optimisticMessages.filter(
-        (msg) => msg.item.id.toString() === group.item_id.toString(),
+        (msg) => msg.itemId === group.subject.item_id,
       );
-      const updatedMessages = [...group.messages, ...optimisticForGroup].sort(
+      const updatedMessages: Message[] = [
+        ...group.messages,
+        ...optimisticForGroup,
+      ].sort(
         (a, b) =>
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       );
       return { ...group, messages: updatedMessages };
     });
-  }, [messagesData, optimisticMessages]);
+  }, [convertedGroups, optimisticMessages]);
 
-  const contextValue = useMemo(
+  const contextValue: ChatContextType = useMemo(
     () => ({
       messageGroups: combinedMessageGroups,
-      selectedItemId,
+      selectedGroupId,
       currentUser: user,
-      selectItem,
+      selectGroup,
       sendMessage,
       isLoading: authLoading || messagesLoading,
       isAuthenticated: !!user,
     }),
     [
       combinedMessageGroups,
-      selectedItemId,
+      selectedGroupId,
       user,
-      selectItem,
+      selectGroup,
       sendMessage,
       authLoading,
       messagesLoading,
