@@ -1,3 +1,4 @@
+// src/views/pages/messages/MakeOfferDialog.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -22,8 +23,8 @@ import { formatCurrency } from '@/utils/CurrencyFormatter';
 interface MakeOfferDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receiverId: string;
-  itemId: string;
+  receiverId: string; // from props, but must be converted to number
+  itemId: string; // from props, but must be converted to number
   currentPrice: string | number;
 }
 
@@ -56,6 +57,7 @@ const MakeOfferDialog: React.FC<MakeOfferDialogProps> = ({
         ? currentPrice
         : 0;
 
+  // Use your SWR hook for sending messages
   const { sendMessage, isSending, error } = useSendMessage();
 
   const {
@@ -90,8 +92,8 @@ Thank you`;
 
     try {
       await sendMessage({
-        receiver_id: receiverId,
-        item_id: itemId,
+        receiver_id: Number(receiverId), // convert to number
+        item_id: Number(itemId), // convert to number
         message,
       });
       reset();
@@ -102,6 +104,7 @@ Thank you`;
     }
   };
 
+  // When a suggested price button is clicked, only update the form field (do not submit)
   const handleSuggestedPriceClick = (price: number) => {
     reset({ price });
   };
@@ -129,6 +132,7 @@ Thank you`;
                 <Button
                   key={index}
                   variant="outline"
+                  type="button" // <-- Set type="button" to prevent form submit
                   onClick={() => handleSuggestedPriceClick(price)}
                   className="w-full"
                 >

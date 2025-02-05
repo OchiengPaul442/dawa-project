@@ -39,7 +39,7 @@
   {
     "id": 2,
     "category_name": "Property",
-    "category_item_count": 3,
+    "category_item_count": 4,
     "subcategories": [
       {
         "id": 7,
@@ -64,7 +64,7 @@
       {
         "id": 11,
         "subcategory_name": "Commercial Property for Sale",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 12,

@@ -53,8 +53,8 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
   const onSubmit = async (data: SendMessageFormValues) => {
     try {
       await sendMessage({
-        receiver_id: receiverId,
-        item_id: itemId,
+        receiver_id: Number(receiverId), // convert to number
+        item_id: Number(itemId), // convert to number
         message: data.message,
       });
       reset();

@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+// import { useChat } from '@/views/pages/messages/ChatContext';
 import {
   Bell,
   MessageSquare,
@@ -39,6 +40,8 @@ const formatCount = (count: number) => {
 
 export function UserNav({ user, onLogout }: UserNavProps) {
   const { wishlistCount } = useWishlistActions();
+  // Get the new messages count from chat context
+  // const { newMessagesCount } = useChat();
 
   return (
     <div className="flex items-center gap-4">
@@ -54,10 +57,8 @@ export function UserNav({ user, onLogout }: UserNavProps) {
               {formatCount(wishlistCount as any)}
             </span>
           ) : (
-            <span>
-              <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
-                0
-              </span>
+            <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
+              0
             </span>
           )}
         </Button>
@@ -70,11 +71,11 @@ export function UserNav({ user, onLogout }: UserNavProps) {
       >
         <Button variant="ghost" size="icon" className="rounded-full h-6 w-6">
           <MessageSquare className="h-5 w-5 text-gray-700" />
-          {/* {counters.messages ? (
+          {/* {newMessagesCount > 0 && (
             <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-primary_1 text-white text-xs font-bold rounded-full h-4 px-1 flex items-center justify-center">
-              {formatCount(counters.messages)}
+              {formatCount(newMessagesCount)}
             </span>
-          ) : null} */}
+          )} */}
         </Button>
       </Link>
 

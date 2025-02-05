@@ -61,6 +61,7 @@ export function useCategoryData({
   return { data, error, isLoading, mutate };
 }
 
+//Hooks to send and receive messages
 export function useMessages() {
   // Configure SWR options to revalidate when the window refocuses or reconnects.
   const swrOptions = {

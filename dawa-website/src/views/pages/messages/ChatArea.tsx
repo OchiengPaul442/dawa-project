@@ -22,30 +22,17 @@ interface MessageItemProps {
   otherUser: User;
 }
 
-/**
- * A single message bubble.
- * Right-aligned if currentUser is the sender;
- * left-aligned with an avatar if the otherUser is the sender.
- */
 const MessageItem: React.FC<MessageItemProps> = React.memo(
   ({ message, currentUser, otherUser }) => {
-    // Align right if the senderId matches the current user
-    const isCurrentUserSender = message.senderId === currentUser.id;
-    const isOptimistic = 'status' in message; // For the sending/error icons
-
-    // Container alignment
+    const isCurrentUserSender =
+      Number(message.senderId) === Number(currentUser.id);
     const containerClass = isCurrentUserSender
       ? 'justify-end'
       : 'justify-start';
-
-    // If the current user is the sender, omit the avatar
     const showAvatar = !isCurrentUserSender;
-
-    // For the left side messages, the avatar belongs to otherUser
     const avatarSrc = showAvatar ? otherUser.profile_picture : null;
     const avatarLetter = showAvatar ? otherUser.full_name?.[0] : null;
 
-    // Format the date
     const messageDate = new Date(message.createdAt);
     const formattedTime = isValid(messageDate)
       ? format(messageDate, 'HH:mm')
@@ -53,7 +40,6 @@ const MessageItem: React.FC<MessageItemProps> = React.memo(
 
     return (
       <div className={`flex ${containerClass} items-end mb-4`}>
-        {/* Avatar on the left side only if not current user */}
         {showAvatar && (
           <div className="flex-shrink-0 mr-2">
             <Avatar className="h-6 w-6 rounded-full">
@@ -70,28 +56,26 @@ const MessageItem: React.FC<MessageItemProps> = React.memo(
             </Avatar>
           </div>
         )}
-
         <div
           className={`px-4 py-2 rounded-2xl max-w-[85%] ${
             isCurrentUserSender
               ? 'bg-primary_2 text-gray-900'
               : 'bg-gray-100 text-gray-900'
-          } ${isOptimistic && message.status === 'sending' ? 'opacity-70' : ''}`}
+          } ${'status' in message && message.status === 'sending' ? 'opacity-70' : ''}`}
         >
           <p className="text-sm whitespace-pre-wrap break-words">
             {message.message}
           </p>
           <div className="flex items-center justify-end gap-1">
             <p className="text-[10px] text-gray-500">{formattedTime}</p>
-            {isOptimistic &&
-              (message.status === 'sent' ? (
-                <Check size={12} className="text-green-500" />
-              ) : message.status === 'error' ? (
-                <AlertCircle size={12} className="text-red-500" />
-              ) : null)}
+            {'status' in message && message.status === 'sent' && (
+              <Check size={12} className="text-green-500" />
+            )}
+            {'status' in message && message.status === 'error' && (
+              <AlertCircle size={12} className="text-red-500" />
+            )}
           </div>
         </div>
-        {/* Optional spacing on the right if it's currentUser, to keep symmetrical */}
         {isCurrentUserSender && <div className="w-6 ml-2" />}
       </div>
     );
@@ -105,22 +89,21 @@ export function ChatArea() {
     useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Find the selected group by ID
+  // Find the selected conversation.
   const selectedGroup: MessageGroup | undefined = useMemo(() => {
     return messageGroups.find(
       (group) => group.id.toString() === selectedGroupId,
     );
   }, [messageGroups, selectedGroupId]);
 
-  // We assume exactly 2 participants; the 'other' one has an ID not equal to currentUser.id
+  // Determine the other participant.
   const otherUser: User | null = useMemo(() => {
     if (!currentUser || !selectedGroup) return null;
-    if (selectedGroup.participants.length === 2) {
-      return (
-        selectedGroup.participants.find((p) => p.id !== currentUser.id) || null
-      );
-    }
-    return null;
+    return (
+      selectedGroup.participants.find(
+        (p) => Number(p.id) !== Number(currentUser.id),
+      ) || null
+    );
   }, [selectedGroup, currentUser]);
 
   const scrollToBottom = useCallback(() => {
@@ -133,12 +116,11 @@ export function ChatArea() {
     scrollToBottom();
   }, [scrollToBottom, selectedGroup]);
 
-  // Actually send the message: otherUser.id is the receiver.
   const handleSendMessage = useCallback(
     (content: string) => {
       if (content.trim() && selectedGroup && currentUser && otherUser) {
         sendMessage({
-          receiver_id: otherUser.id, // Must be the other user’s ID
+          receiver_id: otherUser.id, // Will be recalculated in context if needed.
           item_id: selectedGroup.subject.item_id,
           message: content,
         });
@@ -148,7 +130,6 @@ export function ChatArea() {
     [sendMessage, selectedGroup, currentUser, otherUser, scrollToBottom],
   );
 
-  // Various empty states or errors
   if (!selectedGroupId || !selectedGroup) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-50/50">
@@ -173,22 +154,9 @@ export function ChatArea() {
     );
   }
 
-  if (!selectedGroup.messages.length) {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50/50">
-        <EmptyState
-          icon={MessageSquare}
-          title="No Messages"
-          description="Start a conversation by sending a message"
-        />
-      </div>
-    );
-  }
-
-  // Standard chat UI
   return (
     <div className="flex-1 flex flex-col bg-white">
-      {/* Top Bar: show the other user info */}
+      {/* Top Bar with other user info */}
       <div className="px-4 py-3 border-b border-gray-100 flex items-center space-x-3">
         <Avatar className="h-9 w-9 rounded-full">
           {otherUser.profile_picture ? (
@@ -213,7 +181,7 @@ export function ChatArea() {
       </div>
 
       {/* Message List */}
-      <div className="flex-1 overflow-hidden" ref={scrollAreaRef}>
+      <div className="flex-1 overflow-y-auto" ref={scrollAreaRef}>
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
             {selectedGroup.messages.map((message) => (
@@ -228,7 +196,7 @@ export function ChatArea() {
         </ScrollArea>
       </div>
 
-      {/* Input */}
+      {/* Message Input */}
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
   );

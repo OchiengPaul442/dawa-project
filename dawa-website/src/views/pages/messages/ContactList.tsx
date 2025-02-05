@@ -4,7 +4,7 @@
 import React, { useState, useMemo } from 'react';
 import { format, isValid } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, X, Users, AlertCircle } from 'lucide-react';
+import { Search, X, AlertCircle } from 'lucide-react';
 import type { MessageGroup, User, Message } from '@/types/message';
 import { EmptyState } from './EmptyState';
 import { ChatSkeleton } from './chat-skeleton';
@@ -15,7 +15,6 @@ interface ContactListProps {
   selectedGroupId: string | null;
   currentUser: User | null;
   onSelectGroup: (groupId: string) => void;
-  isLoading?: boolean;
 }
 
 const ContactItem: React.FC<{
@@ -24,26 +23,25 @@ const ContactItem: React.FC<{
   selectedGroupId: string | null;
   onSelectGroup: (groupId: string) => void;
 }> = ({ group, currentUser, selectedGroupId, onSelectGroup }) => {
-  if (!group.messages.length) return null;
+  // Ensure that we show the receiver (other participant) details.
+  // We use Number() for safe numeric comparisons.
+  const receiver = group.participants.find(
+    (p) => Number(p.id) !== Number(currentUser.id),
+  );
+  if (!receiver) return null;
 
-  // Determine the other user.
-  const otherUser = group.participants.find((p) => p.id !== currentUser.id);
-  if (!otherUser) return null;
-
+  // Use the last message in the conversation.
   const lastMessage: Message = group.messages[group.messages.length - 1];
 
-  // Count unread messages.
+  // Count unread messages that were sent to the current user.
   const unreadCount = group.messages.filter(
-    (msg) => msg.receiverId === currentUser.id && !msg.read,
+    (msg) => Number(msg.receiverId) === Number(currentUser.id) && !msg.read,
   ).length;
 
-  // Extract the subject text from the subject object.
-  const subjectText =
-    group.subject && typeof group.subject === 'object'
-      ? group.subject.item_name
-      : String(group.subject);
+  // Conversation title uses the subject's item_name.
+  const subjectText = group.subject.item_name;
 
-  // Validate the last message date.
+  // Format the time of the last message.
   const messageDate = new Date(lastMessage.createdAt);
   const formattedTime = isValid(messageDate)
     ? format(messageDate, 'HH:mm')
@@ -57,21 +55,21 @@ const ContactItem: React.FC<{
       }`}
     >
       <Avatar className="h-10 w-10 rounded-full flex-shrink-0">
-        {otherUser.profile_picture ? (
+        {receiver.profile_picture ? (
           <AvatarImage
-            src={otherUser.profile_picture}
-            alt={otherUser.full_name || 'User'}
+            src={receiver.profile_picture}
+            alt={receiver.full_name || 'User'}
           />
         ) : (
           <AvatarFallback className="bg-primary_1 text-white">
-            {otherUser.full_name?.[0]?.toUpperCase() || '?'}
+            {receiver.full_name?.[0]?.toUpperCase() || '?'}
           </AvatarFallback>
         )}
       </Avatar>
       <div className="flex-1 min-w-0 text-left">
         <div className="flex justify-between items-start">
           <p className="text-sm font-medium text-gray-900 truncate">
-            {otherUser.full_name || 'Unknown User'}
+            {receiver.full_name || 'Unknown User'}
           </p>
           <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
             {formattedTime}
@@ -96,64 +94,24 @@ export function ContactList({
   selectedGroupId,
   currentUser,
   onSelectGroup,
-  isLoading = false,
 }: ContactListProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const sortedAndFilteredGroups = useMemo(() => {
+  const filteredGroups = useMemo(() => {
     if (!currentUser) return [];
+    return messageGroups.filter((group) => {
+      // Get the receiver (other participant) by filtering out currentUser.
+      const receiver = group.participants.find(
+        (p) => Number(p.id) !== Number(currentUser.id),
+      );
+      if (!receiver) return false;
 
-    // Only consider groups with at least one message where senderId !== receiverId.
-    const validGroups = messageGroups.filter((group) => {
-      if (!group.messages.length) return false;
-      return group.messages.some((msg) => msg.senderId !== msg.receiverId);
+      const subjectText = group.subject.item_name;
+      return (
+        subjectText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        receiver.full_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     });
-
-    // Keep only the latest conversation per other user.
-    const uniqueConversations = new Map<string, MessageGroup>();
-    validGroups.forEach((group) => {
-      if (!group.messages.length) return;
-      const otherUser = group.participants.find((p) => p.id !== currentUser.id);
-      if (otherUser) {
-        const key = `${otherUser.id}-${group.id}`;
-        const existingGroup = uniqueConversations.get(key);
-        if (!existingGroup) {
-          uniqueConversations.set(key, group);
-        } else {
-          // Compare the last message dates.
-          const lastMsgExisting =
-            existingGroup.messages[existingGroup.messages.length - 1];
-          const lastMsgCurrent = group.messages[group.messages.length - 1];
-          if (
-            new Date(lastMsgCurrent.createdAt) >
-            new Date(lastMsgExisting.createdAt)
-          ) {
-            uniqueConversations.set(key, group);
-          }
-        }
-      }
-    });
-
-    return Array.from(uniqueConversations.values())
-      .filter((group) => {
-        const otherUser = group.participants.find(
-          (p) => p.id !== currentUser.id,
-        );
-        if (!otherUser) return false;
-        const subjectText =
-          group.subject && typeof group.subject === 'object'
-            ? group.subject.item_name
-            : String(group.subject);
-        return (
-          subjectText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          otherUser.full_name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.messages[a.messages.length - 1].createdAt);
-        const dateB = new Date(b.messages[b.messages.length - 1].createdAt);
-        return dateB.getTime() - dateA.getTime();
-      });
   }, [messageGroups, searchQuery, currentUser]);
 
   if (!currentUser) {
@@ -189,9 +147,7 @@ export function ContactList({
         </div>
       </div>
       <ScrollArea className="flex-1">
-        {isLoading ? (
-          <ChatSkeleton />
-        ) : sortedAndFilteredGroups.length === 0 ? (
+        {filteredGroups.length === 0 ? (
           <EmptyState
             icon={AlertCircle}
             title="No results found"
@@ -199,7 +155,7 @@ export function ContactList({
           />
         ) : (
           <div className="divide-y divide-gray-200">
-            {sortedAndFilteredGroups.map((group) => (
+            {filteredGroups.map((group) => (
               <ContactItem
                 key={group.id}
                 group={group}

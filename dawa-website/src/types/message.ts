@@ -1,5 +1,4 @@
 // src/types/message.ts
-
 export interface User {
   id: number;
   full_name: string;
@@ -17,7 +16,7 @@ export interface Message {
   receiverId: number;
   itemId: number;
   message: string;
-  createdAt: string; // internal name for the API's "created_at"
+  createdAt: string; // our internal name for API’s "created_at"
   read: boolean;
 }
 
@@ -46,7 +45,8 @@ export interface ChatContextType {
   selectedGroupId: string | null;
   currentUser: User | null;
   selectGroup: (groupId: string | number) => void;
-  sendMessage: (payload: SendMessagePayload) => void;
+  sendMessage: (payload: SendMessagePayload) => Promise<void>;
   isLoading: boolean;
   isAuthenticated: boolean;
+  newMessagesCount: number;
 }

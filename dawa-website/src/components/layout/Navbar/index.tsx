@@ -23,6 +23,7 @@ import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import { ChevronLeft } from 'lucide-react';
 import MainConfigs from '@configs/mainConfigs';
 import mainConfig from '@configs/mainConfigs';
+import { ChatProvider } from '@/views/pages/messages/ChatContext';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
@@ -77,80 +78,147 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   };
 
   return (
-    <nav className="mb-8">
-      <div className="bg-white hidden sm:block">
-        <div
-          className={`${mainConfig.maxWidthClass} flex items-center justify-between ${
-            isSticky ? 'py-2' : 'py-4'
-          } transition-all duration-300 ease-in-out`}
-        >
-          <div className="lg:hidden">
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  icon={Menu}
-                  className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 h-10 w-10"
-                />
-              </SheetTrigger>
-              <SheetContent side="left" className="w-80">
-                <MobileSheetContent onClose={() => setIsSheetOpen(false)} />
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Logo */}
-          <Link
-            href={MainConfigs.homePageUrl}
-            className="flex-shrink-0 lg:hidden"
+    <ChatProvider>
+      <nav className="mb-8">
+        <div className="bg-white hidden sm:block">
+          <div
+            className={`${mainConfig.maxWidthClass} flex items-center justify-between ${
+              isSticky ? 'py-2' : 'py-4'
+            } transition-all duration-300 ease-in-out`}
           >
-            <Logo2
-              className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
-                isSticky ? 'h-24 -my-4' : 'h-28 -my-9'
-              }`}
-            />
-          </Link>
+            <div className="lg:hidden">
+              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button
+                    icon={Menu}
+                    className="rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 h-10 w-10"
+                  />
+                </SheetTrigger>
+                <SheetContent side="left" className="w-80">
+                  <MobileSheetContent onClose={() => setIsSheetOpen(false)} />
+                </SheetContent>
+              </Sheet>
+            </div>
 
-          {/* logo category search*/}
-          <div className="hidden lg:flex items-center gap-6">
-            <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
-              <Logo
+            {/* Logo */}
+            <Link
+              href={MainConfigs.homePageUrl}
+              className="flex-shrink-0 lg:hidden"
+            >
+              <Logo2
                 className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
-                  isSticky ? 'h-20 -my-4' : 'h-24 -my-8'
+                  isSticky ? 'h-24 -my-4' : 'h-28 -my-9'
                 }`}
               />
             </Link>
 
-            {pathname !== '/' &&
-              pathname !== '/cat' &&
-              pathname !== '/home' && (
-                <div className="relative" ref={dropdownRef}>
+            {/* logo category search*/}
+            <div className="hidden lg:flex items-center gap-6">
+              <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
+                <Logo
+                  className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
+                    isSticky ? 'h-20 -my-4' : 'h-24 -my-8'
+                  }`}
+                />
+              </Link>
+
+              {pathname !== '/' &&
+                pathname !== '/cat' &&
+                pathname !== '/home' && (
+                  <div className="relative" ref={dropdownRef}>
+                    <Button
+                      icon={FiGrid}
+                      className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
+                      onClick={() => setShowDropdown((prev) => !prev)}
+                    >
+                      <span>Categories</span>
+                    </Button>
+                    <AnimatePresence>
+                      {showDropdown && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute left-0 top-full mt-2 w-auto z-50"
+                        >
+                          <Sidebar onSelect={handleSheetItemClick} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )}
+            </div>
+
+            {/* search */}
+            <div className="hidden lg:flex items-center flex-grow mx-8">
+              <div className="relative w-full max-w-2xl">
+                <Input
+                  type="text"
+                  placeholder="Search products..."
+                  className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1"
+                />
+                <Button
+                  icon={FaSearch}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8"
+                />
+              </div>
+            </div>
+
+            {/* Right side menu and user menu */}
+            <div className="flex items-center gap-4">
+              {loading ? (
+                <UserNavSkeleton />
+              ) : user ? (
+                <>
+                  <UserNav user={user} onLogout={logout} />
                   <Button
-                    icon={FiGrid}
-                    className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
-                    onClick={() => setShowDropdown((prev) => !prev)}
+                    className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
+                    onClick={handleSellClick}
                   >
-                    <span>Categories</span>
+                    Sell
                   </Button>
-                  <AnimatePresence>
-                    {showDropdown && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="absolute left-0 top-full mt-2 w-auto z-50"
-                      >
-                        <Sidebar onSelect={handleSheetItemClick} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                </>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <div className="hidden md:flex items-center">
+                    <Link
+                      href="/login"
+                      className="text-gray-700 hover:text-primary_1 font-medium"
+                    >
+                      Log in
+                    </Link>
+                    <span className="mx-2 text-gray-400">|</span>
+                    <Link
+                      href="/register"
+                      className="text-primary_1 font-semibold hover:text-primary_1"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
+
+                  <Button
+                    className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
+                    onClick={handleSellClick}
+                  >
+                    Sell
+                  </Button>
                 </div>
               )}
+            </div>
           </div>
+        </div>
 
-          {/* search */}
-          <div className="hidden lg:flex items-center flex-grow mx-8">
-            <div className="relative w-full max-w-2xl">
+        <div className={`lg:hidden bg-white`}>
+          <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+            {/* left arrow */}
+            <ChevronLeft
+              className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
+              onClick={() => router.back()}
+            />
+
+            {/* search */}
+            <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search products..."
@@ -162,74 +230,9 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               />
             </div>
           </div>
-
-          {/* Right side menu and user menu */}
-          <div className="flex items-center gap-4">
-            {loading ? (
-              <UserNavSkeleton />
-            ) : user ? (
-              <>
-                <UserNav user={user} onLogout={logout} />
-                <Button
-                  className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
-                  onClick={handleSellClick}
-                >
-                  Sell
-                </Button>
-              </>
-            ) : (
-              <div className="flex items-center gap-4">
-                <div className="hidden md:flex items-center">
-                  <Link
-                    href="/login"
-                    className="text-gray-700 hover:text-primary_1 font-medium"
-                  >
-                    Log in
-                  </Link>
-                  <span className="mx-2 text-gray-400">|</span>
-                  <Link
-                    href="/register"
-                    className="text-primary_1 font-semibold hover:text-primary_1"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-
-                <Button
-                  className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
-                  onClick={handleSellClick}
-                >
-                  Sell
-                </Button>
-              </div>
-            )}
-          </div>
         </div>
-      </div>
-
-      <div className={`lg:hidden bg-white`}>
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
-          {/* left arrow */}
-          <ChevronLeft
-            className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
-            onClick={() => router.back()}
-          />
-
-          {/* search */}
-          <div className="relative w-full">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1"
-            />
-            <Button
-              icon={FaSearch}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8"
-            />
-          </div>
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </ChatProvider>
   );
 };
 

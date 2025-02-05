@@ -43,7 +43,6 @@ export default function ChatApp() {
             selectedGroupId={selectedGroupId}
             currentUser={currentUser}
             onSelectGroup={selectGroup}
-            isLoading={isLoading}
           />
           <ChatArea />
         </div>
