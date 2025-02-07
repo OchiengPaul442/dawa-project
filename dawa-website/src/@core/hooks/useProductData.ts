@@ -191,6 +191,7 @@ export const useUserProfile = () => {
   const { data, error, isLoading, mutate } = useSWR<any>(
     '/getuserprofile/',
     fetchUserProfile,
+    swrOptions,
   );
 
   return {

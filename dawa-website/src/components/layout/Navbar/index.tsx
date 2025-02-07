@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import type React from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
@@ -17,17 +18,18 @@ import { Input } from '@/components/ui/input';
 import Sidebar from '@views/pages/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import { UserNavSkeleton } from './UserNavSkeleton';
-import { useScrollDirection } from '@core/hooks/useScrollDirection';
 import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
-import { ChevronLeft } from 'lucide-react';
 import MainConfigs from '@configs/mainConfigs';
 import mainConfig from '@configs/mainConfigs';
 import { ChatProvider } from '@/views/pages/messages/ChatContext';
+import { useProfile } from '@/contexts/profile-context';
 
 interface NavBarProps {
   closeOnSelect?: boolean;
 }
+
+const DEFAULT_AVATAR = '/assets/default-avatar.png';
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const router = useRouter();
@@ -37,8 +39,8 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user, loading, logout } = useAuth();
-  const { scrollDirection } = useScrollDirection();
+  const { user, logout } = useAuth();
+  const { userProfile, isLoading } = useProfile();
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
@@ -57,8 +59,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     };
     if (showDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
@@ -77,9 +77,22 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     }
   };
 
+  const normalizedUserProfile = userProfile && {
+    first_name: userProfile.user.first_name,
+    last_name: userProfile.user.last_name,
+    email: userProfile.user.email,
+    user_profile_picture:
+      (userProfile as any).user_profile_picture || DEFAULT_AVATAR,
+  };
+
   return (
     <ChatProvider>
-      <nav className="mb-8">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
         <div className="bg-white hidden sm:block">
           <div
             className={`${mainConfig.maxWidthClass} flex items-center justify-between ${
@@ -100,7 +113,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               </Sheet>
             </div>
 
-            {/* Logo */}
             <Link
               href={MainConfigs.homePageUrl}
               className="flex-shrink-0 lg:hidden"
@@ -112,7 +124,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               />
             </Link>
 
-            {/* logo category search*/}
             <div className="hidden lg:flex items-center gap-6">
               <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
                 <Logo
@@ -126,13 +137,18 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
                 pathname !== '/cat' &&
                 pathname !== '/home' && (
                   <div className="relative" ref={dropdownRef}>
-                    <Button
-                      icon={FiGrid}
-                      className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
-                      onClick={() => setShowDropdown((prev) => !prev)}
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <span>Categories</span>
-                    </Button>
+                      <Button
+                        icon={FiGrid}
+                        className="flex items-center gap-2 text-gray-700 bg-transparent shadow-none hover:text-primary_1 rounded-xl"
+                        onClick={() => setShowDropdown((prev) => !prev)}
+                      >
+                        <span>Categories</span>
+                      </Button>
+                    </motion.div>
                     <AnimatePresence>
                       {showDropdown && (
                         <motion.div
@@ -150,59 +166,66 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
                 )}
             </div>
 
-            {/* search */}
             <div className="hidden lg:flex items-center flex-grow mx-8">
               <div className="relative w-full max-w-2xl">
                 <Input
                   type="text"
                   placeholder="Search products..."
-                  className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1"
+                  className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1 transition-all duration-300"
                 />
                 <Button
                   icon={FaSearch}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8 transition-all duration-300"
                 />
               </div>
             </div>
 
-            {/* Right side menu and user menu */}
             <div className="flex items-center gap-4">
-              {loading ? (
+              {isLoading || !normalizedUserProfile ? (
                 <UserNavSkeleton />
               ) : user ? (
                 <>
-                  <UserNav user={user} onLogout={logout} />
-                  <Button
-                    className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
-                    onClick={handleSellClick}
+                  <UserNav user={normalizedUserProfile} onLogout={logout} />
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Sell
-                  </Button>
+                    <Button
+                      className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300"
+                      onClick={handleSellClick}
+                    >
+                      Sell
+                    </Button>
+                  </motion.div>
                 </>
               ) : (
                 <div className="flex items-center gap-4">
                   <div className="hidden md:flex items-center">
                     <Link
                       href="/login"
-                      className="text-gray-700 hover:text-primary_1 font-medium"
+                      className="text-gray-700 hover:text-primary_1 font-medium transition-colors duration-300"
                     >
                       Log in
                     </Link>
                     <span className="mx-2 text-gray-400">|</span>
                     <Link
                       href="/register"
-                      className="text-primary_1 font-semibold hover:text-primary_1"
+                      className="text-primary_1 font-semibold hover:text-primary_1/80 transition-colors duration-300"
                     >
                       Sign up
                     </Link>
                   </div>
-
-                  <Button
-                    className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm"
-                    onClick={handleSellClick}
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Sell
-                  </Button>
+                    <Button
+                      className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm rounded-full transition-all duration-300 hover:bg-gray-800"
+                      onClick={handleSellClick}
+                    >
+                      Sell
+                    </Button>
+                  </motion.div>
                 </div>
               )}
             </div>
@@ -211,27 +234,25 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
 
         <div className={`lg:hidden bg-white`}>
           <div className="container mx-auto px-4 py-2 flex items-center justify-between">
-            {/* left arrow */}
             <ChevronLeft
               className="w-8 h-8 text-primary_1 mr-3 cursor-pointer"
               onClick={() => router.back()}
             />
 
-            {/* search */}
             <div className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search products..."
-                className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1"
+                className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1 transition-all duration-300"
               />
               <Button
                 icon={FaSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8 transition-all duration-300"
               />
             </div>
           </div>
         </div>
-      </nav>
+      </motion.nav>
     </ChatProvider>
   );
 };
