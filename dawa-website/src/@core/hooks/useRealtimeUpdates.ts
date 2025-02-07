@@ -1,37 +1,34 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useMessages } from './useProductData';
 
 const POLLING_INTERVAL = 5000; // 5 seconds
 
 export function useRealtimeUpdates() {
   const { messagesData, mutate, isLoading } = useMessages();
-  const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
+  const lastUpdateTimeRef = useRef<number>(Date.now());
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const checkForUpdates = useCallback(async () => {
-    const currentTime = Date.now();
-    if (currentTime - lastUpdateTime >= POLLING_INTERVAL) {
-      await mutate();
-      setLastUpdateTime(currentTime);
-    }
-    scheduleNextUpdate();
-  }, [lastUpdateTime, mutate]);
-
-  const scheduleNextUpdate = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    timeoutRef.current = setTimeout(checkForUpdates, POLLING_INTERVAL);
-  }, [checkForUpdates]);
-
   useEffect(() => {
-    scheduleNextUpdate();
+    const poll = async () => {
+      const currentTime = Date.now();
+      // Check if enough time has passed
+      if (currentTime - lastUpdateTimeRef.current >= POLLING_INTERVAL) {
+        await mutate();
+        lastUpdateTimeRef.current = currentTime;
+      }
+      timeoutRef.current = setTimeout(poll, POLLING_INTERVAL);
+    };
+
+    // Start the polling
+    timeoutRef.current = setTimeout(poll, POLLING_INTERVAL);
+
+    // Cleanup on unmount
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [scheduleNextUpdate]);
+  }, [mutate]);
 
   return { messagesData, isLoading };
 }

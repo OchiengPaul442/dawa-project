@@ -1,36 +1,28 @@
 import Sidebar, { MobileNav } from '@/views/auth/Sidebar';
-import { Card, CardContent } from '@/components/ui/card';
-import mainConfig from '@/configs/mainConfigs';
 import { ProfileProvider } from '@/contexts/profile-context';
+import type { ReactNode } from 'react';
 
 export default function AuthenticatedLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <ProfileProvider>
-      <div className="min-h-screen">
-        <Card className={`${mainConfig.maxWidthClass}`}>
-          <CardContent className="p-0">
-            <div className="flex flex-col md:flex-row">
-              {/* Sidebar - hidden on mobile */}
-              <div className="hidden md:block">
-                <Sidebar />
-              </div>
-
-              {/* Mobile Navigation - visible only on mobile */}
-              <div className="md:hidden">
-                <MobileNav />
-              </div>
-
-              {/* Main Content */}
-              <main className="flex-1 p-4 md:p-8 lg:p-16 min-h-[calc(100vh-4rem)]">
-                {children}
-              </main>
+      <div className="flex min-h-screen bg-gray-100">
+        <Sidebar className="hidden lg:block" />
+        <div className="flex flex-1 flex-col">
+          <header className="bg-white shadow-sm lg:hidden">
+            <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
+              <MobileNav />
             </div>
-          </CardContent>
-        </Card>
+          </header>
+          <main className="flex-1 bg-gray-100">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </ProfileProvider>
   );

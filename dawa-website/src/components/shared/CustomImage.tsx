@@ -29,12 +29,14 @@ const CustomImage: React.FC<CustomImageProps> = ({
   const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
+    // If the incoming src changes and doesn't match the current imgSrc,
+    // update the imgSrc state to trigger reloading.
     if (src !== imgSrc) {
       setImgSrc(src || fallbackSrc);
       setIsLoading(true);
       setHasError(false);
     }
-  }, [src, fallbackSrc]);
+  }, [src, fallbackSrc, imgSrc]);
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);

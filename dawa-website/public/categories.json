@@ -150,7 +150,7 @@
   {
     "id": 5,
     "category_name": "Home, Appliances & Furniture",
-    "category_item_count": 2,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 25,
@@ -180,7 +180,7 @@
       {
         "id": 30,
         "subcategory_name": "Other Home, Appliances & Furniture",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       }
     ]
   },

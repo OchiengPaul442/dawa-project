@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -33,6 +34,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { selectCategories } from '@/redux-store/slices/categories/categories';
 import CategorySelect from '@/components/shared/CategorySelect';
+import Image from 'next/image';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { ImageSkeleton } from './ImageSkeleton';
 
 interface EditAdvertSheetProps {
   isOpen: boolean;
@@ -45,7 +50,6 @@ interface FormDataState {
   item_id: number;
   item_name: string;
   item_price: number;
-  // Change this key name so that it matches what your backend expects.
   item_subcategory: number | null;
   item_description: string;
   item_location: string;
@@ -59,15 +63,11 @@ export function EditAdvertSheet({
   onUpdate,
 }: EditAdvertSheetProps) {
   const { updateProduct, isLoading: isUpdating } = useUpdateProduct();
-  const { deleteItemImage, isMutating: isDeleting } = useDeleteItemImage();
-  const [deleteImageId, setDeleteImageId] = useState<number | null>(null);
-
-  // Initialize form data using the new key name.
+  const { deleteItemImage } = useDeleteItemImage();
   const [formData, setFormData] = useState<FormDataState>({
     item_id: item.id,
     item_name: item.name,
     item_price: item.price,
-    // Use the provided subcategory id if available; otherwise null.
     item_subcategory: item.subcategory_id ? Number(item.subcategory_id) : null,
     item_description: item.description,
     item_location: item.location,
@@ -75,12 +75,14 @@ export function EditAdvertSheet({
   });
   const [images, setImages] = useState(item.images || []);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [imagesLoading, setImagesLoading] = useState(true);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
 
   const categories = useSelector(selectCategories);
 
-  // If the item doesn't have a valid subcategory id but has a subcategory name,
-  // search the categories list and update the form state.
   useEffect(() => {
     if (
       !formData.item_subcategory &&
@@ -107,6 +109,15 @@ export function EditAdvertSheet({
     }
   }, [item.subcategory, formData.item_subcategory, categories]);
 
+  useEffect(() => {
+    // Simulate image loading delay
+    const timer = setTimeout(() => {
+      setImagesLoading(false);
+    }, 1500); // Adjust this value as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -120,7 +131,6 @@ export function EditAdvertSheet({
     }
   };
 
-  // Convert the string value from CategorySelect into a number.
   const handleCategoryChange = (subcategoryId: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -131,15 +141,18 @@ export function EditAdvertSheet({
     }
   };
 
-  const handleDeleteImage = async (imageId: number) => {
-    try {
-      await deleteItemImage({ image_id: imageId });
-      setImages(images.filter((img: any) => img.image_id !== imageId));
-      toast.success('Image deleted successfully');
-      setDeleteImageId(null);
-    } catch (error) {
-      toast.error('Failed to delete image');
+  const handleDeleteImage = (imageId: number) => {
+    setImageToDelete(imageId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteImage = () => {
+    if (imageToDelete) {
+      setImages(images.filter((img: any) => img.image_id !== imageToDelete));
+      setDeletedImageIds((prev) => [...prev, imageToDelete]);
+      setImageToDelete(null);
     }
+    setIsDeleteDialogOpen(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,7 +180,6 @@ export function EditAdvertSheet({
       const form = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
-        // Check if the value is a boolean and convert accordingly.
         if (typeof value === 'boolean') {
           form.append(key, value ? 'True' : 'False');
         } else {
@@ -176,7 +188,11 @@ export function EditAdvertSheet({
       });
 
       newImages.forEach((file, index) => {
-        form.append(`images[${index}]`, file);
+        form.append(`new_images[${index}]`, file);
+      });
+
+      deletedImageIds.forEach((id, index) => {
+        form.append(`deleted_images[${index}]`, id.toString());
       });
 
       await updateProduct(form);
@@ -196,242 +212,129 @@ export function EditAdvertSheet({
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-xl overflow-y-auto"
+          className="w-full sm:max-w-xl p-0 bg-background [&_[data-state=open]_.close-button]:hidden"
         >
-          <SheetHeader className="space-y-2 mb-6">
-            <SheetTitle>Edit Advert</SheetTitle>
-            <SheetDescription>
-              Make changes to your advert here. Click save when you're done.
-            </SheetDescription>
-          </SheetHeader>
+          <ScrollArea className="h-full px-6">
+            <SheetHeader className="sticky top-0 z-10 bg-background pt-6 pb-4">
+              <SheetTitle>Edit Advert</SheetTitle>
+              <SheetDescription>
+                Make changes to your advert here. Click save when you're done.
+              </SheetDescription>
+              <Separator className="mt-4" />
+            </SheetHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Images Section */}
-            <div className="space-y-4">
-              <Label>Current Images</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <AnimatePresence>
-                  {images.map((image: any) => (
-                    <motion.div
-                      key={image.image_id}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.2 }}
-                      className="relative group aspect-square"
-                    >
-                      <img
-                        src={image.image_url || '/placeholder.svg'}
-                        alt={formData.item_name}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => setDeleteImageId(image.image_id)}
-                        disabled={isDeleting}
-                      >
-                        {isDeleting ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <X className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {images.length === 0 && (
-                  <div className="col-span-2 flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg text-muted-foreground">
-                    <ImageIcon className="h-8 w-8 mb-2" />
-                    <p className="text-sm">No images available</p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-6 pb-6">
+              <ImageSection
+                images={images}
+                newImages={newImages}
+                formData={formData}
+                handleDeleteImage={handleDeleteImage}
+                handleImageUpload={handleImageUpload}
+                setNewImages={setNewImages}
+                isLoading={imagesLoading}
+              />
 
-            {/* New Images Upload */}
-            <div className="space-y-4">
-              <Label htmlFor="new-images">Add New Images</Label>
-              <div className="flex items-center justify-center w-full">
-                <label
-                  htmlFor="new-images"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-3 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG or WEBP (MAX. 800x400px)
-                    </p>
-                  </div>
-                  <input
-                    id="new-images"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                  />
-                </label>
-              </div>
-              {newImages.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {newImages.map((file, index) => (
-                    <div key={index} className="relative group aspect-square">
-                      <img
-                        src={URL.createObjectURL(file) || '/placeholder.svg'}
-                        alt={`New upload ${index + 1}`}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() =>
-                          setNewImages(newImages.filter((_, i) => i !== index))
-                        }
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="item_subcategory">Category</Label>
+              <div className="space-y-4">
                 <CategorySelect
                   categories={(categories as any) || []}
-                  // Convert the numeric subcategory id (or null) to a string
                   value={
                     formData.item_subcategory !== null
                       ? formData.item_subcategory.toString()
                       : ''
                   }
-                  // onChange receives a string then converts it to a number
                   onChange={handleCategoryChange}
                   errors={errors.item_subcategory}
                 />
-              </div>
 
-              <div>
-                <Label htmlFor="item_name">Title</Label>
-                <Input
+                <FormField
                   id="item_name"
-                  name="item_name"
+                  label="Title"
                   value={formData.item_name}
                   onChange={handleInputChange}
-                  className="mt-1.5"
+                  error={errors.item_name}
                   required
                 />
-                {errors.item_name && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.item_name}
-                  </p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="item_price">Price (UGX)</Label>
-                <Input
+                <FormField
                   id="item_price"
-                  name="item_price"
+                  label="Price (UGX)"
                   type="number"
                   value={formData.item_price}
                   onChange={handleInputChange}
-                  className="mt-1.5"
+                  error={errors.item_price}
                   required
                 />
-                {errors.item_price && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.item_price}
-                  </p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="item_location">Location</Label>
-                <Input
+                <FormField
                   id="item_location"
-                  name="item_location"
+                  label="Location"
                   value={formData.item_location}
                   onChange={handleInputChange}
-                  className="mt-1.5"
+                  error={errors.item_location}
                   required
                 />
-                {errors.item_location && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.item_location}
-                  </p>
-                )}
-              </div>
 
-              <div>
-                <Label htmlFor="item_description">Description</Label>
-                <Textarea
-                  id="item_description"
-                  name="item_description"
-                  value={formData.item_description}
-                  onChange={handleInputChange}
-                  className="mt-1.5 min-h-[100px]"
-                  required
-                />
-                {errors.item_description && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.item_description}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="item_negotiable">Negotiable</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Allow buyers to negotiate the price
-                  </p>
+                <div>
+                  <Label htmlFor="item_description">Description</Label>
+                  <Textarea
+                    id="item_description"
+                    name="item_description"
+                    value={formData.item_description}
+                    onChange={handleInputChange}
+                    className="mt-1.5 min-h-[100px]"
+                    required
+                  />
+                  {errors.item_description && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.item_description}
+                    </p>
+                  )}
                 </div>
-                <Switch
-                  id="item_negotiable"
-                  name="item_negotiable"
-                  checked={formData.item_negotiable}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      item_negotiable: checked,
-                    }))
-                  }
-                />
-              </div>
-            </div>
 
-            <div className="flex justify-end gap-4 pt-4">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isUpdating}>
-                {isUpdating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Changes'
-                )}
-              </Button>
-            </div>
-          </form>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="item_negotiable">Negotiable</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Allow buyers to negotiate the price
+                    </p>
+                  </div>
+                  <Switch
+                    id="item_negotiable"
+                    name="item_negotiable"
+                    checked={formData.item_negotiable}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        item_negotiable: checked,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 pt-4">
+                <Button type="button" variant="outline" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUpdating}>
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              </div>
+            </form>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
 
       <AlertDialog
-        open={!!deleteImageId}
-        onOpenChange={() => setDeleteImageId(null)}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -442,23 +345,172 @@ export function EditAdvertSheet({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteImageId && handleDeleteImage(deleteImageId)}
+              onClick={confirmDeleteImage}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                'Delete'
-              )}
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>
+  );
+}
+
+interface ImageSectionProps {
+  images: any[];
+  newImages: File[];
+  formData: FormDataState;
+  handleDeleteImage: (id: number) => void;
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setNewImages: React.Dispatch<React.SetStateAction<File[]>>;
+  isLoading: boolean;
+}
+
+function ImageSection({
+  images,
+  newImages,
+  formData,
+  handleDeleteImage,
+  handleImageUpload,
+  setNewImages,
+  isLoading,
+}: ImageSectionProps) {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Label>Images</Label>
+        <ImageSkeleton />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <Label>Images</Label>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <AnimatePresence>
+          {images.map((image: any) => (
+            <motion.div
+              key={image.image_id}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              className="relative group aspect-square"
+            >
+              <Image
+                src={image.image_url || '/placeholder.svg'}
+                alt={formData.item_name}
+                fill
+                className="object-cover rounded-lg"
+              />
+              <Button
+                size="icon"
+                variant="destructive"
+                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleDeleteImage(image.image_id)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </motion.div>
+          ))}
+          {newImages.map((file, index) => (
+            <motion.div
+              key={`new-${index}`}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.2 }}
+              className="relative group aspect-square"
+            >
+              <Image
+                src={URL.createObjectURL(file) || '/placeholder.svg'}
+                alt={`New upload ${index + 1}`}
+                fill
+                className="object-cover rounded-lg"
+              />
+              <Button
+                size="icon"
+                variant="destructive"
+                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() =>
+                  setNewImages(newImages.filter((_, i) => i !== index))
+                }
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        {images.length === 0 && newImages.length === 0 && (
+          <div className="col-span-2 sm:col-span-3 flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg text-muted-foreground">
+            <ImageIcon className="h-8 w-8 mb-2" />
+            <p className="text-sm">No images available</p>
+          </div>
+        )}
+        <label
+          htmlFor="new-images"
+          className="flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted/80 transition-colors"
+        >
+          <div className="flex flex-col items-center justify-center p-4 text-center">
+            <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">
+              Upload
+              <br />
+              New Image
+            </p>
+          </div>
+          <input
+            id="new-images"
+            type="file"
+            className="hidden"
+            accept="image/*"
+            multiple
+            onChange={handleImageUpload}
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
+interface FormFieldProps {
+  id: string;
+  label: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  type?: string;
+  required?: boolean;
+}
+
+function FormField({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  type = 'text',
+  required = false,
+}: FormFieldProps) {
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        name={id}
+        type={type}
+        value={value}
+        onChange={onChange}
+        className="mt-1.5"
+        required={required}
+      />
+      {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+    </div>
   );
 }

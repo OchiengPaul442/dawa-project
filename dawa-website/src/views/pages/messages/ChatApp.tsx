@@ -1,4 +1,3 @@
-// src/views/pages/messages/ChatApp.tsx
 'use client';
 
 import React from 'react';
@@ -6,7 +5,7 @@ import { useChat } from './ChatContext';
 import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import Loader from '@/components/Loader';
 
 export default function ChatApp() {
   const {
@@ -15,21 +14,12 @@ export default function ChatApp() {
     currentUser,
     selectGroup,
     isLoading,
-    isAuthenticated,
   } = useChat();
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <p className="text-gray-500">Please sign in to access messages</p>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[80vh]">
-        <Loader2 className="w-8 h-8 text-primary_1 animate-spin" />
+      <div className="flex items-center justify-center h-[400px]">
+        <Loader />
       </div>
     );
   }
