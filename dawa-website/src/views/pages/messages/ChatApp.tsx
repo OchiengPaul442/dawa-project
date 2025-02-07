@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useState } from 'react';
 import { ChatProvider, useChat } from './ChatContext';
 import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
@@ -15,6 +15,7 @@ function ChatAppContent() {
     selectGroup,
     isLoading,
   } = useChat();
+  const [isMobileChat, setIsMobileChat] = useState(false);
 
   if (isLoading) {
     return (
@@ -25,16 +26,23 @@ function ChatAppContent() {
   }
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardContent className="p-0">
-        <div className="rounded-xl overflow-hidden max-w-7xl mx-auto h-[80vh] flex flex-col md:flex-row">
+        <div className="rounded-xl overflow-hidden h-[80vh] flex">
           <ContactList
             messageGroups={messageGroups}
             selectedGroupId={selectedGroupId}
             currentUser={currentUser}
-            onSelectGroup={selectGroup}
+            onSelectGroup={(groupId) => {
+              selectGroup(groupId);
+              setIsMobileChat(true);
+            }}
+            className={`w-full md:w-[350px] ${isMobileChat ? 'hidden md:block' : 'block'}`}
           />
-          <ChatArea />
+          <ChatArea
+            onBack={() => setIsMobileChat(false)}
+            className={`flex-1 ${isMobileChat ? 'block' : 'hidden md:block'}`}
+          />
         </div>
       </CardContent>
     </Card>

@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { format, isValid } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MessageSquare, Check, AlertCircle } from 'lucide-react';
+import { MessageSquare, Check, AlertCircle, ArrowLeft } from 'lucide-react';
 import type {
   Message,
   OptimisticMessage,
@@ -14,6 +14,7 @@ import { useChat } from './ChatContext';
 import { MessageInput } from './MessageInput';
 import { EmptyState } from './EmptyState';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 interface MessageItemProps {
   message: Message | OptimisticMessage;
@@ -83,19 +84,23 @@ const MessageItem: React.FC<MessageItemProps> = React.memo(
 
 MessageItem.displayName = 'MessageItem';
 
-export function ChatArea() {
+interface ChatAreaProps {
+  onBack: () => void;
+  className?: string;
+}
+
+export function ChatArea({ onBack, className }: ChatAreaProps) {
   const { messageGroups, selectedGroupId, currentUser, sendMessage } =
     useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
 
-  // Get the active conversation.
   const selectedGroup: MessageGroup | undefined = useMemo(
     () =>
       messageGroups.find((group) => group.id.toString() === selectedGroupId),
     [messageGroups, selectedGroupId],
   );
 
-  // Determine the other participant.
   const otherUser: User | null = useMemo(() => {
     if (!currentUser || !selectedGroup) return null;
     return (
@@ -106,15 +111,14 @@ export function ChatArea() {
   }, [selectedGroup, currentUser]);
 
   const scrollToBottom = useCallback(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
-  // Scroll when the conversation changes.
   useEffect(() => {
     scrollToBottom();
-  }, [scrollToBottom, selectedGroup]);
+  }, [scrollToBottom]); // Removed selectedGroup from dependencies
 
   const handleSendMessage = useCallback(
     (content: string) => {
@@ -124,7 +128,8 @@ export function ChatArea() {
           item_id: selectedGroup.subject.item_id,
           message: content,
         });
-        scrollToBottom();
+        // Scroll to bottom after sending a new message
+        setTimeout(scrollToBottom, 100);
       }
     },
     [sendMessage, selectedGroup, currentUser, otherUser, scrollToBottom],
@@ -132,7 +137,9 @@ export function ChatArea() {
 
   if (!selectedGroupId || !selectedGroup) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+      <div
+        className={`flex-1 flex items-center justify-center bg-gray-50/50 ${className}`}
+      >
         <EmptyState
           icon={MessageSquare}
           title="Your Messages"
@@ -144,7 +151,9 @@ export function ChatArea() {
 
   if (!currentUser || !otherUser) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50/50">
+      <div
+        className={`flex-1 flex items-center justify-center bg-gray-50/50 ${className}`}
+      >
         <EmptyState
           icon={MessageSquare}
           title="User Not Found"
@@ -155,9 +164,16 @@ export function ChatArea() {
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
-      {/* Top Bar with other user info */}
+    <div className={`flex flex-col bg-white ${className}`}>
       <div className="px-4 py-3 border-b border-gray-100 flex items-center space-x-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          className="md:hidden"
+        >
+          <ArrowLeft className="h-6 w-6" />
+        </Button>
         <Avatar className="h-9 w-9 rounded-full">
           {otherUser.profile_picture ? (
             <AvatarImage
@@ -180,23 +196,29 @@ export function ChatArea() {
         </div>
       </div>
 
-      {/* Message List */}
       <div className="flex-1 overflow-y-auto" ref={scrollAreaRef}>
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
-            {selectedGroup.messages.map((message) => (
-              <MessageItem
+            {selectedGroup.messages.map((message, index) => (
+              <div
                 key={message.id}
-                message={message}
-                currentUser={currentUser}
-                otherUser={otherUser}
-              />
+                ref={
+                  index === selectedGroup.messages.length - 1
+                    ? lastMessageRef
+                    : null
+                }
+              >
+                <MessageItem
+                  message={message}
+                  currentUser={currentUser}
+                  otherUser={otherUser}
+                />
+              </div>
             ))}
           </div>
         </ScrollArea>
       </div>
 
-      {/* Message Input */}
       <MessageInput onSendMessage={handleSendMessage} />
     </div>
   );

@@ -13,6 +13,7 @@ interface ContactListProps {
   selectedGroupId: string | null;
   currentUser: User | null;
   onSelectGroup: (groupId: string) => void;
+  className?: string;
 }
 
 const ContactItem: React.FC<{
@@ -21,16 +22,12 @@ const ContactItem: React.FC<{
   selectedGroupId: string | null;
   onSelectGroup: (groupId: string) => void;
 }> = React.memo(({ group, currentUser, selectedGroupId, onSelectGroup }) => {
-  // Get the other participant.
   const receiver = group.participants.find(
     (p) => Number(p.id) !== Number(currentUser.id),
   );
   if (!receiver) return null;
 
-  // Use the last message in the conversation.
   const lastMessage: Message = group.messages[group.messages.length - 1];
-
-  // Count unread messages sent to the current user.
   const unreadCount = group.messages.filter(
     (msg) => Number(msg.receiverId) === Number(currentUser.id) && !msg.read,
   ).length;
@@ -48,7 +45,7 @@ const ContactItem: React.FC<{
         selectedGroupId === group.id.toString() ? 'bg-primary_2/40' : ''
       }`}
     >
-      <Avatar className="h-10 w-10 rounded-full flex-shrink-0">
+      <Avatar className="h-12 w-12 rounded-full flex-shrink-0">
         {receiver.profile_picture ? (
           <AvatarImage
             src={receiver.profile_picture}
@@ -74,11 +71,11 @@ const ContactItem: React.FC<{
           {lastMessage.message}
         </p>
       </div>
-      {/* {unreadCount > 0 && (
+      {unreadCount > 0 && (
         <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-primary_1 text-white text-xs font-medium">
           {unreadCount}
         </span>
-      )} */}
+      )}
     </button>
   );
 });
@@ -90,10 +87,10 @@ export function ContactList({
   selectedGroupId,
   currentUser,
   onSelectGroup,
+  className,
 }: ContactListProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter groups based on search query.
   const filteredGroups = useMemo(() => {
     if (!currentUser) return [];
     return messageGroups.filter((group) => {
@@ -121,7 +118,9 @@ export function ContactList({
   }
 
   return (
-    <div className="w-full md:w-[350px] border-r border-gray-200 flex flex-col bg-white">
+    <div
+      className={`border-r border-gray-200 flex flex-col bg-white ${className}`}
+    >
       <div className="p-4 border-b border-gray-200">
         <div className="relative">
           <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />

@@ -169,17 +169,13 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           ) : user ? (
             <>
               <UserNav user={normalizedUserProfile} onLogout={logout} />
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+
+              <Button
+                className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300 "
+                onClick={handleSellClick}
               >
-                <Button
-                  className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300 "
-                  onClick={handleSellClick}
-                >
-                  Sell
-                </Button>
-              </motion.div>
+                Sell
+              </Button>
             </>
           ) : (
             <div className="flex items-center gap-4">
