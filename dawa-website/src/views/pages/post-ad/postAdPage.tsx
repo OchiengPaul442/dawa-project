@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { PencilIcon } from 'lucide-react';
 
 import InputField from '@/views/auth/InputField';
-import CategorySelect from './CategorySelect';
+import CategorySelect from '../../../components/shared/CategorySelect';
 import ImageUpload from './ImageUpload';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

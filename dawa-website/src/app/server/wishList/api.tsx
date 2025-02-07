@@ -1,16 +1,28 @@
-import { apiRequest } from '@/utils/apiClient';
+import { secureApiClient } from '@/utils/apiClient';
 
-// Fetch user wishlist
+/**
+ * Fetches the user's wishlist.
+ *
+ * @returns The wishlist extracted from the API response.
+ */
 export const getUserWishList = async (): Promise<any> => {
-  return apiRequest('get', '/getuserwishlist/').then(
-    (response) => response.wishlist,
-  );
+  const response = await secureApiClient.get('/getuserwishlist/');
+  // Adjust this extraction according to your API's response shape.
+  return response.data.wishlist;
 };
 
-// Add or remove item from wishlist
+/**
+ * Toggles (adds or removes) an item from the user's wishlist.
+ *
+ * @param url - The endpoint URL.
+ * @param param1 - An object with a property `arg` containing { item_id: string }.
+ * @returns The API response data.
+ */
 export const toggleWishlistItem = async (
   url: string,
   { arg }: { arg: { item_id: string } },
 ): Promise<any> => {
-  return apiRequest('post', url, arg).then((response) => response.data);
+  const response = await secureApiClient.post(url, arg);
+  // Adjust this extraction according to your API's response shape.
+  return response.data;
 };

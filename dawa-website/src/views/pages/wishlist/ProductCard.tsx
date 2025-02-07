@@ -18,8 +18,8 @@ import { useDispatch } from '@redux-store/hooks';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useWishlistActions } from '@core/hooks/useWishlistActions';
 import type { ProductCardProps } from '@/types/wishList';
-import { format } from 'date-fns';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
+import { formatDate } from '@/utils/dateFormatter';
 
 const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
@@ -120,7 +120,7 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
             {/* Date & Pricing */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
               <span className="text-gray-500 text-xs sm:text-sm">
-                Added {format(new Date(product.dateAdded), 'MMMM d, yyyy')}
+                Added {formatDate(product.dateAdded)}
               </span>
             </div>
 
@@ -128,11 +128,11 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
               <span className="text-xl sm:text-2xl font-semibold text-primary_1">
                 <CurrencyFormatter price={product.price as any} />
               </span>
-              {product.originalPrice && (
+              {/* {product.originalPrice && (
                 <span className="text-sm text-gray-400 line-through">
                   <CurrencyFormatter price={product.originalPrice as any} />
                 </span>
-              )}
+              )} */}
             </div>
 
             {/* View Details Button */}

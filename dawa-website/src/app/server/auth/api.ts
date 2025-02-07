@@ -1,4 +1,8 @@
-import { secureApiClient, openApiClient } from '@/utils/apiClient';
+import {
+  secureApiClient,
+  openApiClient,
+  secureMultipartApiClient,
+} from '@/utils/apiClient';
 import {
   RegisterRequest,
   ActivationRequest,
@@ -68,7 +72,30 @@ export const resetPassword = async (
  * Get user profile.
  * @returns User profile data
  */
-export const getUserProfile = async (): Promise<any> => {
-  const response = await secureApiClient.get('/getuserprofile/');
+export const fetchUserProfile = async (): Promise<any> => {
+  const response = await secureApiClient.get<any>('/getuserprofile/');
+  console.info(response.data);
+  return response.data;
+};
+
+/**
+ * Update user profile.
+ */
+export const updateUserProfile = async (data: FormData): Promise<any> => {
+  const response = await secureMultipartApiClient.patch(
+    '/updateuserprofile/',
+    data,
+  );
+  return response.data;
+};
+
+/**
+ *Change user password.
+ */
+export const changeUserPassword = async (
+  _key: string,
+  { arg }: { arg: any },
+): Promise<any> => {
+  const response = await secureApiClient.post('/changepassword/', arg);
   return response.data;
 };

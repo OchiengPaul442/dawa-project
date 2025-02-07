@@ -124,7 +124,7 @@ export function UserNav({ user, onLogout }: UserNavProps) {
 
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link href="/account/adverts" className="cursor-pointer">
+              <Link href="/account" className="cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 <span>Account</span>
               </Link>

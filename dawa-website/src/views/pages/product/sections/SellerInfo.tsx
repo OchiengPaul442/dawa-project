@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import CustomImage from '@/components/shared/CustomImage';
 import { SellerType } from '@/types/product';
 import { Star } from 'lucide-react';
+import Link from 'next/link';
 
 interface SellerInfoProps {
   seller: SellerType;
@@ -29,9 +30,11 @@ export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => (
           ({reviews.length} review{reviews.length > 1 && 's'})
         </span>
       </div>
-      <Button variant="outline" size="sm" className="text-primary_1">
-        <FaStore className="mr-2" /> View Store
-      </Button>
+      <Link href="/my-shop">
+        <Button variant="outline" size="sm" className="text-primary_1">
+          <FaStore className="mr-2" /> View Store
+        </Button>
+      </Link>
     </div>
   </div>
 );

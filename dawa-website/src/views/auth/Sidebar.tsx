@@ -1,16 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  Settings,
-  Users,
-  MessageSquare,
-  HelpCircle,
-  FileText,
-  LogOut,
-  Menu,
-  X,
-} from 'lucide-react';
+import { Settings, HelpCircle, FileText, LogOut, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,6 +15,8 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@core/hooks/use-auth';
 import { motion } from 'framer-motion';
+import { useProfile } from '@/contexts/profile-context';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface SidebarItem {
   className?: string;
@@ -31,20 +24,10 @@ interface SidebarItem {
 
 const menuItems = [
   {
-    href: '/account/adverts',
+    href: '/account',
     icon: FileText,
     label: 'My Adverts',
   },
-  // {
-  //   href: '/account/followers',
-  //   icon: Users,
-  //   label: 'Followers',
-  // },
-  // {
-  //   href: '/account/feedback',
-  //   icon: MessageSquare,
-  //   label: 'Feedback',
-  // },
   {
     href: '/account/settings',
     icon: Settings,
@@ -59,7 +42,8 @@ const menuItems = [
 
 export const MobileNav = () => {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { userProfile, isLoading } = useProfile();
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -67,20 +51,42 @@ export const MobileNav = () => {
       <SheetTrigger asChild className="lg:hidden">
         <Button variant="outline" className="lg:hidden mt-8">
           <Menu className="text-3xl" scale={1.5} />
-          <span className="">Toggle menu</span>
+          <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-full max-w-xs p-0">
         <div className="flex flex-col min-h-screen">
           <SheetHeader className="p-6 border-b">
             <div className="flex flex-col items-center space-y-3">
-              <Avatar className="w-20 h-20">
-                <AvatarImage src={user?.image} alt={user?.name} />
-                <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-              </Avatar>
+              {isLoading ? (
+                <Skeleton className="w-20 h-20 rounded-full" />
+              ) : (
+                <Avatar className="w-20 h-20">
+                  <AvatarImage
+                    src={userProfile?.user_profile_picture || undefined}
+                    alt={`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}
+                  />
+                  <AvatarFallback>
+                    {userProfile?.user.first_name[0]}
+                  </AvatarFallback>
+                </Avatar>
+              )}
               <div className="text-center">
-                <h2 className="text-lg font-semibold">{user?.name}</h2>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                {isLoading ? (
+                  <>
+                    <Skeleton className="h-6 w-32 mb-1" />
+                    <Skeleton className="h-4 w-24" />
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-lg font-semibold">
+                      {`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {userProfile?.user.email}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </SheetHeader>
@@ -130,7 +136,8 @@ export const MobileNav = () => {
 
 const Sidebar = ({ className }: SidebarItem) => {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { userProfile, isLoading } = useProfile();
 
   return (
     <>
@@ -141,13 +148,33 @@ const Sidebar = ({ className }: SidebarItem) => {
         )}
       >
         <div className="flex flex-col items-center space-y-3">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src={user?.image} alt={user?.name} />
-            <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
+          {isLoading ? (
+            <Skeleton className="w-24 h-24 rounded-full" />
+          ) : (
+            <Avatar className="w-24 h-24">
+              <AvatarImage
+                src={userProfile?.user_profile_picture || undefined}
+                alt={`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}
+              />
+              <AvatarFallback>{userProfile?.user.first_name[0]}</AvatarFallback>
+            </Avatar>
+          )}
           <div className="text-center">
-            <h2 className="text-xl font-bold">{user?.name}</h2>
-            <p className="text-xs text-muted-foreground">{user?.email}</p>
+            {isLoading ? (
+              <>
+                <Skeleton className="h-7 w-40 mb-1" />
+                <Skeleton className="h-4 w-32" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-bold">
+                  {`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  {userProfile?.user.email}
+                </p>
+              </>
+            )}
           </div>
         </div>
         <nav className="space-y-1">

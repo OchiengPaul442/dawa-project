@@ -9,9 +9,15 @@ import {
   getProductDetails,
   reportAbuse,
   sendReview,
+  updateProduct,
+  deleteProductImage,
 } from '@/app/server/products/api';
-import { useEffect, useMemo } from 'react';
-import { useDispatch } from '@/redux-store/hooks';
+import {
+  fetchUserProfile,
+  updateUserProfile,
+  changeUserPassword,
+} from '@/app/server/auth/api';
+import { useMemo } from 'react';
 import { swrOptions } from '../swrConfig';
 import useSWRMutation from 'swr/mutation';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
@@ -181,3 +187,75 @@ export function useSendReviews() {
     error,
   };
 }
+
+export const useUserProfile = () => {
+  // The SWR hook handles fetching, caching, and revalidation.
+  const { data, error, isLoading, mutate } = useSWR<any>(
+    '/getuserprofile/',
+    fetchUserProfile,
+  );
+
+  return {
+    userProfile: data?.data?.user_profile || null,
+    items: data?.data?.items || [],
+    isLoading,
+    isError: error,
+    mutate,
+  };
+};
+
+export function useUpdateUserProfile() {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any,
+    any,
+    string,
+    FormData
+  >('/updateuserprofile/', (_key, { arg }) => updateUserProfile(arg));
+
+  return {
+    updateUserProfile: trigger,
+    isLoading: isMutating,
+    error,
+  };
+}
+export function useChangeUserPassword() {
+  const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
+    '/changepassword/',
+    changeUserPassword,
+  );
+
+  return {
+    changeUserPassword: trigger,
+    isLoading: isMutating,
+    error,
+  };
+}
+
+// Update product data
+export const useUpdateProduct = () => {
+  const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
+    '/updateitem/',
+    updateProduct,
+  );
+
+  return {
+    updateProduct: trigger,
+    isLoading: isMutating,
+    error,
+  };
+};
+
+// delete product image
+export const useDeleteItemImage = () => {
+  const { trigger, data, error, isMutating } = useSWRMutation(
+    '/deleteitemimage/',
+    deleteProductImage,
+  );
+
+  return {
+    deleteItemImage: trigger,
+    data,
+    error,
+    isMutating,
+  };
+};

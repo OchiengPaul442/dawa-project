@@ -1,7 +1,7 @@
 import type React from 'react';
 import CardLayout from '@/components/ProductCards/CardLayout';
 import type { SimilarItem } from '@/types/product';
-import { ChevronRight } from 'lucide-react';
+import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmptyState from './EmptyState';
 import { useRouter } from 'next/navigation';
@@ -25,13 +25,14 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ similarItems }) => {
     <div className="mt-16 bg-white">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-primary_1">Similar Products</h2>
+
         <Button
           variant="link"
-          onClick={() => router.push(`/cat/${similarItems[0].category}`)}
           className="text-primary group"
+          onClick={() => router.push(`/cat/${similarItems[0].category}`)}
         >
           View All
-          <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           <span className="sr-only">View all similar products</span>
         </Button>
       </div>

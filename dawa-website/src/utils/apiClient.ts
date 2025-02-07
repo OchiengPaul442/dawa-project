@@ -1,3 +1,4 @@
+// apiClient.ts
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
 
@@ -13,13 +14,12 @@ const createApiClient = (
   type: ApiClientType,
   headersConfig?: HeadersConfig,
 ): AxiosInstance => {
+  // For multipart requests, do not set Content-Type manually.
   const instance = axios.create({
     baseURL: BASE_URL,
-    headers: {
-      'Content-Type': headersConfig?.isMultipart
-        ? 'multipart/form-data'
-        : 'application/json',
-    },
+    headers: headersConfig?.isMultipart
+      ? {}
+      : { 'Content-Type': 'application/json' },
   });
 
   if (type === 'secure') {
@@ -37,23 +37,6 @@ const createApiClient = (
 
   return instance;
 };
-
-// Generic request function to handle API calls
-export async function apiRequest(
-  method: 'get' | 'post',
-  url: string,
-  data?: any,
-): Promise<any> {
-  try {
-    const response =
-      method === 'get'
-        ? await secureApiClient.get(url)
-        : await secureApiClient.post(url, data);
-    return response.data;
-  } catch (error: any) {
-    throw error?.response?.data || error.message || error;
-  }
-}
 
 export const secureApiClient = createApiClient('secure');
 export const openApiClient = createApiClient('open');

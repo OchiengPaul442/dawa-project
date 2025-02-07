@@ -71,6 +71,26 @@ export const addNewProduct = async (
     .then((response) => response.data);
 };
 
+// Update a product
+export const updateProduct = async (
+  url: string,
+  { arg }: { arg: ProductUploadProps },
+): Promise<any> => {
+  return secureMultipartApiClient
+    .patch(url, arg)
+    .then((response) => response.data);
+};
+
+// delete a product image
+export const deleteProductImage = async (
+  url: string,
+  { arg }: { arg: any },
+): Promise<any> => {
+  return secureApiClient
+    .delete(url, { data: arg })
+    .then((response) => response.data);
+};
+
 // report abuse
 export const reportAbuse = async (
   url: string,
