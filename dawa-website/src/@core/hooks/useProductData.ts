@@ -69,12 +69,10 @@ export function useCategoryData({
 
 //Hooks to send and receive messages
 export function useMessages() {
-  // Configure SWR options to revalidate when the window refocuses or reconnects.
   const swrOptions = {
-    revalidateOnFocus: true, // re-fetch on window focus
-    revalidateOnReconnect: true, // re-fetch when reconnecting to the network
-    // Optionally, you can add a refreshInterval (in ms) to periodically update the data.
-    // For example, to refresh every 5 seconds, uncomment the next line:
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+    // Optionally enable periodic refresh:
     // refreshInterval: 5000,
   };
 

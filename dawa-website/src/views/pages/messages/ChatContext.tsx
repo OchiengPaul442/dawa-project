@@ -1,4 +1,3 @@
-// src/views/pages/messages/ChatContext.tsx
 'use client';
 
 import React, {
@@ -20,51 +19,44 @@ import type {
 import { useMessages, useSendMessage } from '@core/hooks/useProductData';
 import { useAuth } from '@core/hooks/use-auth';
 
+// Create a context to hold all chat-related state and logic.
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 /**
  * Returns true if both messages have the same sender, same item id,
  * and exactly the same trimmed message text.
- * This check is used for deduplication.
  */
-const isSimilarMessage = (msg1: Message, msg2: Message): boolean => {
-  return (
-    msg1.senderId === msg2.senderId &&
-    msg1.itemId === msg2.itemId &&
-    msg1.message.trim() === msg2.message.trim()
-  );
-};
+const isSimilarMessage = (msg1: Message, msg2: Message): boolean =>
+  msg1.senderId === msg2.senderId &&
+  msg1.itemId === msg2.itemId &&
+  msg1.message.trim() === msg2.message.trim();
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // State for the selected conversation/group
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  // State for optimistic messages (pending, error, or confirmed "sent")
   const [optimisticMessages, setOptimisticMessages] = useState<
     OptimisticMessage[]
   >([]);
 
-  // Get logged-in user from the auth hook
+  // Get the authenticated user.
   const { user, loading: authLoading } = useAuth() as {
     user: User | null;
     loading: boolean;
   };
 
-  // Fetch messages via your SWR hook
+  // Fetch messages from the API via SWR.
   const { messagesData, isLoading: messagesLoading, mutate } = useMessages();
-  // Use your SWR mutation hook to send messages
+
+  // SWR mutation hook to send messages.
   const { sendMessage: sendMessageMutation } = useSendMessage();
 
-  // Handler to set the active conversation
+  // Handler to set the active conversation.
   const selectGroup = useCallback((groupId: string | number) => {
     setSelectedGroupId(groupId ? groupId.toString() : null);
   }, []);
 
-  // Convert the API data to our internal format:
-  // - Rename "created_at" to "createdAt"
-  // - Force senderId and receiverId to numbers
-  // - Attach the subject's item_id as itemId on each message
+  // Convert and normalize fetched messages.
   const convertedGroups: MessageGroup[] = useMemo(() => {
     if (!messagesData) return [];
     return messagesData.map((group: any) => ({
@@ -79,7 +71,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   }, [messagesData]);
 
-  // Helper: given a group, return the other participant (the one that is not the current user)
+  // Helper: Get the other participant in a conversation.
   const getOtherParticipant = useCallback(
     (group: MessageGroup): User | null => {
       if (!user) return null;
@@ -91,13 +83,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   // Send a message with an optimistic update.
-  // Instead of removing the optimistic message on success, we update its status to "sent".
   const sendMessage = useCallback(
     async (payload: SendMessagePayload) => {
       if (!user) return;
 
-      // Determine the proper receiver:
-      // If payload.receiver_id is missing or equals the logged-in user, derive from the selected group.
+      // Determine the proper receiver.
       let finalReceiverId = payload.receiver_id;
       if (!finalReceiverId || Number(finalReceiverId) === Number(user.id)) {
         const selectedGroup = convertedGroups.find(
@@ -117,13 +107,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
 
-      // Final safety check: do not allow self-messaging.
       if (Number(finalReceiverId) === Number(user.id)) {
-        console.error('You cannot send a message to yourself.');
+        console.error('Self-messaging is not allowed.');
         return;
       }
 
-      // Create an optimistic message that appears immediately.
+      // Create an optimistic message.
       const optimisticMessage: OptimisticMessage = {
         id: uuidv4(),
         itemId: payload.item_id,
@@ -135,22 +124,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         status: 'sending',
       };
 
-      // Add the optimistic message to state.
+      // Add the optimistic message.
       setOptimisticMessages((prev) => [...prev, optimisticMessage]);
 
       try {
-        // Send the message via your SWR mutation hook.
+        // Trigger the API call.
         await sendMessageMutation({ ...payload, receiver_id: finalReceiverId });
-        // On success, update the optimistic message status to "sent"
+        // Update optimistic message status to "sent" on success.
         setOptimisticMessages((prev) =>
           prev.map((msg) =>
             msg.id === optimisticMessage.id ? { ...msg, status: 'sent' } : msg,
           ),
         );
-        // Revalidate the messages data in the background.
+        // Revalidate messages in the background.
         mutate();
       } catch (error) {
-        // Mark the optimistic message as errored.
+        // Mark the message as errored.
         setOptimisticMessages((prev) =>
           prev.map((msg) =>
             msg.id === optimisticMessage.id ? { ...msg, status: 'error' } : msg,
@@ -169,24 +158,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     ],
   );
 
-  // Merge optimistic messages with the fetched messages.
-  // For each group, if a fetched message is a duplicate of a confirmed optimistic message,
-  // omit the fetched one.
+  // Merge optimistic messages with fetched messages and deduplicate.
   const combinedMessageGroups: MessageGroup[] = useMemo(() => {
-    if (!convertedGroups) return [];
     return convertedGroups.map((group: MessageGroup) => {
-      // Get optimistic messages for this group.
       const optimisticForGroup = optimisticMessages.filter(
         (optim) => optim.itemId === group.subject.item_id,
       );
-      // Filter fetched messages: if a confirmed optimistic message is duplicate, omit it.
-      const dedupedFetched = group.messages.filter((fetchedMsg) => {
-        return !optimisticForGroup.some(
-          (optim) =>
-            optim.status === 'sent' && isSimilarMessage(fetchedMsg, optim),
-        );
-      });
-      // Merge the deduped fetched messages with all optimistic messages.
+      const dedupedFetched = group.messages.filter(
+        (fetchedMsg) =>
+          !optimisticForGroup.some(
+            (optim) =>
+              optim.status === 'sent' && isSimilarMessage(fetchedMsg, optim),
+          ),
+      );
       const mergedMessages: Message[] = [
         ...dedupedFetched,
         ...optimisticForGroup,
@@ -198,7 +182,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [convertedGroups, optimisticMessages]);
 
-  // Sort groups so that the conversation with the most recent message appears first.
+  // Sort groups so that the conversation with the most recent message is first.
   const sortedMessageGroups = useMemo(() => {
     return combinedMessageGroups.slice().sort((a, b) => {
       const aLast = new Date(
@@ -211,19 +195,15 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [combinedMessageGroups]);
 
-  // Compute a count of unread messages for the current user.
+  // Compute unread messages count.
   const newMessagesCount = useMemo(() => {
     if (!user) return 0;
-    let count = 0;
-    sortedMessageGroups.forEach((group) => {
-      group.messages.forEach((msg) => {
-        // Consider messages unread if the current user is the receiver and read is false.
-        if (Number(msg.receiverId) === Number(user.id) && !msg.read) {
-          count++;
-        }
-      });
-    });
-    return count;
+    return sortedMessageGroups.reduce((acc, group) => {
+      const unread = group.messages.filter(
+        (msg) => Number(msg.receiverId) === Number(user.id) && !msg.read,
+      ).length;
+      return acc + unread;
+    }, 0);
   }, [sortedMessageGroups, user]);
 
   const contextValue: ChatContextType = useMemo(
@@ -235,7 +215,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       sendMessage,
       isLoading: authLoading || messagesLoading,
       isAuthenticated: !!user,
-      newMessagesCount, // expose the unread messages count
+      newMessagesCount,
     }),
     [
       sortedMessageGroups,

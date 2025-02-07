@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useChat } from './ChatContext';
+import { ChatProvider, useChat } from './ChatContext';
 import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
 import { Card, CardContent } from '@/components/ui/card';
 import Loader from '@/components/Loader';
 
-export default function ChatApp() {
+function ChatAppContent() {
   const {
     messageGroups,
     selectedGroupId,
@@ -38,5 +38,13 @@ export default function ChatApp() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export default function ChatApp() {
+  return (
+    <ChatProvider>
+      <ChatAppContent />
+    </ChatProvider>
   );
 }

@@ -1,4 +1,3 @@
-// src/views/pages/messages/MessageInput.tsx
 'use client';
 
 import React, { useState, useCallback } from 'react';

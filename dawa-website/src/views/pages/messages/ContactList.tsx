@@ -1,4 +1,3 @@
-// src/views/pages/messages/ContactList.tsx
 'use client';
 
 import React, { useState, useMemo } from 'react';
@@ -7,7 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, X, AlertCircle } from 'lucide-react';
 import type { MessageGroup, User, Message } from '@/types/message';
 import { EmptyState } from './EmptyState';
-import { ChatSkeleton } from './chat-skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ContactListProps {
@@ -22,9 +20,8 @@ const ContactItem: React.FC<{
   currentUser: User;
   selectedGroupId: string | null;
   onSelectGroup: (groupId: string) => void;
-}> = ({ group, currentUser, selectedGroupId, onSelectGroup }) => {
-  // Ensure that we show the receiver (other participant) details.
-  // We use Number() for safe numeric comparisons.
+}> = React.memo(({ group, currentUser, selectedGroupId, onSelectGroup }) => {
+  // Get the other participant.
   const receiver = group.participants.find(
     (p) => Number(p.id) !== Number(currentUser.id),
   );
@@ -33,15 +30,12 @@ const ContactItem: React.FC<{
   // Use the last message in the conversation.
   const lastMessage: Message = group.messages[group.messages.length - 1];
 
-  // Count unread messages that were sent to the current user.
+  // Count unread messages sent to the current user.
   const unreadCount = group.messages.filter(
     (msg) => Number(msg.receiverId) === Number(currentUser.id) && !msg.read,
   ).length;
 
-  // Conversation title uses the subject's item_name.
   const subjectText = group.subject.item_name;
-
-  // Format the time of the last message.
   const messageDate = new Date(lastMessage.createdAt);
   const formattedTime = isValid(messageDate)
     ? format(messageDate, 'HH:mm')
@@ -87,7 +81,9 @@ const ContactItem: React.FC<{
       )} */}
     </button>
   );
-};
+});
+
+ContactItem.displayName = 'ContactItem';
 
 export function ContactList({
   messageGroups,
@@ -97,10 +93,10 @@ export function ContactList({
 }: ContactListProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Filter groups based on search query.
   const filteredGroups = useMemo(() => {
     if (!currentUser) return [];
     return messageGroups.filter((group) => {
-      // Get the receiver (other participant) by filtering out currentUser.
       const receiver = group.participants.find(
         (p) => Number(p.id) !== Number(currentUser.id),
       );

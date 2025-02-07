@@ -1,4 +1,3 @@
-// src/views/pages/messages/ChatArea.tsx
 'use client';
 
 import React, { useRef, useEffect, useCallback, useMemo } from 'react';
@@ -89,12 +88,12 @@ export function ChatArea() {
     useChat();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // Find the selected conversation.
-  const selectedGroup: MessageGroup | undefined = useMemo(() => {
-    return messageGroups.find(
-      (group) => group.id.toString() === selectedGroupId,
-    );
-  }, [messageGroups, selectedGroupId]);
+  // Get the active conversation.
+  const selectedGroup: MessageGroup | undefined = useMemo(
+    () =>
+      messageGroups.find((group) => group.id.toString() === selectedGroupId),
+    [messageGroups, selectedGroupId],
+  );
 
   // Determine the other participant.
   const otherUser: User | null = useMemo(() => {
@@ -112,6 +111,7 @@ export function ChatArea() {
     }
   }, []);
 
+  // Scroll when the conversation changes.
   useEffect(() => {
     scrollToBottom();
   }, [scrollToBottom, selectedGroup]);
@@ -120,7 +120,7 @@ export function ChatArea() {
     (content: string) => {
       if (content.trim() && selectedGroup && currentUser && otherUser) {
         sendMessage({
-          receiver_id: otherUser.id, // Will be recalculated in context if needed.
+          receiver_id: otherUser.id,
           item_id: selectedGroup.subject.item_id,
           message: content,
         });
