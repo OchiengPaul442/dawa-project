@@ -10,6 +10,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useAuth } from '@core/hooks/use-auth';
@@ -36,7 +37,9 @@ const NavItem: React.FC<NavItemProps> = ({ item, pathname, onClick }) => (
   <Link href={item.href} onClick={onClick}>
     <Button
       variant="ghost"
-      className={`w-full justify-start ${pathname === item.href ? 'bg-gray-100 text-primary' : ''}`}
+      className={`w-full justify-start ${
+        pathname === item.href ? 'bg-gray-100 text-primary' : ''
+      }`}
     >
       <item.icon className="mr-2 h-4 w-4" />
       {item.label}
@@ -85,7 +88,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ userProfile, isLoading }) => (
         </>
       ) : (
         <>
-          <h2 className="text-lg font-semibold">{`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}</h2>
+          <h2 className="text-lg font-semibold">
+            {`${userProfile?.user.first_name} ${userProfile?.user.last_name}`}
+          </h2>
           <p className="text-xs text-muted-foreground">
             {userProfile?.user.email}
           </p>
@@ -111,6 +116,8 @@ export const MobileNav: React.FC = () => {
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
         <SheetHeader className="border-b pb-4 mb-4">
+          {/* Add a title for accessibility */}
+          <SheetTitle className="sr-only">User Menu</SheetTitle>
           <UserInfo userProfile={userProfile} isLoading={isLoading} />
         </SheetHeader>
         <nav className="space-y-2">

@@ -14,7 +14,7 @@ const navItems = [
   { icon: Heart, label: 'Wishlist', href: '/wishlist' },
   { icon: PlusCircle, label: 'Sell', href: '/post-ad' },
   { icon: MessageSquare, label: 'Messages', href: '/messages' },
-  { icon: User, label: 'Profile', href: '/account/adverts' },
+  { icon: User, label: 'Profile', href: '/account' },
 ];
 
 export function BottomNav() {
