@@ -21,22 +21,18 @@ import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
-interface UserNavProps {
-  user: {
-    first_name: string;
-    last_name: string;
-    user_profile_picture: string;
-    email: string;
-  };
-  onLogout: () => void;
-}
-
 const formatCount = (count: number) => {
   if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
   return count.toString();
 };
 
-export function UserNav({ user, onLogout }: UserNavProps) {
+export function UserNav({
+  user,
+  onLogout,
+}: {
+  user: any;
+  onLogout: () => void;
+}) {
   const { wishlistCount } = useWishlistActions();
 
   // Assert that wishlistCount is a number, or provide a default value

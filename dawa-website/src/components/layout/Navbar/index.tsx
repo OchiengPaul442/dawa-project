@@ -1,29 +1,30 @@
 'use client';
 
-import type React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, MouseEvent } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
 import { Menu, ChevronLeft, User } from 'lucide-react';
-import Link from 'next/link';
+import { useDispatch } from '@redux-store/hooks';
+
+import { useAuth } from '@core/hooks/use-auth';
+import { useProfile } from '@/contexts/profile-context';
+import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
+
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
 import Logo3 from '@public/assets/svgs/DAWA VARIATION-01.svg';
 import { UserNav } from './user-nav';
-import { useAuth } from '@core/hooks/use-auth';
+import { UserNavSkeleton } from './UserNavSkeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '../../shared/Button';
 import { Input } from '@/components/ui/input';
 import Sidebar from '@views/pages/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
-import { UserNavSkeleton } from './UserNavSkeleton';
-import { useDispatch } from '@redux-store/hooks';
-import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import MainConfigs from '@configs/mainConfigs';
 import mainConfig from '@configs/mainConfigs';
 import { ChatProvider } from '@/views/pages/messages/ChatContext';
-import { useProfile } from '@/contexts/profile-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface NavBarProps {
@@ -33,53 +34,54 @@ interface NavBarProps {
 const DEFAULT_AVATAR = '/assets/default-avatar.png';
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
+  // Router, dispatch and path
   const router = useRouter();
   const dispatch = useDispatch();
+  const pathname = usePathname();
+  const isHomePage = pathname === '/' || pathname === '/home';
+
+  // State hooks
   const [isSticky, setIsSticky] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Refs
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const { user, logout } = useAuth();
-  const { userProfile, isLoading } = useProfile();
 
-  const isHomePage = pathname === '/' || pathname === '/home';
+  // Auth and Profile data
+  const { user, loading, logout } = useAuth();
+  const { userProfile } = useProfile();
 
-  const normalizedUserProfile = userProfile && {
-    first_name: userProfile.user.first_name,
-    last_name: userProfile.user.last_name,
-    email: userProfile.user.email,
-    user_profile_picture:
-      (userProfile as any).user_profile_picture || DEFAULT_AVATAR,
-  };
-
-  useEffect(() => {
-    const handleScroll = () => setIsSticky(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowDropdown(false);
+  // Normalize profile data from profile context and auth session
+  const normalizedUserProfile = userProfile
+    ? {
+        first_name: userProfile.user.first_name,
+        last_name: userProfile.user.last_name,
+        email: userProfile.user.email,
+        user_profile_picture:
+          (userProfile as any).user_profile_picture || DEFAULT_AVATAR,
       }
-    };
-    if (showDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showDropdown]);
+    : null;
 
+  const normalizedUserFromAuth = user
+    ? {
+        first_name: user.name.split(' ')[0],
+        last_name: user.name.split(' ')[1],
+        email: user.email,
+        user_profile_picture: user.image,
+      }
+    : null;
+
+  // Event Handlers
+
+  // Closes the sheet after selecting an item.
   const handleSheetItemClick = () => {
     if (closeOnSelect) {
       setIsSheetOpen(false);
     }
   };
 
+  // Handles Sell button click: if the user is not logged in, open the auth dialog; otherwise, redirect.
   const handleSellClick = () => {
     if (!user) {
       dispatch(openAuthDialog());
@@ -88,6 +90,38 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     }
   };
 
+  // Effect: Handle sticky navbar on scroll.
+  useEffect(() => {
+    const handleScroll = () => setIsSticky(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Effect: Hide dropdown when clicking outside.
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      const mouseEvent = event as unknown as MouseEvent;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(mouseEvent.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
+  // Render Functions
+
+  /**
+   * Render desktop navigation bar.
+   */
   const renderDesktopNav = () => (
     <div className="bg-white hidden sm:block">
       <div
@@ -95,6 +129,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           isSticky ? 'py-2' : 'py-4'
         } transition-all duration-300 ease-in-out`}
       >
+        {/* Mobile sheet trigger for smaller screens */}
         <div className="lg:hidden">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
@@ -109,6 +144,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </Sheet>
         </div>
 
+        {/* Logo */}
         <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
           <Logo2
             className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
@@ -117,6 +153,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           />
         </Link>
 
+        {/* Categories dropdown */}
         <div className="hidden lg:flex items-center gap-6">
           {pathname !== '/' && pathname !== '/cat' && pathname !== '/home' && (
             <div className="relative" ref={dropdownRef}>
@@ -134,12 +171,13 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               </motion.div>
               <AnimatePresence>
                 {showDropdown && (
+                  // Here we set an absolute container with a very high z-index.
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute left-0 top-full mt-2 w-auto z-50"
+                    className="absolute left-0 top-full mt-2 w-auto z-[9999]"
                   >
                     <Sidebar onSelect={handleSheetItemClick} />
                   </motion.div>
@@ -149,6 +187,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           )}
         </div>
 
+        {/* Search Bar */}
         <div className="hidden lg:flex items-center flex-grow mx-8">
           <div className="relative w-full max-w-2xl">
             <Input
@@ -163,15 +202,18 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </div>
         </div>
 
+        {/* User Navigation & Sell Button */}
         <div className="flex items-center gap-4">
-          {isLoading || !normalizedUserProfile ? (
+          {loading ? (
             <UserNavSkeleton />
           ) : user ? (
             <>
-              <UserNav user={normalizedUserProfile} onLogout={logout} />
-
+              <UserNav
+                user={normalizedUserProfile || normalizedUserFromAuth}
+                onLogout={logout}
+              />
               <Button
-                className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300 "
+                className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300"
                 onClick={handleSellClick}
               >
                 Sell
@@ -194,17 +236,12 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
                   Sign up
                 </Link>
               </div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <Button
+                className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm transition-all duration-300 hover:bg-gray-800"
+                onClick={handleSellClick}
               >
-                <Button
-                  className="text-white px-6 py-2 bg-gray-700 font-semibold h-10 text-sm rounded-full transition-all duration-300 hover:bg-gray-800"
-                  onClick={handleSellClick}
-                >
-                  Sell
-                </Button>
-              </motion.div>
+                Sell
+              </Button>
             </div>
           )}
         </div>
@@ -212,6 +249,9 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     </div>
   );
 
+  /**
+   * Render mobile navigation bar.
+   */
   const renderMobileNav = () => {
     if (isHomePage) {
       return (
@@ -221,16 +261,27 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
                 <Logo3 className="h-20 -m-5 w-auto" />
               </Link>
-
               {user ? (
                 <Link href="/account">
                   <Avatar className="h-8 w-8 ring-2 ring-white/50">
                     <AvatarImage
-                      src={normalizedUserProfile?.user_profile_picture}
-                      alt={`${normalizedUserProfile?.first_name} ${normalizedUserProfile?.last_name}`}
+                      src={
+                        normalizedUserProfile?.user_profile_picture ||
+                        normalizedUserFromAuth?.user_profile_picture
+                      }
+                      alt={`${
+                        normalizedUserProfile?.first_name ||
+                        normalizedUserFromAuth?.first_name
+                      } ${
+                        normalizedUserProfile?.last_name ||
+                        normalizedUserFromAuth?.last_name
+                      }`}
                     />
                     <AvatarFallback className="bg-white/10 text-white">
-                      {normalizedUserProfile?.first_name.charAt(0)}
+                      {(
+                        normalizedUserProfile?.first_name ||
+                        normalizedUserFromAuth?.first_name
+                      )?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Link>
@@ -245,7 +296,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               )}
             </div>
           </div>
-
           <div className="px-4 py-6">
             <div className="container mx-auto">
               <h2 className="text-white text-center mb-4 text-lg font-medium">
@@ -291,21 +341,20 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     );
   };
 
+  // Wrap the nav in a container with a high z-index so that the dropdown appears above all.
   return (
     <ChatProvider>
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.3,
-          type: 'tween',
-          ease: 'anticipate',
-        }}
-        className="mb-8"
-      >
-        {renderDesktopNav()}
-        {renderMobileNav()}
-      </motion.nav>
+      <div className="relative z-[9999]">
+        <motion.nav
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, type: 'tween', ease: 'anticipate' }}
+          className="mb-8"
+        >
+          {renderDesktopNav()}
+          {renderMobileNav()}
+        </motion.nav>
+      </div>
     </ChatProvider>
   );
 };

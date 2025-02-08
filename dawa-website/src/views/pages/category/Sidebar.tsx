@@ -20,16 +20,43 @@ interface SidebarProps {
   onSelect?: () => void;
 }
 
+/**
+ * Transform a Redux category (which may have incomplete subcategory objects)
+ * into a local Category that matches our type.
+ *
+ * For each subcategory, we supply default values for the missing fields.
+ */
+function transformCategory(cat: any): Category {
+  return {
+    ...cat,
+    subcategories: cat.subcategories
+      ? cat.subcategories.map((sub: any) => ({
+          id: sub.id,
+          subcategory_name: sub.subcategory_name,
+          name: sub.subcategory_name, // use subcategory_name as display name
+          count: 0, // default count (adjust if needed)
+          icon: '', // safe serializable value
+          href: `/cat/${slugify(cat.category_name)}/${slugify(sub.subcategory_name)}`,
+        }))
+      : [],
+  };
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
-  const categories = useSelector(selectCategories);
+  // Get Redux categories and transform them.
+  const reduxCategories = useSelector(selectCategories);
   const dispatch = useDispatch();
 
-  // Store the currently hovered category.
+  // Transform Redux categories to match our local type.
+  const categories: Category[] = reduxCategories
+    ? reduxCategories.map((cat: any) => transformCategory(cat))
+    : [];
+
+  // Local state: currently hovered category.
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
-  // Determine if screen is large enough (e.g., 1024px or more).
+  // Track if screen is large (>= 1024px).
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
 
-  // Update isLargeScreen on window resize.
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
@@ -39,12 +66,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Close the sidebar if an item is selected.
+  // When an item is selected, optionally call onSelect.
   const handleItemClick = useCallback(() => {
     if (onSelect) onSelect();
   }, [onSelect]);
 
-  // Set hovered category when mouse enters (only on large screens).
+  // On large screens, set the hovered category.
   const handleCategoryMouseEnter = useCallback(
     (category: Category) => {
       if (isLargeScreen) {
@@ -54,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [isLargeScreen],
   );
 
-  // Reset hovered category when the mouse leaves the sidebar.
+  // Clear hovered category when the mouse leaves.
   const handleSidebarMouseLeave = useCallback(() => {
     setHoveredCategory(null);
   }, []);
@@ -75,8 +102,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           }}
         >
           <div
-            className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between
-              ${isActive ? 'bg-gray-100 text-primary_1' : 'hover:bg-gray-50 hover:text-primary_1'}`}
+            className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between ${
+              isActive
+                ? 'bg-gray-100 text-primary_1'
+                : 'hover:bg-gray-50 hover:text-primary_1'
+            }`}
             onMouseEnter={() => handleCategoryMouseEnter(category)}
           >
             <div className="flex items-center gap-2 w-full truncate">
@@ -103,22 +133,25 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
 
   // Render a single subcategory item.
   const renderSubcategoryItem = useCallback(
-    (subcategory: Subcategory, categoryName: string) => {
-      const Icon =
-        subcategoryIconMap[subcategory.subcategory_name] || DefaultIcon;
+    (subcat: Subcategory) => {
+      // Compute the icon component. Cast as React.ComponentType if needed.
+      const IconComponent =
+        (subcategoryIconMap[
+          subcat.subcategory_name
+        ] as React.ComponentType<any>) || DefaultIcon;
       return (
         <Link
-          key={subcategory.id}
-          href={`/cat/${slugify(categoryName)}/${slugify(subcategory.subcategory_name)}`}
+          key={subcat.id}
+          href={subcat.href}
           onClick={() => {
             handleItemClick();
-            dispatch(setSelectedSubcategory(subcategory));
+            dispatch(setSelectedSubcategory(subcat));
           }}
         >
           <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center">
-            <Icon className="h-4 w-4 mr-2" />
+            <IconComponent className="h-4 w-4 mr-2" />
             <span className="text-sm font-medium truncate max-w-[180px]">
-              {subcategory.subcategory_name}
+              {subcat.subcategory_name}
             </span>
           </div>
         </Link>
@@ -127,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [handleItemClick, dispatch],
   );
 
-  if (!categories) {
+  if (!categories || categories.length === 0) {
     return <SidebarSkeleton />;
   }
 
@@ -139,43 +172,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       <div className="sticky top-[100px] flex">
         {/* Category Sidebar */}
         <Card
-          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
+          className={`w-full lg:w-[288px] ${
+            hoveredCategory ? 'rounded-r-none border-r-0' : ''
+          }`}
         >
           <CardContent className="p-0">
             <ScrollArea className="h-[700px]">
-              {categories.length > 0 ? (
-                <div className="p-4 space-y-1">
-                  {categories.map((category: any) =>
-                    renderCategoryItem(category),
-                  )}
-                </div>
-              ) : (
-                <div className="p-4 text-gray-500">No categories found.</div>
-              )}
+              <div className="p-4 space-y-1">
+                {categories.map((category: Category) =>
+                  renderCategoryItem(category),
+                )}
+              </div>
             </ScrollArea>
           </CardContent>
         </Card>
         {/* Subcategory Sidebar */}
         {isLargeScreen && hoveredCategory && (
-          <Card className="w-[288px] rounded-l-none border-l-0">
+          <Card className="min-w-[288px] rounded-l-none border-l-0">
             <CardContent className="p-0">
               <ScrollArea className="h-[700px]">
                 <div className="p-4 space-y-1">
-                  {hoveredCategory.subcategories?.map((subcategory) =>
-                    renderSubcategoryItem(
-                      // Transform the subcategory object to match the expected Subcategory type.
-                      {
-                        id: subcategory.id,
-                        subcategory_name: subcategory.subcategory_name,
-                        name: subcategory.subcategory_name, // Fallback: use subcategory_name as name
-                        count: 0, // Default count; adjust if needed
-                        icon:
-                          subcategoryIconMap[subcategory.subcategory_name] ||
-                          DefaultIcon,
-                        href: '', // Corrected property name from 'hrefts' to 'href'
-                      },
-                      hoveredCategory.category_name,
-                    ),
+                  {(hoveredCategory.subcategories || []).map((subcat) =>
+                    renderSubcategoryItem(subcat),
                   )}
                 </div>
               </ScrollArea>
