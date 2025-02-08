@@ -9,12 +9,11 @@ import ProductSkeleton from './product-skeleton';
 import Link from 'next/link';
 
 interface ProdPageProps {
-  params: { slug: string[] }; // Ensured slug exists in params
+  params: { slug: string[] };
 }
 
 const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
-  const { slug } = params; // Now correctly typed and always an array
-
+  const { slug } = params;
   const selectedProductId = useSelector(
     (state) => state.product.selectedProductId,
   );
@@ -35,7 +34,7 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
 
   if (!productData || slug.length === 0) {
     return (
-      <div className=" text-center">
+      <div className="text-center">
         <p className="text-gray-500">
           Product not found. Please check the URL or browse our catalog.
         </p>
@@ -53,7 +52,6 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
         subcategoryName={productData.subcategory}
         productName={productData.name}
       />
-
       <div>
         <ProductDetails product={productData} />
       </div>
@@ -61,4 +59,4 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
   );
 };
 
-export default ProdPage;
+export default React.memo(ProdPage);

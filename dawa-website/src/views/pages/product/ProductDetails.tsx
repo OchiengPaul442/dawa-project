@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAuth } from '@/@core/hooks/use-auth';
 import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
@@ -38,17 +37,31 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     },
   );
 
-  const handleAction = (action: () => void) => {
-    if (!user) {
-      dispatch(openAuthDialog());
-    } else {
-      action();
-    }
-  };
+  const handleAction = useCallback(
+    (action: () => void) => {
+      if (!user) {
+        dispatch(openAuthDialog());
+      } else {
+        action();
+      }
+    },
+    [user, dispatch],
+  );
 
-  const toggleDialog = (dialog: DialogType) => {
+  const toggleDialog = useCallback((dialog: DialogType) => {
     setDialogStates((prev) => ({ ...prev, [dialog]: !prev[dialog] }));
-  };
+  }, []);
+
+  function getValidImageUrl(url: string | undefined, fallback: string): string {
+    if (!url) return fallback;
+    try {
+      // Try to construct a URL. This will throw if the url is invalid.
+      new URL(url);
+      return url;
+    } catch (error) {
+      return fallback;
+    }
+  }
 
   return (
     <>
@@ -62,14 +75,22 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               {/* Product images section */}
               <div className="w-full">
                 {product.images && product.images.length > 0 ? (
-                  <ImageCarousel images={product.images as any} />
+                  <ImageCarousel
+                    images={product.images.map((img) => ({
+                      ...img,
+                      image_id: Number(img.image_id), // ensure image_id is a number
+                      image_url: getValidImageUrl(
+                        img.image_url,
+                        '/placeholder-product.png',
+                      ),
+                    }))}
+                  />
                 ) : (
                   <p className="text-gray-500">
                     No images available for this product.
                   </p>
                 )}
               </div>
-
               {/* Product details section */}
               <div className="space-y-6">
                 <ProductInfo product={product} />
@@ -83,17 +104,14 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 />
               </div>
             </div>
-
             {/* Product tabs spanning full width below */}
             <div className="w-full flex flex-col gap-10">
               <ShareSection title={product.name} />
               <ProductTabs product={product} />
             </div>
-
             {/* Similar Products Section */}
             <SimilarProducts similarItems={product.similar_items} />
           </div>
-
           {/* Right column - sidebar */}
           <div className="lg:sticky lg:top-4 h-fit">
             <Sidebar
@@ -105,7 +123,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </div>
         </div>
       </section>
-
       <ProductDialogs
         product={product}
         dialogStates={dialogStates}
@@ -114,3 +131,5 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     </>
   );
 };
+
+export default React.memo(ProductDetails);

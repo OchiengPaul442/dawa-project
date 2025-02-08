@@ -344,7 +344,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
   // Wrap the nav in a container with a high z-index so that the dropdown appears above all.
   return (
     <ChatProvider>
-      <div className="relative z-[9999]">
+      <div className="relative z-50">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
