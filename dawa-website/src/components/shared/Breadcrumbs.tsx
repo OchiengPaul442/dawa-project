@@ -139,7 +139,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
             <Button
               variant="outline"
               size="sm"
-              className="w-full justify-between"
+              className="w-full h-10 justify-between"
             >
               <span className="truncate">
                 {productName || subcategoryName || categoryName || 'Home'}
