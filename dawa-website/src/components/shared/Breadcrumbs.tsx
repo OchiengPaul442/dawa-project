@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronRight, ChevronsRight } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
@@ -13,7 +12,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ExtendedSubcategory {
   subcategory_name: string;
@@ -44,8 +42,9 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
 }) => {
   const categories = useSelector(selectCategories) as ExtendedCategory[];
 
+  // Build the breadcrumb trail based on the current category/subcategory.
   const breadcrumbItems: BreadcrumbItem[] = useMemo(() => {
-    const items: BreadcrumbItem[] = [{ name: 'Home', href: '/' }];
+    const items: BreadcrumbItem[] = [{ name: 'Home', href: '/home' }];
 
     let selectedCategory: ExtendedCategory | undefined;
     let selectedSubcategory: ExtendedSubcategory | undefined;
@@ -74,60 +73,66 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     if (selectedCategory && selectedSubcategory) {
       items.push({
         name: `${selectedSubcategory.subcategory_name} (${selectedSubcategory.subcategory_item_count})`,
-        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(selectedSubcategory.subcategory_name)}`,
+        href: `/cat/${slugify(selectedCategory.category_name)}/${slugify(
+          selectedSubcategory.subcategory_name,
+        )}`,
       });
     }
 
     return items;
   }, [categories, categoryName, subcategoryName]);
 
+  // Renders the list of breadcrumb items.
   const renderBreadcrumbContent = () => (
-    <ScrollArea className="w-full">
-      <ul className="flex items-center space-x-1 whitespace-nowrap">
-        {breadcrumbItems.map((item, index) => {
-          const isLastItem =
-            index === breadcrumbItems.length - 1 && !productName;
-          return (
-            <li key={index} className="flex items-center">
-              {isLastItem ? (
-                <span
-                  className="text-gray-500 cursor-default truncate max-w-[150px]"
+    <ul className="flex flex-wrap gap-2 items-center space-x-2">
+      {breadcrumbItems.map((item, index) => {
+        const isLastItem = index === breadcrumbItems.length - 1 && !productName;
+        return (
+          <li key={index} className="flex items-center">
+            {isLastItem ? (
+              <span
+                className="text-gray-500 whitespace-normal"
+                title={item.name}
+              >
+                {item.name}
+              </span>
+            ) : (
+              <>
+                <Link
+                  href={item.href}
+                  className="hover:underline text-primary_1 font-medium whitespace-normal"
                   title={item.name}
                 >
                   {item.name}
-                </span>
-              ) : (
-                <>
-                  <Link
-                    href={item.href}
-                    className="hover:underline text-primary_1 font-medium truncate max-w-[150px]"
-                    title={item.name}
-                  >
-                    {item.name}
-                  </Link>
-                  <ChevronRight className="h-4 w-4 text-gray-400 mx-1 flex-shrink-0" />
-                </>
-              )}
-            </li>
-          );
-        })}
-        {productName && (
-          <li className="flex items-center">
-            <span
-              className="text-gray-800 truncate max-w-[150px]"
-              title={productName}
-            >
-              {productName}
-            </span>
+                </Link>
+                <ChevronRight className="h-4 w-4 text-gray-400" />
+              </>
+            )}
           </li>
-        )}
-      </ul>
-    </ScrollArea>
+        );
+      })}
+      {productName && (
+        <li className="flex items-center">
+          <span className="text-gray-800 whitespace-normal" title={productName}>
+            {productName}
+          </span>
+        </li>
+      )}
+    </ul>
   );
 
   return (
     <nav className="mb-6" aria-label="Breadcrumb">
-      <div className="hidden sm:block">{renderBreadcrumbContent()}</div>
+      {/* Desktop Version */}
+      <div className="hidden sm:block">
+        <div className="overflow-x-auto">
+          <div className="flex items-center min-w-max">
+            {renderBreadcrumbContent()}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Version */}
       <div className="sm:hidden">
         <Collapsible>
           <CollapsibleTrigger asChild>
@@ -136,7 +141,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
               size="sm"
               className="w-full justify-between"
             >
-              <span className="truncate mr-2">
+              <span className="truncate">
                 {productName || subcategoryName || categoryName || 'Home'}
               </span>
               <ChevronsRight className="h-4 w-4" />

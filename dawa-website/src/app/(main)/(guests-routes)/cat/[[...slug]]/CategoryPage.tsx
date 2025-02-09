@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
+import Link from 'next/link';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
@@ -11,6 +12,7 @@ import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubca
 import CategoriesPage from '@/views/pages/category/CategoriesPage';
 import CustomPagination from '@/components/shared/CustomPagination';
 import Loader from '@/components/Loader';
+import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 import { slugify } from '@/utils/slugify';
 import {
@@ -19,8 +21,16 @@ import {
 } from '@redux-store/slices/categories/categorySlice';
 import { useCategoryData } from '@core/hooks/useProductData';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+
 import type { Category, Subcategory } from '@/types/category';
-import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 type FilterOptionType =
   | 'default'
@@ -45,7 +55,7 @@ interface CategoryPageProps {
   category: string[];
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
+const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -57,7 +67,6 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
   const [currentPage, setCurrentPage] = useState(1);
-
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
 
@@ -68,6 +77,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
   const [appliedSelectedColors, setAppliedSelectedColors] = useState<string[]>(
     [],
   );
+
+  // State to control mobile modals
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
 
   // Derive selectedCategory based on the URL slug
   const selectedCategory = useMemo(() => {
@@ -218,16 +231,33 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
 
   return (
     <>
-      {/* Use the refactored Breadcrumbs component */}
+      {/* Breadcrumbs */}
       <Breadcrumbs
         categoryName={selectedCategory.category_name}
         subcategoryName={selectedSubcategory?.subcategory_name}
-        // productName="Optional Product Name"
       />
 
+      {/* Mobile header buttons for Filters and Categories */}
+      <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow-sm">
+        <Button
+          variant="outline"
+          onClick={() => setMobileCategoriesOpen(true)}
+          className="w-1/2 mr-2"
+        >
+          Categories
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => setMobileFiltersOpen(true)}
+          className="w-1/2 ml-2"
+        >
+          Filters
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
-        {/* Sidebar */}
-        <aside className="lg:col-span-1 flex flex-col space-y-6">
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:flex flex-col space-y-6">
           <CategoriesAndSubcategories
             categoryName={selectedCategory.category_name}
             categoryCount={selectedCategory.category_item_count}
@@ -303,6 +333,68 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category }) => {
           )}
         </main>
       </div>
+
+      {/* Mobile Categories Modal */}
+      <Dialog
+        open={mobileCategoriesOpen}
+        onOpenChange={setMobileCategoriesOpen}
+      >
+        <DialogContent className="p-0 m-0 w-full h-full max-w-full">
+          <DialogHeader className="px-4 py-4 border-b border-gray-200">
+            <DialogTitle className="text-xl font-semibold">
+              Categories
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-4 overflow-auto h-full">
+            <CategoriesAndSubcategories
+              categoryName={selectedCategory.category_name}
+              categoryCount={selectedCategory.category_item_count}
+              subcategories={selectedCategory.subcategories.map((sub) => ({
+                name: sub.subcategory_name,
+                count: sub.subcategory_item_count,
+              }))}
+              parentCategory={category[0]}
+            />
+            <div className="mt-4">
+              <Button
+                onClick={() => setMobileCategoriesOpen(false)}
+                className="w-full bg-[#FFA200] text-white hover:bg-[#FF8C00] transition-all"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Mobile Filters Modal */}
+      <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+        <DialogContent className="p-0 m-0 w-full h-full max-w-full">
+          <DialogHeader className="px-4 py-4 border-b border-gray-200">
+            <DialogTitle className="text-xl font-semibold">Filters</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 overflow-auto h-full">
+            <ProductFilter
+              appliedPriceRange={appliedPriceRange}
+              appliedLocation={appliedLocation}
+              appliedSelectedColors={appliedSelectedColors}
+              onApplyFilters={(priceRange, location, colors) => {
+                handleApplyFilters(priceRange, location, colors);
+                setMobileFiltersOpen(false);
+              }}
+              onResetFilters={resetFilters}
+            />
+            <div className="mt-4">
+              <Button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="w-full bg-[#FFA200] text-white hover:bg-[#FF8C00] transition-all"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

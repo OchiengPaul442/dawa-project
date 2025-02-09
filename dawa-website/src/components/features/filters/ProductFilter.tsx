@@ -134,7 +134,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
     <Collapsible
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      className="bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-300"
     >
       <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
@@ -147,7 +147,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
 
       <CollapsibleContent>
         <div className="p-4 space-y-6">
-          {/* Custom Price Range Inputs */}
+          {/* Price Range Inputs */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-600">
               Price Range ({CURRENCY})
@@ -158,8 +158,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                   type="text"
                   value={minInput}
                   onChange={(e) => handleInputChange(e.target.value, true)}
-                  className="w-full"
                   placeholder="Min"
+                  className="w-full"
                 />
               </div>
               <span className="text-gray-400">-</span>
@@ -168,8 +168,8 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                   type="text"
                   value={maxInput}
                   onChange={(e) => handleInputChange(e.target.value, false)}
-                  className="w-full"
                   placeholder="Max"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -216,7 +216,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
             />
           </div>
 
-          {/* Location Dropdown */}
+          {/* Location */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-600">
               Location
@@ -239,7 +239,11 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
                 className="text-[#FFA200] hover:text-[#FF8C00] transition-colors h-auto py-1"
               >
                 <FaCheckCircle
-                  className={`mr-2 ${tempSelectedColors.length === allColors.length ? 'text-[#FFA200]' : 'text-gray-400'}`}
+                  className={`mr-2 ${
+                    tempSelectedColors.length === allColors.length
+                      ? 'text-[#FFA200]'
+                      : 'text-gray-400'
+                  }`}
                 />
                 Select All
               </Button>
@@ -280,7 +284,7 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
             )}
           </div>
 
-          {/* Filter and Reset Buttons */}
+          {/* Action Buttons */}
           <div className="space-y-3 pt-2">
             <Button
               onClick={handleApply}

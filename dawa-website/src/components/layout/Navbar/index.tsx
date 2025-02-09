@@ -34,25 +34,19 @@ interface NavBarProps {
 const DEFAULT_AVATAR = '/assets/default-avatar.png';
 
 const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
-  // Router, dispatch and path
   const router = useRouter();
   const dispatch = useDispatch();
   const pathname = usePathname();
   const isHomePage = pathname === '/' || pathname === '/home';
 
-  // State hooks
   const [isSticky, setIsSticky] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-
-  // Refs
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Auth and Profile data
   const { user, loading, logout } = useAuth();
   const { userProfile } = useProfile();
 
-  // Normalize profile data from profile context and auth session
   const normalizedUserProfile = userProfile
     ? {
         first_name: userProfile.user.first_name,
@@ -72,16 +66,18 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
       }
     : null;
 
-  // Event Handlers
-
-  // Closes the sheet after selecting an item.
+  // For mobile sheet, close after item selection.
   const handleSheetItemClick = () => {
     if (closeOnSelect) {
       setIsSheetOpen(false);
     }
   };
 
-  // Handles Sell button click: if the user is not logged in, open the auth dialog; otherwise, redirect.
+  // For desktop dropdown, close the categories dropdown.
+  const handleDesktopCategorySelect = () => {
+    setShowDropdown(false);
+  };
+
   const handleSellClick = () => {
     if (!user) {
       dispatch(openAuthDialog());
@@ -90,14 +86,12 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     }
   };
 
-  // Effect: Handle sticky navbar on scroll.
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Effect: Hide dropdown when clicking outside.
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       const mouseEvent = event as unknown as MouseEvent;
@@ -117,11 +111,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     };
   }, [showDropdown]);
 
-  // Render Functions
-
-  /**
-   * Render desktop navigation bar.
-   */
   const renderDesktopNav = () => (
     <div className="bg-white hidden sm:block">
       <div
@@ -129,7 +118,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           isSticky ? 'py-2' : 'py-4'
         } transition-all duration-300 ease-in-out`}
       >
-        {/* Mobile sheet trigger for smaller screens */}
         <div className="lg:hidden">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
@@ -144,7 +132,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           </Sheet>
         </div>
 
-        {/* Logo */}
         <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
           <Logo2
             className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
@@ -153,7 +140,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
           />
         </Link>
 
-        {/* Categories dropdown */}
+        {/* Categories dropdown for Desktop */}
         <div className="hidden lg:flex items-center gap-6">
           {pathname !== '/' && pathname !== '/cat' && pathname !== '/home' && (
             <div className="relative" ref={dropdownRef}>
@@ -171,7 +158,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
               </motion.div>
               <AnimatePresence>
                 {showDropdown && (
-                  // Here we set an absolute container with a very high z-index.
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -179,7 +165,7 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
                     transition={{ duration: 0.3 }}
                     className="absolute left-0 top-full mt-2 w-auto z-[9999]"
                   >
-                    <Sidebar onSelect={handleSheetItemClick} />
+                    <Sidebar onSelect={handleDesktopCategorySelect} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -249,9 +235,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     </div>
   );
 
-  /**
-   * Render mobile navigation bar.
-   */
   const renderMobileNav = () => {
     if (isHomePage) {
       return (
@@ -341,7 +324,6 @@ const NavBar: React.FC<NavBarProps> = ({ closeOnSelect = true }) => {
     );
   };
 
-  // Wrap the nav in a container with a high z-index so that the dropdown appears above all.
   return (
     <ChatProvider>
       <div className="relative z-50">

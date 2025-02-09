@@ -23,8 +23,6 @@ interface SidebarProps {
 /**
  * Transform a Redux category (which may have incomplete subcategory objects)
  * into a local Category that matches our type.
- *
- * For each subcategory, we supply default values for the missing fields.
  */
 function transformCategory(cat: any): Category {
   return {
@@ -134,7 +132,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   // Render a single subcategory item.
   const renderSubcategoryItem = useCallback(
     (subcat: Subcategory) => {
-      // Compute the icon component. Cast as React.ComponentType if needed.
       const IconComponent =
         (subcategoryIconMap[
           subcat.subcategory_name
@@ -172,9 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       <div className="sticky top-[100px] flex">
         {/* Category Sidebar */}
         <Card
-          className={`w-full lg:w-[288px] ${
-            hoveredCategory ? 'rounded-r-none border-r-0' : ''
-          }`}
+          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
         >
           <CardContent className="p-0">
             <ScrollArea className="h-[700px]">

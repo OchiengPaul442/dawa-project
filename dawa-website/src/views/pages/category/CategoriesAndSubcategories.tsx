@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import React, { useState, useMemo, FC } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { slugify } from '@/utils/slugify';
 
@@ -17,18 +17,17 @@ interface CategoriesAndSubcategoriesProps {
   parentCategory: string;
 }
 
-const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
+const CategoriesAndSubcategories: FC<CategoriesAndSubcategoriesProps> = ({
   categoryName,
   categoryCount,
   subcategories,
   parentCategory,
 }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const [showMore, setShowMore] = useState(false);
 
   const toggleShowMore = () => {
-    setShowMore(!showMore);
+    setShowMore((prev) => !prev);
   };
 
   const slugifiedCategoryName = useMemo(
@@ -36,10 +35,7 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
     [categoryName],
   );
 
-  const isActive = (path: string) => {
-    const decodedPathname = decodeURIComponent(pathname);
-    return decodedPathname === path;
-  };
+  const isActive = (path: string) => decodeURIComponent(pathname) === path;
 
   const isCategoryActive = useMemo(() => {
     const decodedPathname = decodeURIComponent(pathname);
@@ -50,23 +46,19 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
   }, [pathname, slugifiedCategoryName]);
 
   const themeColors = {
-    primary: '#FFA200', // Yellow
-    textGray: '#6B7280',
-    lightGray: '#F5F5F5',
+    primary: '#FFA200',
     hoverGray: '#E0E0E0',
   };
 
   return (
-    <div className="space-y-4 bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300 hover:shadow-md lg:max-w-sm">
+    <div className="space-y-4 bg-white border border-gray-200 p-4 rounded-md shadow-sm transition-all duration-300">
       {/* Main Category */}
       <div>
         <Link href={`/cat/${slugifiedCategoryName}`}>
           <h2
             className={`text-lg font-semibold cursor-pointer ${
-              isCategoryActive
-                ? `text-[${themeColors.primary}]`
-                : 'text-gray-800'
-            } hover:text-[${themeColors.primary}] transition-colors duration-200`}
+              isCategoryActive ? 'text-primary_1' : 'text-gray-800'
+            } hover:text-primary_1 transition-colors duration-200`}
           >
             {categoryName}{' '}
             <span className="text-sm font-normal text-gray-500">
@@ -89,8 +81,8 @@ const CategoriesAndSubcategories: React.FC<CategoriesAndSubcategoriesProps> = ({
               <button
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium border transition-all duration-200 ${
                   isActive(subcatPath)
-                    ? `border-[${themeColors.primary}] bg-[${themeColors.primary}] text-white`
-                    : `border-gray-300 bg-gray-50 text-gray-800 hover:bg-[${themeColors.hoverGray}]`
+                    ? 'border-primary_1 bg-primary_1 text-white'
+                    : 'border-gray-300 bg-gray-50 text-gray-800 hover:bg-gray-200'
                 }`}
               >
                 <span>{subcat.name}</span>
