@@ -3,7 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, HelpCircle, FileText, LogOut, Menu } from 'lucide-react';
+import {
+  Settings,
+  HelpCircle,
+  FileText,
+  LogOut,
+  SquareMenu,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -108,11 +114,14 @@ export const MobileNav: React.FC = () => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Menu className="h-6 w-6" />
+      <SheetTrigger
+        asChild
+        className="bg-background rounded-xl w-full flex justify-end items-center"
+      >
+        <button className="p-2 ">
+          <SquareMenu size={26} />
           <span className="sr-only">Open menu</span>
-        </Button>
+        </button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
         <SheetHeader className="border-b pb-4 mb-4">
