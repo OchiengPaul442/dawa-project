@@ -160,8 +160,8 @@ function EmptyState() {
       <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
       <h3 className="text-lg font-semibold mb-2">No Adverts Yet</h3>
       <p className="text-muted-foreground mb-6 max-w-sm">
-        You haven't created any adverts yet. Start by creating your first advert
-        to showcase your items.
+        You haven&apos;t created any adverts yet. Start by creating your first
+        advert to showcase your items.
       </p>
       <Link href="/post-ad">
         <Button>

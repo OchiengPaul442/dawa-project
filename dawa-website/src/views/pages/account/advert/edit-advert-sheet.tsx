@@ -218,7 +218,8 @@ export function EditAdvertSheet({
             <SheetHeader className="sticky top-0 z-10 bg-background pt-6 pb-4">
               <SheetTitle>Edit Advert</SheetTitle>
               <SheetDescription>
-                Make changes to your advert here. Click save when you're done.
+                Make changes to your advert here. Click save when you&apos;re
+                done.
               </SheetDescription>
               <Separator className="mt-4" />
             </SheetHeader>

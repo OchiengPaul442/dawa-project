@@ -50,7 +50,7 @@ export default function UnauthorizedPage() {
             Unauthorized Access
           </CardTitle>
           <CardDescription className="text-center text-gray-600">
-            Oops! You don't have permission to access this page.
+            Oops! You don&apos;t have permission to access this page.
           </CardDescription>
         </CardHeader>
         <CardContent>

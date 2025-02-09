@@ -1,4 +1,5 @@
 import type React from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -144,14 +145,18 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
                   files.scanned_national_id_or_passport_document.file.type.startsWith(
                     'image/',
                   ) ? (
-                    <img
-                      src={
-                        files.scanned_national_id_or_passport_document
-                          .preview || ''
-                      }
-                      alt="Uploaded document preview"
-                      className="max-h-48 object-contain rounded-md w-full"
-                    />
+                    <div className="relative h-48 w-full">
+                      <Image
+                        src={
+                          files.scanned_national_id_or_passport_document
+                            .preview || ''
+                        }
+                        alt="Uploaded document preview"
+                        layout="fill"
+                        objectFit="contain"
+                        className="rounded-md"
+                      />
+                    </div>
                   ) : (
                     <div className="flex items-center space-x-2 p-2">
                       <FileText className="h-6 w-6 text-primary" />

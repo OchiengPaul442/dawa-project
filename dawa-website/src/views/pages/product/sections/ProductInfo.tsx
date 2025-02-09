@@ -53,3 +53,5 @@ export const ProductInfo: React.FC<ProductInfoProps> = React.memo(
     );
   },
 );
+
+ProductInfo.displayName = 'ProductInfo';
