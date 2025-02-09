@@ -103,6 +103,7 @@ export function AuthDialog() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           {/* Google Sign-In Button */}
           <Button
+            type="button"
             variant="outline"
             className="w-full h-12 relative"
             onClick={handleGoogleSignIn}
@@ -192,6 +193,7 @@ export function AuthDialog() {
           <div className="text-sm text-center">
             Don&apos;t have an account?{' '}
             <Button
+              type="button"
               variant="link"
               className="p-0 h-auto font-normal text-primary_1"
               onClick={() => handleLinkClick('/register')}
@@ -204,6 +206,7 @@ export function AuthDialog() {
           <div className="text-xs text-center text-muted-foreground">
             By continuing, you agree to our{' '}
             <Button
+              type="button"
               variant="link"
               className="p-0 h-auto text-xs font-normal text-primary_1"
               onClick={() => handleLinkClick('/legal/terms')}
@@ -212,6 +215,7 @@ export function AuthDialog() {
             </Button>{' '}
             and{' '}
             <Button
+              type="button"
               variant="link"
               className="p-0 h-auto text-xs font-normal text-primary_1"
               onClick={() => handleLinkClick('/legal/privacy')}

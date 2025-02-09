@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import * as jwtDecode from 'jwt-decode';
+import { useSWRConfig } from 'swr';
 
 interface User {
   id: string;
@@ -28,6 +29,7 @@ const api = axios.create({
 
 export function useAuth() {
   const { data: session, status } = useSession();
+  const { cache } = useSWRConfig(); // Access the SWR cache
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [counters, setCounters] = useState<Counters>({
@@ -37,20 +39,38 @@ export function useAuth() {
   });
   const [tokenExpired, setTokenExpired] = useState(false);
 
+  // Function to clear the SWR cache by iterating over its keys.
+  const clearSWRCache = () => {
+    // Check if cache has a keys method (like a Map)
+    if (typeof cache.keys === 'function') {
+      for (const key of cache.keys()) {
+        cache.delete(key);
+      }
+    } else {
+      console.warn('SWR cache does not support keys() method.');
+    }
+  };
+
   // Memoized logout function so it's stable across renders.
   const logout = useCallback(async () => {
     try {
+      // Sign out the user (without redirecting immediately)
       await signOut({ redirect: false });
+      // Clear local user state
       setUser(null);
       setCounters({
         favorites: 0,
         messages: 0,
         notifications: 0,
       });
+      // Clear localStorage (or remove specific keys if desired)
+      localStorage.clear();
+      // Clear SWR cache manually
+      clearSWRCache();
     } catch (error) {
       console.error('Logout failed:', error);
     }
-  }, []);
+  }, [cache]);
 
   // Axios interceptor to attach the token on each request.
   useEffect(() => {

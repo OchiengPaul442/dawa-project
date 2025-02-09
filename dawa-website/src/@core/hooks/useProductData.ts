@@ -187,6 +187,11 @@ export function useSendReviews() {
 }
 
 export const useUserProfile = () => {
+  const swrOptions = {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  };
+
   // The SWR hook handles fetching, caching, and revalidation.
   const { data, error, isLoading, mutate } = useSWR<any>(
     '/getuserprofile/',

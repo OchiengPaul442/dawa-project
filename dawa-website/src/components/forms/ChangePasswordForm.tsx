@@ -6,7 +6,7 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaLock, FaKey } from 'react-icons/fa';
-import Button from '../shared/Button';
+import Button from '@/components/shared/Button';
 import { resetPassword } from '@/app/server/auth/api';
 import { useRouter } from 'next/navigation';
 
@@ -66,8 +66,7 @@ const ChangePasswordForm: React.FC = () => {
       );
       return;
     }
-
-    setApiError(null); // Reset any previous errors
+    setApiError(null);
     try {
       await resetPassword({
         email,
@@ -75,12 +74,9 @@ const ChangePasswordForm: React.FC = () => {
         new_password: data.new_password,
         confirm_password: data.confirm_password,
       });
-      // Clear the email from sessionStorage
       sessionStorage.removeItem('resetEmail');
-      // Redirect to login page or success page
       router.push('/login');
     } catch (error: any) {
-      // Handle API errors
       setApiError(error.message || 'Something went wrong. Please try again.');
     }
   };
@@ -91,6 +87,7 @@ const ChangePasswordForm: React.FC = () => {
       <Controller
         name="otp"
         control={control}
+        defaultValue={0} // <-- Set default value as 0 (a number) to fix the type error
         render={({ field }) => (
           <InputField
             type="number"
@@ -107,6 +104,7 @@ const ChangePasswordForm: React.FC = () => {
       <Controller
         name="new_password"
         control={control}
+        defaultValue=""
         render={({ field }) => (
           <InputField
             type="password"
@@ -123,6 +121,7 @@ const ChangePasswordForm: React.FC = () => {
       <Controller
         name="confirm_password"
         control={control}
+        defaultValue=""
         render={({ field }) => (
           <InputField
             type="password"

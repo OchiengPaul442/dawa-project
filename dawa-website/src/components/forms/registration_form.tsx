@@ -37,6 +37,15 @@ const RegistrationForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const router = useRouter();
+  const { user } = useAuth();
+
+  // Remove auto-redirect so the registration page does not log in automatically.
+
+  useEffect(() => {
+    if (user) {
+      router.push('/home');
+    }
+  }, [user, router]);
 
   const {
     register,
@@ -56,35 +65,17 @@ const RegistrationForm: React.FC = () => {
     },
   });
 
-  const { user } = useAuth();
-
-  // if user is authenticated, redirect to dashboard
-  useEffect(() => {
-    if (user) {
-      router.push('/');
-    }
-  }, [user, router]);
-
   const handleGoogleSignIn = async () => {
     setLoading(true);
-
-    // Initiate Google sign-in via NextAuth
     const result = await signIn('google', { redirect: false });
-
-    if (result?.error) {
-      return;
-    } else if (result?.ok) {
-      router.push('/');
-    }
-
+    if (result?.error) return;
+    else if (result?.ok) router.push('/');
     setLoading(false);
   };
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     setLoading(true);
     setApiError(null);
-
-    // Ensure the phone number is in E.164 format
     const formattedData = {
       email: data.email.trim(),
       password: data.password,
@@ -92,14 +83,11 @@ const RegistrationForm: React.FC = () => {
       firstname: data.firstName.trim(),
       lastname: data.lastName.trim(),
       user_role: 'Client',
-      contact: data.phone.trim(), // Already in "+<country><number>" format
+      contact: data.phone.trim(),
     };
-
     try {
       const response = await registerUser(formattedData);
-
       if (response.status === 201 || response.status === 200) {
-        // Save the email in session storage for use on the activation page
         sessionStorage.setItem('registeredEmail', formattedData.email);
         router.push('/activate');
       } else {
@@ -120,21 +108,19 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full md:w-[60%] px-10 py-12 md:px-12 md:py-16 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-semibold mb-2 text-black">
+    <div className="flex flex-col w-full md:w-[60%] px-6 py-8 md:px-10 md:py-12 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold mb-2 text-center text-black">
         Create an Account
       </h2>
-      <p className="text-gray-500 mb-6">
+      <p className="text-gray-500 mb-6 text-center">
         Please fill in your details to create your account.
       </p>
-
       {apiError && (
         <p className="text-red-500 text-sm text-center">{apiError}</p>
       )}
-
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name Fields */}
-        <div className="flex flex-col w-full justify-between md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <InputField
             label="First Name"
             icon={FaUserCircle}
@@ -143,7 +129,6 @@ const RegistrationForm: React.FC = () => {
             {...register('firstName')}
             errors={errors.firstName?.message}
           />
-
           <InputField
             label="Last Name"
             icon={FaUserCircle}
@@ -158,7 +143,7 @@ const RegistrationForm: React.FC = () => {
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
             Phone Number{' '}
-            <span className="text-gray-300 text-sm font-normal">
+            <span className="text-gray-400 text-sm font-normal">
               (e.g. +256 077 788 2393)
             </span>
           </label>
@@ -171,12 +156,8 @@ const RegistrationForm: React.FC = () => {
                 enableAreaCodes={true}
                 value={value}
                 onChange={(numericValue) => {
-                  // numericValue is something like "256778823938" for Uganda
                   let fullNumber = `+${numericValue}`.replace(/\s+/g, '');
-
-                  // Remove a leading zero after country code (e.g., "+2560778823938" -> "+256778823938")
                   fullNumber = fullNumber.replace(/^(\+256)0/, '$1');
-
                   onChange(fullNumber);
                 }}
                 inputClass={`w-full bg-gray-50 border rounded-lg p-2 ${
@@ -187,13 +168,12 @@ const RegistrationForm: React.FC = () => {
                 inputProps={{
                   placeholder: 'Enter phone number',
                   className:
-                    'w-full flex-grow focus:border-primary_1 outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-r-md px-12 py-4',
+                    'w-full focus:border-primary_1 outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-md px-4 py-3',
                 }}
                 specialLabel=""
               />
             )}
           />
-
           {errors.phone && (
             <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>
           )}
@@ -209,15 +189,13 @@ const RegistrationForm: React.FC = () => {
           errors={errors.email?.message}
         />
 
-        {/* Password */}
+        {/* Password Field */}
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
             Password
           </label>
           <div
-            className={`flex items-center border rounded-lg p-4 focus-within:border-primary_1 ${
-              errors.password ? 'border-red-500' : 'border-gray-300'
-            }`}
+            className={`flex items-center border rounded-lg p-3 focus-within:border-primary_1 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
           >
             <FaUnlock className="text-gray-400 mr-2" />
             <input
@@ -229,7 +207,7 @@ const RegistrationForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500 hover:text-primary_1 ml-2"
+              className="text-gray-500 hover:text-primary_1 ml-2 focus:outline-none"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -277,7 +255,7 @@ const RegistrationForm: React.FC = () => {
         <Button
           type="submit"
           disabled={!isValid || loading}
-          className={`w-full mt-6 h-12 bg-primary_1 text-white py-3 rounded-md font-bold hover:bg-primary_1/90 transition-colors ${
+          className={`w-full mt-6 h-12 bg-primary_1 text-white rounded-md font-bold hover:bg-primary_1/90 transition-colors ${
             !isValid || loading ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
@@ -296,7 +274,7 @@ const RegistrationForm: React.FC = () => {
           type="button"
           icon={GoogleIcon}
           onClick={handleGoogleSignIn}
-          className="w-full mt-4 h-12 shadow-none flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+          className="w-full mt-4 h-12 bg-gray-200 text-gray-700 rounded-md font-semibold hover:bg-gray-300 transition-colors flex items-center justify-center"
         >
           Register with Google
         </Button>

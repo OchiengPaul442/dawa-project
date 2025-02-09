@@ -1,18 +1,19 @@
 import React from 'react';
-import Register_form from '@/components/forms/registration_form';
+import RegistrationForm from '@/components/forms/registration_form';
 
 const SignupPage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center">
-      <div className="flex flex-col md:flex-row w-full max-w-6xl bg-white rounded-3xl shadow-md border-primary_1 border overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-md md:max-w-6xl bg-white rounded-3xl overflow-hidden shadow-md border border-primary_1 flex flex-col md:flex-row">
+        {/* Image panel visible on desktop */}
         <div
-          className="hidden md:block w-[40%] bg-cover bg-center"
+          className="hidden md:block w-2/5 bg-cover bg-center"
           style={{
             backgroundImage:
-              'url("https://images.unsplash.com/photo-1523705480679-b5d0cc17a656?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2lnbnVwfGVufDB8fDB8fHww")',
+              'url("https://images.unsplash.com/photo-1523705480679-b5d0cc17a656?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3")',
           }}
         ></div>
-        <Register_form />
+        <RegistrationForm />
       </div>
     </div>
   );

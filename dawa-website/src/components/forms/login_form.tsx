@@ -4,8 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { FaUnlock, FaEye, FaEyeSlash, FaUserCircle } from 'react-icons/fa';
 import Button from '@/components/shared/Button';
 import { Checkbox } from '@/components/ui/checkbox';
-
-import GoogleIcon from '@public/assets/svgs/google.svg';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import InputField from '@/views/auth/InputField';
@@ -13,7 +11,10 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authSchema } from '@core/validations/authValidation';
-import { useAuth } from '@core/hooks/use-auth';
+// Instead of using your useAuth hook that might immediately return a user,
+// you can use NextAuth’s useSession hook if available:
+import { useSession } from 'next-auth/react';
+import GoogleIcon from '@public/assets/svgs/google.svg';
 
 interface ILoginInputs {
   emailOrUsername: string;
@@ -27,14 +28,18 @@ const LoginForm: React.FC = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { user } = useAuth();
+  // Using NextAuth’s useSession hook provides a status.
+  const { data: session, status } = useSession();
 
-  // if user is authenticated, redirect to dashboard
+  // If you want to auto-redirect only when the session is authenticated,
+  // you can condition on the session status.
+  // To prevent auto-redirection altogether, simply remove or comment out this effect.
+
   useEffect(() => {
-    if (user) {
-      router.push('/');
+    if (status === 'authenticated') {
+      router.push('/home');
     }
-  }, [user, router]);
+  }, [status, router]);
 
   const {
     register,
@@ -53,16 +58,12 @@ const LoginForm: React.FC = () => {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-
-    // Initiate Google sign-in via NextAuth
     const result = await signIn('google', { redirect: false });
-
     if (result?.error) {
-      return;
+      setErrorMessage(result.error);
     } else if (result?.ok) {
       router.push('/');
     }
-
     setIsLoading(false);
   };
 
@@ -75,7 +76,6 @@ const LoginForm: React.FC = () => {
         username: data.emailOrUsername,
         password: data.password,
       });
-
       if (res?.error) {
         setErrorMessage(res.error);
       } else if (res?.ok) {
@@ -93,21 +93,18 @@ const LoginForm: React.FC = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (errorMessage) {
-      timer = setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000); // 5000ms = 5 seconds
+      timer = setTimeout(() => setErrorMessage(null), 5000);
     }
     return () => clearTimeout(timer);
   }, [errorMessage]);
 
   return (
-    <div className="flex-1 p-8 lg:rounded-l-2xl w-full">
+    <div className="flex-1 p-6 md:p-10">
       <h2 className="text-2xl font-semibold mb-2 text-center">Login</h2>
       <p className="text-gray-500 mb-6 text-center">
         Welcome back! Please login to your account.
       </p>
 
-      {/* Display authentication errors */}
       {errorMessage && (
         <p className="text-red-500 text-sm text-center">{errorMessage}</p>
       )}
@@ -129,7 +126,7 @@ const LoginForm: React.FC = () => {
             Password
           </label>
           <div
-            className={`flex items-center border rounded-lg p-4 focus-within:border-primary_1 ${
+            className={`flex items-center border rounded-lg p-3 focus-within:border-primary_1 ${
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
@@ -179,7 +176,6 @@ const LoginForm: React.FC = () => {
               Remember Me
             </label>
           </div>
-
           <Link
             href="/forgot-password"
             className="text-primary_1 text-sm font-semibold hover:underline"
@@ -192,7 +188,7 @@ const LoginForm: React.FC = () => {
         <Button
           type="submit"
           disabled={!isValid || isLoading}
-          className={`w-full mt-6 h-12 bg-primary_1 text-white py-3 rounded-md font-bold hover:bg-primary_1-dark transition-colors ${
+          className={`w-full mt-6 h-12 bg-primary_1 text-white rounded-md font-bold hover:bg-primary_1-dark transition-colors ${
             !isValid || isLoading ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
@@ -210,12 +206,12 @@ const LoginForm: React.FC = () => {
           type="button"
           icon={GoogleIcon}
           onClick={handleGoogleSignIn}
-          className="w-full mt-4 h-12 shadow-none flex items-center justify-center bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300 transition-colors"
+          className="w-full mt-4 h-12 bg-gray-200 text-gray-700 rounded-md font-semibold hover:bg-gray-300 transition-colors flex items-center justify-center"
         >
           Sign in with Google
         </Button>
 
-        <p className="mt-8 text-center text-sm text-gray-600">
+        <p className="mt-8 text-sm text-center text-gray-600">
           Don’t have an account?{' '}
           <Link href="/register" className="text-primary_1 hover:underline">
             Register now

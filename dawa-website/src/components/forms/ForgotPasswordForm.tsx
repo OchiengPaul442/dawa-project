@@ -1,16 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import InputField from '@/views/auth/InputField';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaEnvelope } from 'react-icons/fa';
-import Button from '../shared/Button';
+import Button from '@/components/shared/Button';
 import { forgotPassword } from '@/app/server/auth/api';
 import { useRouter } from 'next/navigation';
+import InputField from '@/views/auth/InputField';
 
-// Define form schema using yup
 const forgotPasswordSchema = yup.object().shape({
   email: yup
     .string()
@@ -18,7 +17,6 @@ const forgotPasswordSchema = yup.object().shape({
     .required('Email is required'),
 });
 
-// Define form input types
 interface ForgotPasswordFormInputs {
   email: string;
 }
@@ -32,7 +30,6 @@ const ForgotPasswordForm: React.FC = () => {
     resolver: yupResolver(forgotPasswordSchema),
     mode: 'onChange',
   });
-
   const router = useRouter();
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -40,12 +37,9 @@ const ForgotPasswordForm: React.FC = () => {
     setApiError(null);
     try {
       await forgotPassword({ email: data.email });
-      // Store the email in sessionStorage
       sessionStorage.setItem('resetEmail', data.email);
-      // Redirect to Change Password page
       router.push('/change-password');
     } catch (error: any) {
-      // Handle API errors
       setApiError(error.message || 'Something went wrong. Please try again.');
     }
   };
@@ -56,6 +50,7 @@ const ForgotPasswordForm: React.FC = () => {
       <Controller
         name="email"
         control={control}
+        defaultValue=""
         render={({ field }) => (
           <InputField
             type="email"

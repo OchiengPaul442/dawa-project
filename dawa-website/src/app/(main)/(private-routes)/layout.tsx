@@ -18,8 +18,6 @@ export default function WishListLayout({
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  console.info('user', user);
-
   useEffect(() => {
     if (!loading) {
       if (user) {

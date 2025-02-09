@@ -74,7 +74,6 @@ export const resetPassword = async (
  */
 export const fetchUserProfile = async (): Promise<any> => {
   const response = await secureApiClient.get<any>('/getuserprofile/');
-  console.info(response.data);
   return response.data;
 };
 
