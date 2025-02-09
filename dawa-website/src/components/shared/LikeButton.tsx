@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import type { Product } from '@/types/wishList';
+import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
+import { useDispatch } from '@/redux-store/hooks';
 
 interface LikeButtonProps {
   productId: string;
@@ -32,6 +34,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
   variant = 'default',
 }) => {
   const { user } = useAuth();
+  const dispatch = useDispatch();
   const { isInWishlist, toggle } = useWishlist();
   const [hasClicked, setHasClicked] = React.useState(false);
 
@@ -42,7 +45,10 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
     setHasClicked(true);
     setTimeout(() => setHasClicked(false), 1000);
 
-    if (!user) return;
+    if (!user) {
+      dispatch(openAuthDialog());
+      return;
+    }
     toggle(productId, product);
   };
 
