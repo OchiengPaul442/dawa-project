@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
           {/* Logo and Description */}
           <div className="lg:col-span-2 space-y-6">
             <Link href="/">
-              <Logo className="w-auto h-16" />
+              <Logo className="w-auto h-20 -m-6" />
             </Link>
             <p className="text-sm">
               Your trusted partner for all your e-commerce needs. We provide

@@ -65,8 +65,8 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   return (
     <>
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main grid container with sidebar */}
+      <section>
+        {/* Main grid container */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,250px] gap-6">
           {/* Left column - main content */}
           <div className="space-y-8">
@@ -104,16 +104,29 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 />
               </div>
             </div>
-            {/* Product tabs spanning full width below */}
+
+            {/* Mobile Sidebar: Rendered only on mobile */}
+            <div className="lg:hidden">
+              <Sidebar
+                productId={product.id}
+                onPostAd={() => handleAction(() => router.push('/post-ad'))}
+                onSafetyTips={() => toggleDialog('safety')}
+                onReportAbuse={() => handleAction(() => toggleDialog('report'))}
+              />
+            </div>
+
+            {/* Product tabs and share section */}
             <div className="w-full flex flex-col gap-10">
               <ShareSection title={product.name} />
               <ProductTabs product={product} />
             </div>
+
             {/* Similar Products Section */}
             <SimilarProducts similarItems={product.similar_items} />
           </div>
-          {/* Right column - sidebar */}
-          <div className="lg:sticky lg:top-4 h-fit">
+
+          {/* Right column - Desktop Sidebar (only on large screens) */}
+          <div className="hidden lg:block lg:sticky lg:top-4 h-fit">
             <Sidebar
               productId={product.id}
               onPostAd={() => handleAction(() => router.push('/post-ad'))}
@@ -123,6 +136,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </div>
         </div>
       </section>
+
       <ProductDialogs
         product={product}
         dialogStates={dialogStates}

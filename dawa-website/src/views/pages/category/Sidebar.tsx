@@ -9,7 +9,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { Category, Subcategory } from '@/types/category';
 import { slugify } from '@/utils/slugify';
 import SidebarSkeleton from './SidebarSkeleton';
-import { categoryIconMap, subcategoryIconMap, DefaultIcon } from './icon-maps';
+import {
+  categoryIconMap,
+  subcategoryIconMap,
+  UniversalFallbackIcon,
+} from './icon-maps';
 import {
   setSelectedCategory,
   setSelectedSubcategory,
@@ -87,7 +91,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   // Render a single category item.
   const renderCategoryItem = useCallback(
     (category: Category) => {
-      const Icon = categoryIconMap[category.category_name] || DefaultIcon;
+      const Icon =
+        categoryIconMap[category.category_name] || UniversalFallbackIcon;
       const isActive = hoveredCategory?.id === category.id;
 
       return (
@@ -135,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       const IconComponent =
         (subcategoryIconMap[
           subcat.subcategory_name
-        ] as React.ComponentType<any>) || DefaultIcon;
+        ] as React.ComponentType<any>) || UniversalFallbackIcon;
       return (
         <Link
           key={subcat.id}

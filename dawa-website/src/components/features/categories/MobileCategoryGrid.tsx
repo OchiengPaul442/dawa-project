@@ -59,7 +59,7 @@ const MobileCategoryGrid: React.FC = React.memo(() => {
         const categorySlug = slugify(category_name);
 
         return (
-          <Link key={category_name} href={`/cat/${categorySlug}`}>
+          <Link key={category_name} href={`/subs/${categorySlug}`}>
             <div className="flex flex-col items-center justify-center p-4 bg-gray-100 border aspect-square rounded-lg">
               <Icon className="h-6 w-6 mb-2 text-primary" />
             </div>

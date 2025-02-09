@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { ChevronRight, ChevronsRight } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
 import { useSelector } from '@/redux-store/hooks';
 import { selectCategories } from '@/redux-store/slices/categories/categories';
@@ -82,16 +82,16 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
     return items;
   }, [categories, categoryName, subcategoryName]);
 
-  // Renders the list of breadcrumb items.
+  // Render the breadcrumb list (used in both desktop and mobile).
   const renderBreadcrumbContent = () => (
-    <ul className="flex flex-wrap gap-2 items-center space-x-2">
+    <ul className="flex flex-wrap gap-2 items-center">
       {breadcrumbItems.map((item, index) => {
         const isLastItem = index === breadcrumbItems.length - 1 && !productName;
         return (
           <li key={index} className="flex items-center">
             {isLastItem ? (
               <span
-                className="text-gray-500 whitespace-normal"
+                className="text-gray-500 whitespace-nowrap"
                 title={item.name}
               >
                 {item.name}
@@ -100,7 +100,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
               <>
                 <Link
                   href={item.href}
-                  className="hover:underline text-primary_1 font-medium whitespace-normal"
+                  className="hover:underline text-primary_1 font-medium whitespace-nowrap"
                   title={item.name}
                 >
                   {item.name}
@@ -113,7 +113,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       })}
       {productName && (
         <li className="flex items-center">
-          <span className="text-gray-800 whitespace-normal" title={productName}>
+          <span className="text-gray-800 whitespace-nowrap" title={productName}>
             {productName}
           </span>
         </li>
@@ -139,15 +139,15 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
             <Button
               variant="outline"
               size="sm"
-              className="w-full h-10 justify-between"
+              className="w-full h-10 justify-between px-4 bg-white border border-gray-200 shadow-sm"
             >
-              <span className="truncate">
+              <span className="font-medium text-gray-800">
                 {productName || subcategoryName || categoryName || 'Home'}
               </span>
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronDown className="h-5 w-5 text-gray-500" />
             </Button>
           </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2">
+          <CollapsibleContent className="mt-2 rounded-md border border-gray-200 p-4 bg-white shadow">
             {renderBreadcrumbContent()}
           </CollapsibleContent>
         </Collapsible>

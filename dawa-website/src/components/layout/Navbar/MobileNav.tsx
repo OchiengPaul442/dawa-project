@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, User, X, Search } from 'lucide-react';
+import { User, X, Search } from 'lucide-react';
 import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
@@ -13,6 +13,7 @@ import Button from '@/components/shared/Button';
 import { Input } from '@/components/ui/input';
 import MainConfigs from '@/configs/mainConfigs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import BackButton from '@/components/shared/BackButton';
 
 const MobileNav: React.FC<any> = ({
   isHomePage,
@@ -45,17 +46,7 @@ const MobileNav: React.FC<any> = ({
     >
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {!isHomePage && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="mr-2 text-primary_1"
-              onClick={() => router.back()}
-            >
-              <ChevronLeft className="h-8 w-8" />
-              <span className="sr-only">Go back</span>
-            </Button>
-          )}
+          {!isHomePage && <BackButton />}
           <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
             <Logo2 className="h-20 -m-6 w-auto" />
           </Link>

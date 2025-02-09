@@ -10,8 +10,7 @@ import { FiGrid } from 'react-icons/fi';
 import { Menu } from 'lucide-react';
 import { useDispatch } from '@redux-store/hooks';
 
-import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
-import Logo3 from '@public/assets/svgs/DAWA VARIATION-01.svg';
+import Logo3 from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import { UserNav } from './user-nav';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -87,7 +86,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
         </div>
 
         <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
-          <Logo2
+          <Logo3
             className={`w-auto transition-all duration-300 lg:-ml-8 ease-in-out ${
               isSticky ? 'h-24 -my-4' : 'h-28 -my-9'
             }`}

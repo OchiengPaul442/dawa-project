@@ -111,7 +111,7 @@ export default function ProductSkeleton() {
         </div>
       </div>
 
-      <div className="container mx-auto px-5">
+      <div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-10">
             <ImageSkeleton />

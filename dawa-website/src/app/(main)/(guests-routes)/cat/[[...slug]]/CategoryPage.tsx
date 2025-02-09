@@ -3,13 +3,11 @@
 import React, { useState, useMemo, useCallback, useEffect, FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
-import Link from 'next/link';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/categories/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
-import CategoriesPage from '@/views/pages/category/CategoriesPage';
 import CustomPagination from '@/components/shared/CustomPagination';
 import Loader from '@/components/Loader';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
@@ -226,17 +224,18 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
 
   // If no category is found, show the categories listing page
   if (!selectedCategory) {
-    return <CategoriesPage />;
+    return null;
   }
 
   return (
     <>
       {/* Breadcrumbs */}
-      <Breadcrumbs
-        categoryName={selectedCategory.category_name}
-        subcategoryName={selectedSubcategory?.subcategory_name}
-      />
-
+      <div className="hidden md:block">
+        <Breadcrumbs
+          categoryName={selectedCategory.category_name}
+          subcategoryName={selectedSubcategory?.subcategory_name}
+        />
+      </div>
       {/* Mobile header buttons for Filters and Categories */}
       <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow-sm">
         <Button

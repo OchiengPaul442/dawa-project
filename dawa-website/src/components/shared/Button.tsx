@@ -27,7 +27,7 @@ const Button: FC<any> = ({
       )}
       {...props}
     >
-      {Icon && <Icon className={cn('w-5 h-5', isOnlyIcon && 'mx-auto')} />}
+      {Icon && <Icon className={cn('w-6 h-6', isOnlyIcon && 'mx-auto')} />}
       {!isOnlyIcon && <span className="text-center">{children}</span>}
     </ShadcnButton>
   );
