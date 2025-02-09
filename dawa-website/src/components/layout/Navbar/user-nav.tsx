@@ -1,4 +1,4 @@
-import { useWishlistActions } from '@/@core/hooks/useWishlistActions';
+import { useWishlist } from '@/contexts/WishlistContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,9 +33,10 @@ export function UserNav({
   user: any;
   onLogout: () => void;
 }) {
-  const { wishlistCount } = useWishlistActions();
+  // Use the wishlist context to get the count.
+  const { wishlistCount } = useWishlist();
 
-  // Assert that wishlistCount is a number, or provide a default value
+  // Assert that wishlistCount is a number, or provide a default value.
   const safeWishlistCount =
     typeof wishlistCount === 'number' ? wishlistCount : 0;
 

@@ -1,13 +1,12 @@
+// src/components/shared/LikeButton.tsx
 'use client';
 
 import React from 'react';
 import { Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
-import { useDispatch } from '@redux-store/hooks';
 import { useAuth } from '@core/hooks/use-auth';
-import { useWishlistActions } from '@core/hooks/useWishlistActions';
+import { useWishlist } from '@/contexts/WishlistContext';
 import {
   Tooltip,
   TooltipContent,
@@ -15,9 +14,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import type { Product } from '@/types/wishList';
 
 interface LikeButtonProps {
   productId: string;
+  product?: Product; // Full product details for optimistic update.
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'minimal' | 'floating';
@@ -25,13 +26,13 @@ interface LikeButtonProps {
 
 export const LikeButton: React.FC<LikeButtonProps> = ({
   productId,
+  product,
   className = '',
   size = 'md',
   variant = 'default',
 }) => {
-  const dispatch = useDispatch();
   const { user } = useAuth();
-  const { isInWishlist, toggle } = useWishlistActions();
+  const { isInWishlist, toggle } = useWishlist();
   const [hasClicked, setHasClicked] = React.useState(false);
 
   const isLiked = isInWishlist(productId);
@@ -39,15 +40,10 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setHasClicked(true);
-
-    // Reset the click animation after 1s
     setTimeout(() => setHasClicked(false), 1000);
 
-    if (!user) {
-      dispatch(openAuthDialog());
-      return;
-    }
-    toggle(productId);
+    if (!user) return;
+    toggle(productId, product);
   };
 
   const sizeClasses = {
@@ -62,7 +58,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
     lg: 'w-6 h-6',
   };
 
-  const variants = {
+  const variantsClasses = {
     default: 'bg-white shadow-lg hover:shadow-xl',
     minimal: 'bg-transparent hover:bg-black/5',
     floating: 'bg-white/90 backdrop-blur-sm shadow-lg hover:shadow-xl',
@@ -78,7 +74,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
             onClick={handleClick}
             className={cn(
               'relative rounded-full transition-all duration-300',
-              variants[variant],
+              variantsClasses[variant],
               sizeClasses[size],
               className,
               isLiked && 'bg-red-50',
@@ -94,17 +90,12 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
                 />
               )}
             </AnimatePresence>
-
             <motion.div
               animate={{
                 scale: isLiked ? 1 : [1, 1.2, 1],
                 rotate: hasClicked ? [0, -20, 20, 0] : 0,
               }}
-              transition={{
-                type: 'spring',
-                stiffness: 300,
-                damping: 15,
-              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >
               <Heart
                 className={cn(

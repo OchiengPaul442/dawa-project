@@ -1,30 +1,20 @@
-// ProductCard.tsx
+// src/components/shared/ProductCard.tsx
 'use client';
 
-import React, { FC, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Trash2, ExternalLink, Share2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import Button from '@/components/shared/Button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { useRouter } from 'next/navigation';
 import { slugify } from '@/utils/slugify';
-import { useDispatch } from '@redux-store/hooks';
-import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
-import { useWishlistActions } from '@core/hooks/useWishlistActions';
+import { useWishlist } from '@/contexts/WishlistContext';
 import type { ProductCardProps } from '@/types/wishList';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 import { formatDate } from '@/utils/dateFormatter';
 
-const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { removeItem } = useWishlistActions();
+  const { removeItem } = useWishlist();
 
   const handleShare = useCallback(() => {
     const url = window.location.href;
@@ -45,9 +35,8 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
   }, [product]);
 
   const handleViewDetails = useCallback(() => {
-    dispatch(setSelectedProduct(product.id));
     router.push(`/prod/${slugify(product.name)}`);
-  }, [dispatch, router, product]);
+  }, [router, product]);
 
   const handleRemoveFromWishlist = useCallback(() => {
     removeItem(product.id);
@@ -83,37 +72,20 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
 
               {/* Action Buttons */}
               <div className="flex sm:flex-col gap-2 flex-shrink-0">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        icon={Share2}
-                        variant="ghost"
-                        className="w-8 h-8"
-                        onClick={handleShare}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Share Product</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        icon={Trash2}
-                        variant="ghost"
-                        className="w-8 h-8 text-red-500 hover:text-red-600"
-                        onClick={handleRemoveFromWishlist}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Remove from Wishlist</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                  >
+                    <Share2 className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={handleRemoveFromWishlist}
+                    className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-red-500"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -128,23 +100,18 @@ const ProductCard: FC<ProductCardProps> = React.memo(({ product }) => {
               <span className="text-xl sm:text-2xl font-semibold text-primary_1">
                 <CurrencyFormatter price={product.price as any} />
               </span>
-              {/* {product.originalPrice && (
-                <span className="text-sm text-gray-400 line-through">
-                  <CurrencyFormatter price={product.originalPrice as any} />
-                </span>
-              )} */}
             </div>
 
-            {/* View Details Button */}
+            {/* Like Button & View Details */}
             <div className="pt-2 flex items-center justify-between">
-              <Button
-                variant="outline"
-                icon={ExternalLink}
-                className="flex items-center gap-1 text-xs sm:text-sm"
+              <div></div>
+              <button
                 onClick={handleViewDetails}
+                className="flex items-center gap-1 px-3 py-2 border rounded text-xs sm:text-sm"
               >
-                View Details
-              </Button>
+                <ExternalLink className="h-4 w-4" />
+                <span>View Details</span>
+              </button>
             </div>
           </div>
         </div>

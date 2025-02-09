@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
+import { useRouter } from 'next/navigation';
 import { slugify } from '@/utils/slugify';
 import { LikeButton } from '@/components/shared/LikeButton';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
-import { SimilarItem } from '@/types/product';
+import type { SimilarItem } from '@/types/product';
 
 interface ProductCardProps {
   product: SimilarItem;
@@ -24,7 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
     router.push(`/prod/${slugify(product.name)}`);
   }, [router, dispatch, product.id, product.name]);
 
-  // get the first item from the images array
+  // Get the first image URL from the images array.
   const image = product.images[0]?.image_url || '';
 
   return (
@@ -42,9 +42,10 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
           />
-          {/* Use the new LikeButton */}
+          {/* Pass the full product details to the LikeButton for optimistic update */}
           <LikeButton
             productId={product.id}
+            product={product as any}
             className="absolute bottom-2 right-2 z-10"
           />
         </div>

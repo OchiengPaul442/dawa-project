@@ -1,4 +1,6 @@
+// ListLayout.tsx
 'use client';
+
 import React, { useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
@@ -30,9 +32,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-lg w-full">
-      {/* Outer container: On mobile the sections stack vertically, on desktop they sit side by side */}
       <div className="flex flex-col sm:flex-row">
-        {/* Image Section */}
         <div className="relative w-full sm:w-48 md:w-64 aspect-square sm:aspect-auto sm:h-48 md:h-64">
           <CustomImage
             src={image}
@@ -44,9 +44,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
           />
         </div>
 
-        {/* Content Section */}
         <div className="flex flex-col sm:flex-row justify-between w-full p-4">
-          {/* Left: Product Details */}
           <div className="flex flex-col gap-2">
             {product.rating !== undefined && (
               <div className="flex items-center gap-1 text-sm text-primary font-medium">
@@ -76,7 +74,6 @@ const ListLayout: React.FC<ListLayoutProps> = ({ product }) => {
             )}
           </div>
 
-          {/* Right: Price & Actions */}
           <div className="flex flex-col items-start justify-end mt-4 sm:mt-0 sm:ml-4">
             <div className="flex flex-col items-baseline gap-1">
               {product.originalPrice && (

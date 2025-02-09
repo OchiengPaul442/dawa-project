@@ -1,31 +1,31 @@
-// WishlistPage.tsx
+// src/app/wishlist/WishlistPage.tsx
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
 import WishlistHeader from './WishlistHeader';
 import ProductList from './ProductList';
 import Button from '@/components/shared/Button';
-import { useWishlistActions } from '@core/hooks/useWishlistActions';
+import { useWishlist } from '@/contexts/WishlistContext';
 import type { Product } from '@/types/wishList';
 
 const WishlistPage = () => {
-  const { rawWishlist, isLoading } = useWishlistActions();
+  const { rawWishlist, isLoading } = useWishlist();
 
   const [sortBy, setSortBy] = useState<string>('date-added');
   const [visibleProducts, setVisibleProducts] = useState<number>(10);
 
-  // Convert item price to number so that arithmetic operations work
+  // Map raw wishlist data (assumed to be Product objects) to our local array.
+  // If the API data already matches the Product type, this mapping may be trivial.
   const products: Product[] = useMemo(() => {
-    if (!rawWishlist) return [];
     return rawWishlist.map((item: any) => ({
       id: item.id,
       name: item.item_name,
-      price: Number(item.item_price), // Convert string to number here
-      originalPrice: 0, // Or use Number(item.original_price) if applicable
+      price: item.item_price, // Assumed to be string; convert if needed.
+      originalPrice: item.original_price ? item.original_price : '0',
       discount: 0,
       image: item.images?.[0]?.image || '',
-      rating: 0,
-      orders: 0,
+      rating: item.rating || 0,
+      orders: item.orders || 0,
       dateAdded: item.created_at,
       description: item.item_description,
     }));

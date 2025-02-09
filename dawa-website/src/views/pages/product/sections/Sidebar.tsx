@@ -2,7 +2,7 @@ import React from 'react';
 import { FaHeart, FaPlus, FaShieldAlt, FaFlag } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useWishlistActions } from '@core/hooks/useWishlistActions';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 interface SidebarProps {
   productId: string;
@@ -17,7 +17,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSafetyTips,
   onReportAbuse,
 }) => {
-  const { isInWishlist, toggle, isLoading } = useWishlistActions();
+  const { isInWishlist, toggle, isLoading } = useWishlist();
   const isWishlisted = isInWishlist(productId);
 
   const handleWishlistToggle = async () => {
