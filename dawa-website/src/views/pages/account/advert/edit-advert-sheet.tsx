@@ -241,7 +241,8 @@ export function EditAdvertSheet({
                 <X className="h-5 w-5" />
               </Button>
               <SheetDescription className="mt-1 text-sm text-gray-600">
-                Make changes to your advert here. Click save when you're done.
+                Make changes to your advert here. Click save when you&apos;re
+                done.
               </SheetDescription>
               <Separator className="mt-4" />
             </SheetHeader>

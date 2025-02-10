@@ -1,4 +1,3 @@
-// src/contexts/WishlistContext.tsx
 'use client';
 
 import React, {
@@ -7,6 +6,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from 'react';
 import { useSWRConfig } from 'swr';
 import useSWR from 'swr';
@@ -16,9 +16,7 @@ import { useAuth } from '@core/hooks/use-auth';
 import type { Product } from '@/types/wishList';
 
 interface WishlistContextProps {
-  // Full product objects (optimistically updated)
   rawWishlist: Product[];
-  // An array of product IDs for convenience
   wishlist: string[];
   wishlistCount: number;
   isLoading: boolean;
@@ -38,20 +36,20 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
   const { user } = useAuth();
   const { mutate: globalMutate } = useSWRConfig();
 
-  // Only fetch wishlist if a user exists.
   const { data, isLoading, mutate } = useSWR(
     user ? 'userWishlist' : null,
     getUserWishList,
     swrOptions,
   );
 
-  // Ensure rawWishlist is an array of Product objects.
-  const rawWishlist: Product[] = Array.isArray(data) ? data : [];
+  // Use useMemo to stabilize the rawWishlist array.
+  const rawWishlist: Product[] = useMemo(
+    () => (Array.isArray(data) ? data : []),
+    [data],
+  );
 
-  // Local state: array of product IDs (for quick lookup)
   const [wishlist, setWishlist] = useState<string[]>([]);
 
-  // Update the local ID array only when rawWishlist changes.
   useEffect(() => {
     const ids = rawWishlist.map((item) => item.id);
     if (JSON.stringify(ids) !== JSON.stringify(wishlist)) {
@@ -69,7 +67,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!user) return;
       const currentlyInWishlist = isInWishlist(productId);
 
-      // Optimistically update local IDs.
       setWishlist((prev) =>
         currentlyInWishlist
           ? prev.filter((id) => id !== productId)
@@ -78,16 +75,13 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
 
       console.info('productData', productData);
 
-      // Optimistically update the SWR cache.
       globalMutate(
         'userWishlist',
         (existingData: Product[] = []) => {
           if (!Array.isArray(existingData)) return [];
           if (currentlyInWishlist) {
-            // Remove the product from the wishlist.
             return existingData.filter((item) => item.id !== productId);
           } else {
-            // Add productData if provided; otherwise, add a minimal object.
             const newItem = productData
               ? productData
               : {
@@ -107,15 +101,12 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       try {
-        // Fire off the API call in the background.
         await toggleWishlistItem('/wishunwish/', {
           arg: { item_id: productId },
         });
-        // Revalidate the wishlist data from the server.
         mutate();
       } catch (err) {
         console.error(err);
-        // On error, revert the optimistic update.
         setWishlist((prev) =>
           currentlyInWishlist
             ? [...prev, productId]
@@ -131,7 +122,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
     async (productId: string) => {
       if (!user || !isInWishlist(productId)) return;
 
-      // Optimistically remove the product.
       setWishlist((prev) => prev.filter((id) => id !== productId));
       globalMutate(
         'userWishlist',
@@ -148,7 +138,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
         mutate();
       } catch (err) {
         console.error(err);
-        // On error, revert removal.
         setWishlist((prev) => [...prev, productId]);
         globalMutate('userWishlist');
       }

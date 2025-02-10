@@ -17,7 +17,6 @@ interface Counters {
   notifications: number;
 }
 
-// Represents the decoded JWT payload. We assume the token includes an 'exp' field (expiration time in seconds).
 interface DecodedToken {
   exp: number;
   [key: string]: any;
@@ -29,7 +28,7 @@ const api = axios.create({
 
 export function useAuth() {
   const { data: session, status } = useSession();
-  const { cache } = useSWRConfig(); // Access the SWR cache
+  const { cache } = useSWRConfig();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [counters, setCounters] = useState<Counters>({
@@ -39,9 +38,8 @@ export function useAuth() {
   });
   const [tokenExpired, setTokenExpired] = useState(false);
 
-  // Function to clear the SWR cache by iterating over its keys.
-  const clearSWRCache = () => {
-    // Check if cache has a keys method (like a Map)
+  // Memoize clearSWRCache so that logout can safely depend on it.
+  const clearSWRCache = useCallback(() => {
     if (typeof cache.keys === 'function') {
       for (const key of cache.keys()) {
         cache.delete(key);
@@ -49,30 +47,24 @@ export function useAuth() {
     } else {
       console.warn('SWR cache does not support keys() method.');
     }
-  };
+  }, [cache]);
 
-  // Memoized logout function so it's stable across renders.
   const logout = useCallback(async () => {
     try {
-      // Sign out the user (without redirecting immediately)
       await signOut({ redirect: false });
-      // Clear local user state
       setUser(null);
       setCounters({
         favorites: 0,
         messages: 0,
         notifications: 0,
       });
-      // Clear localStorage (or remove specific keys if desired)
       localStorage.clear();
-      // Clear SWR cache manually
       clearSWRCache();
     } catch (error) {
       console.error('Logout failed:', error);
     }
-  }, [cache]);
+  }, [clearSWRCache]);
 
-  // Axios interceptor to attach the token on each request.
   useEffect(() => {
     const interceptor = api.interceptors.request.use((config) => {
       if (session?.accessToken) {
@@ -85,36 +77,28 @@ export function useAuth() {
     };
   }, [session]);
 
-  // Decode the token to check its expiration and schedule a logout.
   useEffect(() => {
     if (session?.accessToken) {
-      // Check if the token appears to be a valid JWT (should have three parts).
       if (session.accessToken.split('.').length !== 3) {
         console.warn('Invalid JWT token format. Skipping token decode.');
         return;
       }
 
       try {
-        // Cast the imported module to a function type.
         const decodeJwt = jwtDecode as unknown as <T>(token: string) => T;
         const decoded = decodeJwt<DecodedToken>(session.accessToken);
-        // JWT 'exp' is in seconds; convert it to milliseconds.
         const tokenExpirationTime = decoded.exp * 1000;
         const now = Date.now();
 
         if (tokenExpirationTime <= now) {
-          // Token is already expired, so mark it and logout.
           setTokenExpired(true);
           logout();
         } else {
-          // Schedule a logout when the token expires.
           const timeout = tokenExpirationTime - now;
           const timer = setTimeout(() => {
             setTokenExpired(true);
             logout();
           }, timeout);
-
-          // Clean up the timer when the effect re-runs or the component unmounts.
           return () => clearTimeout(timer);
         }
       } catch (error) {
@@ -123,7 +107,6 @@ export function useAuth() {
     }
   }, [session, logout]);
 
-  // Fetch and set user data when session is available.
   useEffect(() => {
     const fetchUserData = async () => {
       if (session?.user) {
