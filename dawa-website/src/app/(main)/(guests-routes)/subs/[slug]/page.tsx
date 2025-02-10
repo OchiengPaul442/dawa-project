@@ -24,7 +24,6 @@ function transformCategory(cat: any): Category {
     ...cat,
     // Generate the category href using slugify.
     href: `/cat/${slugify(cat.category_name)}`,
-    // Ensure subcategories is always an array.
     subcategories: cat.subcategories
       ? cat.subcategories.map((sub: any) => ({
           id: sub.id,
@@ -49,7 +48,6 @@ export default function CategoryPage() {
     : [];
 
   // Extract the category slug from the URL.
-  // Next.js may return a string or an array; we use the first segment.
   const { slug } = params;
   const categorySlug = Array.isArray(slug) ? slug[0] : slug;
 
@@ -135,33 +133,6 @@ export default function CategoryPage() {
           </p>
         )}
       </main>
-
-      {/* Optional: Explore Other Categories */}
-      <footer className="p-4 bg-white shadow-inner">
-        <p className="text-center text-sm text-gray-600">
-          Want to explore another category?
-        </p>
-        <div className="flex flex-wrap justify-center gap-3 mt-2">
-          {categories
-            .filter((cat) => slugify(cat.category_name) !== categorySlug)
-            .map((cat) => {
-              const CatIcon =
-                categoryIconMap[cat.category_name] || UniversalFallbackIcon;
-              return (
-                <Link
-                  key={cat.href}
-                  href={cat.href || '#'}
-                  className="flex items-center px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                >
-                  <CatIcon className="h-4 w-4 text-primary_1 mr-1" />
-                  <span className="text-sm text-gray-700">
-                    {cat.category_name}
-                  </span>
-                </Link>
-              );
-            })}
-        </div>
-      </footer>
     </div>
   );
 }

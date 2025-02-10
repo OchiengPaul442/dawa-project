@@ -38,6 +38,8 @@ import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ImageSkeleton } from './ImageSkeleton';
+import { LocationDialog } from '@/components/dialogs/location-dialog';
+import { locations } from '@/data/locations';
 
 interface EditAdvertSheetProps {
   isOpen: boolean;
@@ -141,6 +143,17 @@ export function EditAdvertSheet({
     }
   };
 
+  // New handler for location selection from LocationDialog
+  const handleLocationSelect = (location: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      item_location: location,
+    }));
+    if (errors.item_location) {
+      setErrors((prev) => ({ ...prev, item_location: '' }));
+    }
+  };
+
   const handleDeleteImage = (imageId: number) => {
     setImageToDelete(imageId);
     setIsDeleteDialogOpen(true);
@@ -212,14 +225,23 @@ export function EditAdvertSheet({
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-xl p-0 bg-background [&_[data-state=open]_.close-button]:hidden"
+          className="w-full sm:max-w-xl p-0 bg-background"
         >
           <ScrollArea className="h-full px-6">
-            <SheetHeader className="sticky top-0 z-10 bg-background pt-6 pb-4">
+            <SheetHeader className="sticky w-full top-0 z-10 bg-background pt-6 pb-4">
               <SheetTitle>Edit Advert</SheetTitle>
-              <SheetDescription>
-                Make changes to your advert here. Click save when you&apos;re
-                done.
+              {/* Added explicit close button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="absolute right-4 top-4"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+              <SheetDescription className="mt-1 text-sm text-gray-600">
+                Make changes to your advert here. Click save when you're done.
               </SheetDescription>
               <Separator className="mt-4" />
             </SheetHeader>
@@ -266,14 +288,21 @@ export function EditAdvertSheet({
                   required
                 />
 
-                <FormField
-                  id="item_location"
-                  label="Location"
-                  value={formData.item_location}
-                  onChange={handleInputChange}
-                  error={errors.item_location}
-                  required
-                />
+                <div>
+                  <Label htmlFor="item_location" className="mb-1">
+                    Location
+                  </Label>
+                  <LocationDialog
+                    locations={locations}
+                    selectedLocation={formData.item_location}
+                    onLocationSelect={handleLocationSelect}
+                  />
+                  {errors.item_location && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.item_location}
+                    </p>
+                  )}
+                </div>
 
                 <div>
                   <Label htmlFor="item_description">Description</Label>

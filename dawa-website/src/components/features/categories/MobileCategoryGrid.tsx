@@ -5,6 +5,8 @@ import { slugify } from '@/utils/slugify';
 import { useSelector } from '@/redux-store/hooks';
 import { selectCategories } from '@/redux-store/slices/categories/categories';
 
+import { useDispatch } from '@redux-store/hooks';
+import { useRouter } from 'next/navigation';
 import {
   Truck,
   Home,
@@ -18,6 +20,8 @@ import {
   Briefcase,
   Heart,
 } from 'lucide-react';
+import { useAuth } from '@/@core/hooks/use-auth';
+import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 
 // Map category names to icons
 const categoryIconMap: Record<string, React.ElementType> = {
@@ -40,18 +44,29 @@ const categoryIconMap: Record<string, React.ElementType> = {
 };
 
 const MobileCategoryGrid: React.FC = React.memo(() => {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const categories = useSelector(selectCategories) as any;
+  const { user } = useAuth();
+
+  const handleSellClick = () => {
+    if (!user) {
+      dispatch(openAuthDialog());
+    } else {
+      router.push('/post-ad');
+    }
+  };
 
   return (
     <div className="grid grid-cols-4 gap-2">
       {/* Post Ad Button */}
-      <Link
-        href="/post-ad"
+      <button
+        onClick={handleSellClick}
         className="flex flex-col items-center justify-center p-4 bg-gray-700 text-white aspect-square rounded-lg"
       >
         <Plus className="h-6 w-6 mb-2" />
         <span className="text-xs text-center">Post ad</span>
-      </Link>
+      </button>
 
       {/* Category List */}
       {categories.map(({ category_name }: any) => {
