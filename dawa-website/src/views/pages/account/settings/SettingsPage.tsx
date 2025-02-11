@@ -149,8 +149,8 @@ export default function SettingsPage() {
       'user_national_id_or_passport',
     ];
     const fieldMapping: { [key: string]: string } = {
-      firstName: 'first_name',
-      lastName: 'last_name',
+      firstName: 'firstname',
+      lastName: 'lastname',
       email: 'email',
       phone: 'contact',
       address: 'address',
