@@ -1,4 +1,5 @@
 'use client';
+import { assetConfig } from '@/configs/assestConfig';
 import VideoSection from './VideoSection';
 import CustomImage from '@/components/shared/CustomImage';
 import mainConfig from '@/configs/mainConfigs';
@@ -21,11 +22,12 @@ const AboutPage = () => {
             <h1 className="text-4xl font-bold text-gray-900">
               Welcome to Dawa Marketplace
             </h1>
-            <p className="mt-4 text-gray-600 text-lg lg:max-w-[500px] leading-relaxed">
-              Dawa is Uganda’s premier online marketplace—your one-stop hub for
-              buying, selling, and advertising products. Whether you’re a small
-              business owner, a casual seller, or a bargain hunter, Dawa brings
-              thousands of listings right to your fingertips.
+            <p className="mt-4 text-gray-600 text-lg lg:max-w-2xl leading-relaxed">
+              At Dawa, we are proud to be Uganda’s leading online marketplace.
+              We connect communities, empower local businesses, and bring you a
+              secure, user-friendly platform for buying, selling, and
+              advertising. Experience a marketplace built with your needs in
+              mind.
             </p>
           </div>
           {/* Logo Section */}
@@ -41,8 +43,8 @@ const AboutPage = () => {
           {/* Large Image */}
           <div className="lg:col-span-2 rounded-xl w-full h-[220px] md:h-[320px] lg:h-[450px] overflow-hidden shadow-lg">
             <CustomImage
-              src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"
-              alt="Marketplace hustle"
+              src={assetConfig.aboutPage.aboutSection1_3.src}
+              alt={assetConfig.aboutPage.aboutSection1_3.alt}
               fill
               style={{ objectFit: 'cover' }}
             />
@@ -52,16 +54,16 @@ const AboutPage = () => {
           <div className="grid grid-rows-2 gap-6">
             <div className="rounded-xl w-full h-[220px] md:h-[320px] lg:h-[220px] overflow-hidden shadow-lg">
               <CustomImage
-                src="https://images.unsplash.com/photo-1602526210198-d8f4a1d85b79?auto=format&fit=crop&w=800&q=80"
-                alt="Local vendor showcasing products"
+                src={assetConfig.aboutPage.aboutSection1_2.src}
+                alt={assetConfig.aboutPage.aboutSection1_2.alt}
                 fill
                 style={{ objectFit: 'cover' }}
               />
             </div>
             <div className="rounded-xl w-full h-[220px] md:h-[320px] lg:h-[220px] overflow-hidden shadow-lg">
               <CustomImage
-                src="https://images.unsplash.com/photo-1573164574572-cb89e39749b4?auto=format&fit=crop&w=800&q=80"
-                alt="Happy customers"
+                src={assetConfig.aboutPage.aboutSection1_1.src}
+                alt={assetConfig.aboutPage.aboutSection1_1.alt}
                 fill
                 style={{ objectFit: 'cover' }}
               />
@@ -77,35 +79,36 @@ const AboutPage = () => {
       <section className={`${mainConfig.maxWidthClass} text-center`}>
         <h2 className="text-3xl font-bold text-gray-900">Why Choose Dawa?</h2>
         <p className="mt-4 text-gray-600 text-lg leading-relaxed max-w-4xl mx-auto">
-          Our mission is to empower Ugandans to connect, trade, and grow their
-          businesses in a trusted and secure environment.
+          Our commitment is to empower Ugandans with a marketplace that is
+          trusted, secure, and built for growth. At Dawa, every feature and
+          service is designed to help you connect, trade, and thrive.
         </p>
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
           {[
             {
               icon: MdOutlineStar,
-              title: 'Trusted Listings',
+              title: 'Verified Listings',
               description:
-                'Every listing is verified to ensure you shop with confidence.',
+                'Shop with confidence knowing every listing is carefully verified.',
             },
             {
               icon: MdOutlineSecurity,
-              title: 'Secure Transactions',
+              title: 'Secure Payments',
               description:
-                'We prioritize your safety with secure payment and delivery options.',
+                'Enjoy a safe and secure payment experience with every transaction.',
             },
             {
               icon: MdOutlineSupportAgent,
-              title: '24/7 Support',
+              title: 'Dedicated Support',
               description:
-                'Our customer support team is here to help you anytime.',
+                'Our customer support is available 24/7 to assist you at every step.',
             },
             {
               icon: MdOutlineFlashOn,
-              title: 'Fast & Easy',
+              title: 'Fast & Simple',
               description:
-                'Quick posting and seamless navigation to buy and sell with ease.',
+                'Experience a streamlined process for posting, buying, and selling.',
             },
           ].map((item, index) => (
             <div
@@ -130,8 +133,8 @@ const AboutPage = () => {
           {/* Image Section */}
           <div className="relative w-full h-[300px] lg:h-[400px] rounded-xl overflow-hidden shadow-lg">
             <CustomImage
-              src="https://images.unsplash.com/photo-1580910051073-9b4171ee4643?auto=format&fit=crop&w=1200&q=80"
-              alt="Start trading on Dawa"
+              src={assetConfig.aboutPage.aboutSection2.src}
+              alt={assetConfig.aboutPage.aboutSection2.alt}
               fill
               style={{ objectFit: 'cover' }}
             />
@@ -140,12 +143,12 @@ const AboutPage = () => {
           {/* Text Section */}
           <div className="flex flex-col justify-center">
             <h3 className="text-2xl lg:text-3xl font-bold text-gray-900">
-              Join Thousands of Happy Traders
+              Join the Dawa Community Today
             </h3>
             <p className="mt-4 text-gray-600 leading-relaxed">
-              From fresh produce and electronics to fashion and home essentials,
-              Dawa connects buyers and sellers from every corner of Uganda.
-              Ready to start your trading journey?
+              Whether you’re a seasoned trader or just starting out, Dawa is the
+              platform for you. Connect with thousands of Ugandans who are
+              already enjoying a trusted, efficient, and vibrant marketplace.
             </p>
           </div>
         </div>
@@ -160,18 +163,19 @@ const AboutPage = () => {
               Our Story
             </h3>
             <p className="mt-4 text-gray-600 leading-relaxed">
-              Founded with the vision to empower local businesses and foster
-              community trade, Dawa has grown into Uganda’s go-to marketplace.
-              Our platform is designed to make buying, selling, and advertising
-              simple and accessible for everyone.
+              Dawa was founded with a simple vision: to empower local
+              communities by making trade accessible and secure. From humble
+              beginnings to becoming Uganda’s top online marketplace, our
+              journey is fueled by innovation, trust, and a commitment to our
+              users.
             </p>
           </div>
 
           {/* Image Section */}
           <div className="relative w-full h-[300px] lg:h-[400px] rounded-xl overflow-hidden shadow-lg">
             <CustomImage
-              src="https://images.unsplash.com/photo-1518606374432-4e2a7f68f0d4?auto=format&fit=crop&w=1200&q=80"
-              alt="Our journey at Dawa"
+              src={assetConfig.aboutPage.aboutSection3.src}
+              alt={assetConfig.aboutPage.aboutSection3.alt}
               fill
               style={{ objectFit: 'cover' }}
             />

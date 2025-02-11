@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NextImage, { type ImageProps as NextImageProps } from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -21,37 +20,47 @@ const CustomImage: React.FC<CustomImageProps> = ({
   fallbackSrc = DEFAULT_FALLBACK_IMAGE,
   src,
   alt = '',
-  quality = 85, // Increased default quality
+  quality = 85,
   ...props
 }) => {
-  const [imgSrc, setImgSrc] = useState<string>(src || fallbackSrc);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [hasError, setHasError] = useState<boolean>(false);
+  const [imgSrc, setImgSrc] = useState(src || fallbackSrc);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // A ref to track if the component is mounted.
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    // If the incoming src changes and doesn't match the current imgSrc,
-    // update the imgSrc state to trigger reloading.
-    if (src !== imgSrc) {
-      setImgSrc(src || fallbackSrc);
-      setIsLoading(true);
-      setHasError(false);
-    }
-  }, [src, fallbackSrc, imgSrc]);
-
-  const handleLoadingComplete = useCallback(() => {
-    setIsLoading(false);
+    // Set mounted flag to false on unmount to avoid updating state after unmount.
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
-  const handleError = useCallback(() => {
+  useEffect(() => {
+    // Update the image source when the provided src or fallbackSrc changes.
+    setImgSrc(src || fallbackSrc);
+    setIsLoading(true);
+    setHasError(false);
+  }, [src, fallbackSrc]);
+
+  const handleLoadingComplete = () => {
+    if (isMounted.current) {
+      setIsLoading(false);
+    }
+  };
+
+  const handleError = () => {
+    // If there's an error and the current source isn't already the fallback, use the fallback.
     if (imgSrc !== fallbackSrc) {
       setImgSrc(fallbackSrc);
       setIsLoading(true);
       setHasError(false);
-    } else {
+    } else if (isMounted.current) {
       setIsLoading(false);
       setHasError(true);
     }
-  }, [fallbackSrc, imgSrc]);
+  };
 
   return (
     <div
