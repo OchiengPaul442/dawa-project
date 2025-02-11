@@ -14,9 +14,7 @@ import { cn } from '@/lib/utils';
 import { PersonalInfoForm } from './PersonalInfoForm';
 import { SecurityForm } from './SecurityForm';
 import { NotificationPreferences } from './NotificationPreferences';
-import { useAuth } from '@/@core/hooks/use-auth';
 
-// Rename our custom interface to ProfileFormData.
 export interface ProfileFormData {
   firstName: string;
   lastName: string;
@@ -122,7 +120,6 @@ export default function SettingsPage() {
             file,
           },
         }));
-        // For the profile picture, update the formData with the preview URL.
         if (field === 'user_profile_picture') {
           setFormData((prevFormData) => ({
             ...prevFormData,
@@ -141,29 +138,44 @@ export default function SettingsPage() {
   const handleProfileUpdate = async () => {
     if (isUpdating) return;
 
-    // Build a payload object that accepts string or File.
+    // Update all editable fields:
+    // firstName, lastName, email, phone, address, and user_national_id_or_passport.
+    const keysToUpdate = [
+      'firstName',
+      'lastName',
+      'email',
+      'phone',
+      'address',
+      'user_national_id_or_passport',
+    ];
+    const fieldMapping: { [key: string]: string } = {
+      firstName: 'first_name',
+      lastName: 'last_name',
+      email: 'email',
+      phone: 'contact',
+      address: 'address',
+      user_national_id_or_passport: 'user_national_id_or_passport',
+    };
+
     const changedData: { [key: string]: string | File } = {};
 
-    // Loop over the formData keys except for the profile picture
-    // (we'll handle that separately)
-    Object.keys(formData).forEach((key) => {
-      if (key === 'user_profile_picture') return; // Skip this field here
-      const value = formData[key as keyof ProfileFormData];
+    keysToUpdate.forEach((key) => {
+      const currentValue = formData[key as keyof typeof formData];
+      const originalValue = originalData[key as keyof typeof originalData];
+      // Only update if currentValue is not null, not empty, and differs from the original.
       if (
-        value !== originalData[key as keyof ProfileFormData] &&
-        value !== '' &&
-        value !== null
+        currentValue !== null &&
+        currentValue !== '' &&
+        currentValue !== originalValue
       ) {
-        // Cast the value to string (since our formData stores strings)
-        changedData[key] = value as string;
+        changedData[fieldMapping[key]] = currentValue;
       }
     });
 
-    // If a new profile picture file exists, add it to the payload.
+    // Include file uploads if present.
     if (files.user_profile_picture?.file) {
       changedData.user_profile_picture = files.user_profile_picture.file;
     }
-    // If a scanned document file exists, add it.
     if (files.scanned_national_id_or_passport_document?.file) {
       changedData.scanned_national_id_or_passport_document =
         files.scanned_national_id_or_passport_document.file;
@@ -201,7 +213,6 @@ export default function SettingsPage() {
     }
     try {
       await changeUserPassword(passwordData);
-      // clear fields
       setPasswordData({
         old_password: '',
         new_password: '',

@@ -55,7 +55,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
       </CardHeader>
       <CardContent>
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          {/* Avatar upload */}
+          {/* Avatar Upload */}
           <div className="flex justify-center mb-6">
             <div className="relative">
               <Avatar className="w-24 h-24">
@@ -87,21 +87,21 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             </div>
           </div>
 
-          {/* Personal information fields */}
+          {/* Personal Information Fields */}
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               label="First Name"
               id="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
-              disabled
+              disabled={isProfileLoading}
             />
             <FormField
               label="Last Name"
               id="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
-              disabled
+              disabled={isProfileLoading}
             />
             <FormField
               label="Email"
@@ -109,7 +109,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               value={formData.email}
               onChange={handleInputChange}
               type="email"
-              disabled
+              disabled={isProfileLoading}
             />
             <FormField
               label="Phone Number"
@@ -117,7 +117,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               value={formData.phone}
               onChange={handleInputChange}
               type="tel"
-              disabled
+              disabled={isProfileLoading}
             />
             <FormField
               label="Address"
@@ -135,7 +135,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             />
           </div>
 
-          {/* Document upload */}
+          {/* Document Upload */}
           <div className="space-y-2">
             <Label>Scanned Document</Label>
             <div className="border rounded-lg p-4 space-y-4">
