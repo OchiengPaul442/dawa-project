@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import type React from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import NextImage, { type ImageProps as NextImageProps } from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -15,52 +16,58 @@ interface CustomImageProps extends Omit<NextImageProps, 'src'> {
 const DEFAULT_FALLBACK_IMAGE = '/assets/images/default_image.webp';
 
 const CustomImage: React.FC<CustomImageProps> = ({
+  src,
+  fallbackSrc = DEFAULT_FALLBACK_IMAGE,
+  alt = '',
+  quality = 85, // Increased default quality
   className,
   containerClassName,
-  fallbackSrc = DEFAULT_FALLBACK_IMAGE,
-  src,
-  alt = '',
-  quality = 85,
   ...props
 }) => {
-  const [imgSrc, setImgSrc] = useState(src || fallbackSrc);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  // Initialize image source with the provided src or fallback
+  const [imgSrc, setImgSrc] = useState<string>(src || fallbackSrc);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [hasError, setHasError] = useState<boolean>(false);
 
-  // A ref to track if the component is mounted.
-  const isMounted = useRef(true);
+  // Use a ref to track whether the component is mounted
+  const mountedRef = useRef(true);
 
   useEffect(() => {
-    // Set mounted flag to false on unmount to avoid updating state after unmount.
+    mountedRef.current = true;
     return () => {
-      isMounted.current = false;
+      mountedRef.current = false;
     };
   }, []);
 
+  // When src or fallbackSrc changes, update the image source and reset states.
   useEffect(() => {
-    // Update the image source when the provided src or fallbackSrc changes.
     setImgSrc(src || fallbackSrc);
     setIsLoading(true);
     setHasError(false);
   }, [src, fallbackSrc]);
 
-  const handleLoadingComplete = () => {
-    if (isMounted.current) {
+  // Callback for when the image loads successfully.
+  const handleLoadingComplete = useCallback(() => {
+    if (mountedRef.current) {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleError = () => {
-    // If there's an error and the current source isn't already the fallback, use the fallback.
+  // Callback for handling image loading errors.
+  const handleError = useCallback(() => {
+    if (!mountedRef.current) return;
+
+    // If the current image is not already the fallback, try loading the fallback.
     if (imgSrc !== fallbackSrc) {
       setImgSrc(fallbackSrc);
       setIsLoading(true);
       setHasError(false);
-    } else if (isMounted.current) {
+    } else {
+      // If fallback also fails, mark an error state.
       setIsLoading(false);
       setHasError(true);
     }
-  };
+  }, [fallbackSrc, imgSrc]);
 
   return (
     <div

@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ProductCarousel } from '../carousels/product-carousel';
-import { PostAdvertCTA } from './post-advert-cta';
-import { SafetyTips } from './safety-tips';
+import { ProductCarousel } from '../../../components/features/carousels/product-carousel';
+import { PostAdvertCTA } from '../../shared/post-advert-cta';
+import { SafetyTips } from '../../shared/safety-tips';
 import MobileCategoryGrid from './MobileCategoryGrid';
 
 export function CategoriesMenu() {

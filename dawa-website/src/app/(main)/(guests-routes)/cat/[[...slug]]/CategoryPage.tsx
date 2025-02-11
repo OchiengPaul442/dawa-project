@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
-import FiltersAndSorting from '@/components/features/categories/FiltersAndSorting';
+import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
 import CustomPagination from '@/components/shared/CustomPagination';
 import Loader from '@/components/Loader';

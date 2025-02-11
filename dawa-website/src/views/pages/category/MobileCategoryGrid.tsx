@@ -7,41 +7,9 @@ import { selectCategories } from '@/redux-store/slices/categories/categories';
 
 import { useDispatch } from '@redux-store/hooks';
 import { useRouter } from 'next/navigation';
-import {
-  Truck,
-  Home,
-  Phone,
-  Tv,
-  Sofa,
-  Palette,
-  Wrench,
-  ShoppingBag,
-  Activity,
-  Briefcase,
-  Heart,
-} from 'lucide-react';
+import { categoryIconMap, UniversalFallbackIcon } from './icon-maps';
 import { useAuth } from '@/@core/hooks/use-auth';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
-
-// Map category names to icons
-const categoryIconMap: Record<string, React.ElementType> = {
-  Vehicles: Truck,
-  Property: Home,
-  'Phones & Tablets': Phone,
-  Electronics: Tv,
-  'Home, Appliances & Furniture': Sofa,
-  'Health & Beauty': Palette,
-  Fashion: ShoppingBag,
-  'Sports, Arts & Outdoors': Activity,
-  'Seeking Work CVs': Briefcase,
-  Services: Wrench,
-  Jobs: Briefcase,
-  'Babies & Kids': ShoppingBag,
-  Pets: Heart,
-  'Agriculture & Food': Wrench,
-  'Commercial Equipment & Tools': Wrench,
-  'Repair & Construction': Wrench,
-};
 
 const MobileCategoryGrid: React.FC = React.memo(() => {
   const router = useRouter();
@@ -70,7 +38,9 @@ const MobileCategoryGrid: React.FC = React.memo(() => {
 
       {/* Category List */}
       {categories.map(({ category_name }: any) => {
-        const Icon = categoryIconMap[category_name] || Wrench;
+        // Get the icon component for the category;
+        // fallback to UniversalFallbackIcon if none is defined.
+        const Icon = categoryIconMap[category_name] || UniversalFallbackIcon;
         const categorySlug = slugify(category_name);
 
         return (

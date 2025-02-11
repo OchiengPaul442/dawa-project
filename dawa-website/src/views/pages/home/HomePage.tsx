@@ -1,4 +1,4 @@
-import { CategoriesMenu } from '@/components/features/categories/categories-menu';
+import { CategoriesMenu } from '@/views/pages/category/categories-menu';
 import mainConfig from '@/configs/mainConfigs';
 import ProductPage from '@/views/pages/trendingProducts';
 import dynamic from 'next/dynamic';
