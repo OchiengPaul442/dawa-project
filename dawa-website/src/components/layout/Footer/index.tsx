@@ -14,7 +14,6 @@ const Footer: React.FC = () => {
   const quickLinks = [
     { href: '/about', label: 'About Us' },
     { href: '/contact-us', label: 'Contact Us' },
-    { href: '/cat', label: 'Categories' },
     ...(user
       ? []
       : [
@@ -26,7 +25,7 @@ const Footer: React.FC = () => {
   const customerLinks = [
     { href: '/legal/terms', label: 'Terms of Service' },
     { href: '/legal/privacy', label: 'Privacy Policy' },
-    { href: '/legal/billing', label: 'Billing Policy' },
+    // { href: '/legal/billing', label: 'Billing Policy' },
     { href: '/faqs', label: 'FAQs' },
   ];
 
