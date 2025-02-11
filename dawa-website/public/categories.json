@@ -550,5 +550,27 @@
         "subcategory_item_count": 0
       }
     ]
+  },
+  {
+    "id": 17,
+    "category_name": "Tours And Travel",
+    "category_item_count": 0,
+    "subcategories": [
+      {
+        "id": 91,
+        "subcategory_name": "Other Tours And Travel",
+        "subcategory_item_count": 0
+      },
+      {
+        "id": 89,
+        "subcategory_name": "Travel Agents & Services",
+        "subcategory_item_count": 0
+      },
+      {
+        "id": 90,
+        "subcategory_name": "Accommodation & Transport",
+        "subcategory_item_count": 0
+      }
+    ]
   }
 ]

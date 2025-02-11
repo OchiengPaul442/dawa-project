@@ -20,6 +20,7 @@ import {
   FcLandscape,
   FcFactory,
   FcSupport,
+  FcBinoculars,
 } from 'react-icons/fc';
 import { PiDogDuotone } from 'react-icons/pi';
 
@@ -48,6 +49,7 @@ export const categoryIconMap: Record<string, React.ElementType> = {
   'Agriculture & Food': FcLandscape,
   'Commercial Equipment & Tools': FcFactory,
   'Repair & Construction': FcSupport, // Best available match
+  'Tours And Travel': FcBinoculars,
 };
 
 // ======================================================
@@ -153,7 +155,7 @@ import {
   MdSecurity,
   MdConstruction,
 } from 'react-icons/md';
-
+import { CgMoreO } from 'react-icons/cg';
 import {
   FaCat,
   FaDove,
@@ -161,6 +163,8 @@ import {
   FaPaw,
   FaBone,
   FaDrumstickBite,
+  FaBus,
+  FaHotel,
 } from 'react-icons/fa';
 
 //
@@ -286,4 +290,9 @@ export const subcategoryIconMap: Record<string, React.ElementType> = {
   'Hand Tools': MdBuild,
   'Safety Equipment': MdSecurity,
   'Other Repair & Construction': MdConstruction,
+
+  // --- Tours & Travel ---
+  'Travel Agents & Services': FaBus,
+  'Accommodation & Transport': FaHotel,
+  'Other Tours And Travel': CgMoreO,
 };

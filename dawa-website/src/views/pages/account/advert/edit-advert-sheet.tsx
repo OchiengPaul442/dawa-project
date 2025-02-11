@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -74,7 +74,7 @@ export function EditAdvertSheet({
     item_description: item.description,
     item_location: item.location,
     item_negotiable: item.item_negotiable,
-    item_status: item.item_status || 'Available',
+    item_status: item.status || 'Available',
   });
   const [images, setImages] = useState(item.images || []);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -84,6 +84,23 @@ export function EditAdvertSheet({
   const [imageToDelete, setImageToDelete] = useState<number | null>(null);
 
   const categories = useSelector(selectCategories);
+
+  // Store the initial form data to compare later for changes.
+  const initialFormDataRef = useRef<FormDataState>(formData);
+  useEffect(() => {
+    initialFormDataRef.current = {
+      item_id: item.id,
+      item_name: item.name,
+      item_price: item.price,
+      item_subcategory: item.subcategory_id
+        ? Number(item.subcategory_id)
+        : null,
+      item_description: item.description,
+      item_location: item.location,
+      item_negotiable: item.item_negotiable,
+      item_status: item.status || 'Available',
+    };
+  }, [item]);
 
   // If no subcategory is selected yet, try to find a match from the provided item.subcategory
   useEffect(() => {
@@ -203,17 +220,50 @@ export function EditAdvertSheet({
     }
 
     try {
+      // Compare current form data with the initial values
+      const initial = initialFormDataRef.current;
+      const changedFields: Partial<FormDataState> = {};
+
+      // Always include the item_id for the API
+      changedFields.item_id = formData.item_id;
+
+      if (formData.item_name !== initial.item_name) {
+        changedFields.item_name = formData.item_name;
+      }
+      if (formData.item_price !== initial.item_price) {
+        changedFields.item_price = formData.item_price;
+      }
+      if (formData.item_subcategory !== initial.item_subcategory) {
+        changedFields.item_subcategory = formData.item_subcategory;
+      }
+      if (formData.item_description !== initial.item_description) {
+        changedFields.item_description = formData.item_description;
+      }
+      if (formData.item_location !== initial.item_location) {
+        changedFields.item_location = formData.item_location;
+      }
+      if (formData.item_negotiable !== initial.item_negotiable) {
+        changedFields.item_negotiable = formData.item_negotiable;
+      }
+      if (formData.item_status !== initial.item_status) {
+        changedFields.item_status = formData.item_status;
+      }
+
+      // Prepare FormData with only changed fields
       const form = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
+      Object.entries(changedFields).forEach(([key, value]) => {
         if (typeof value === 'boolean') {
           form.append(key, value ? 'True' : 'False');
         } else {
           form.append(key, value?.toString() || '');
         }
       });
-      newImages.forEach((file, index) => {
-        form.append(`new_images[${index}]`, file);
+
+      // Always include any new images under the "images" field
+      newImages.forEach((file) => {
+        form.append('images', file);
       });
+
       await updateProduct(form);
       toast.success('Advert updated successfully');
       onUpdate();
