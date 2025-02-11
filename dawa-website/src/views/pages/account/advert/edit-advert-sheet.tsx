@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -77,7 +76,6 @@ export function EditAdvertSheet({
   });
   const [images, setImages] = useState(item.images || []);
   const [newImages, setNewImages] = useState<File[]>([]);
-  const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [imagesLoading, setImagesLoading] = useState(true);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -85,6 +83,7 @@ export function EditAdvertSheet({
 
   const categories = useSelector(selectCategories);
 
+  // If no subcategory is selected yet, try to find a match from the provided item.subcategory
   useEffect(() => {
     if (
       !formData.item_subcategory &&
@@ -111,11 +110,11 @@ export function EditAdvertSheet({
     }
   }, [item.subcategory, formData.item_subcategory, categories]);
 
+  // Simulate image loading delay (e.g. for a skeleton)
   useEffect(() => {
-    // Simulate image loading delay
     const timer = setTimeout(() => {
       setImagesLoading(false);
-    }, 1500); // Adjust this value as needed
+    }, 1500); // Adjust delay as needed
 
     return () => clearTimeout(timer);
   }, []);
@@ -143,7 +142,7 @@ export function EditAdvertSheet({
     }
   };
 
-  // New handler for location selection from LocationDialog
+  // Handler for location selection from LocationDialog
   const handleLocationSelect = (location: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -154,18 +153,32 @@ export function EditAdvertSheet({
     }
   };
 
+  // Open delete dialog for selected image
   const handleDeleteImage = (imageId: number) => {
     setImageToDelete(imageId);
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDeleteImage = () => {
+  // Confirm deletion of an image using the useDeleteItemImage hook.
+  const confirmDeleteImage = async () => {
     if (imageToDelete) {
-      setImages(images.filter((img: any) => img.image_id !== imageToDelete));
-      setDeletedImageIds((prev) => [...prev, imageToDelete]);
-      setImageToDelete(null);
+      try {
+        // Call the hook with the required payload:
+        await deleteItemImage({ image_id: imageToDelete });
+        // Remove the deleted image from the images state:
+        setImages((prevImages: any) =>
+          prevImages.filter((img: any) => img.image_id !== imageToDelete),
+        );
+        toast.success('Image deleted successfully');
+        // Refetch advert/user details:
+        onUpdate();
+      } catch (error: any) {
+        toast.error('Failed to delete image');
+      } finally {
+        setImageToDelete(null);
+        setIsDeleteDialogOpen(false);
+      }
     }
-    setIsDeleteDialogOpen(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,10 +217,6 @@ export function EditAdvertSheet({
         form.append(`new_images[${index}]`, file);
       });
 
-      deletedImageIds.forEach((id, index) => {
-        form.append(`deleted_images[${index}]`, id.toString());
-      });
-
       await updateProduct(form);
       toast.success('Advert updated successfully');
       onUpdate();
@@ -230,7 +239,7 @@ export function EditAdvertSheet({
           <ScrollArea className="h-full px-6">
             <SheetHeader className="sticky w-full top-0 z-10 bg-background pt-6 pb-4">
               <SheetTitle>Edit Advert</SheetTitle>
-              {/* Added explicit close button */}
+              {/* Explicit close button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -247,7 +256,7 @@ export function EditAdvertSheet({
               <Separator className="mt-4" />
             </SheetHeader>
 
-            <form onSubmit={handleSubmit} className="space-y-6 pb-6">
+            <form className="space-y-6 pb-6">
               <ImageSection
                 images={images}
                 newImages={newImages}
@@ -347,7 +356,11 @@ export function EditAdvertSheet({
                 <Button type="button" variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isUpdating}>
+                <Button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isUpdating}
+                >
                   {isUpdating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -363,6 +376,7 @@ export function EditAdvertSheet({
         </SheetContent>
       </Sheet>
 
+      {/* Alert dialog for image deletion */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -443,6 +457,7 @@ function ImageSection({
               <Button
                 size="icon"
                 variant="destructive"
+                type="button"
                 className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => handleDeleteImage(image.image_id)}
               >

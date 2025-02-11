@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { PersonalInfoForm } from './PersonalInfoForm';
 import { SecurityForm } from './SecurityForm';
 import { NotificationPreferences } from './NotificationPreferences';
+import { useAuth } from '@/@core/hooks/use-auth';
 
 // Rename our custom interface to ProfileFormData.
 export interface ProfileFormData {
@@ -28,9 +29,9 @@ export interface ProfileFormData {
 }
 
 interface PasswordData {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  confirm_password: string;
+  new_password: string;
+  old_password: string;
 }
 
 interface FileData {
@@ -58,9 +59,9 @@ export default function SettingsPage() {
   const [originalData, setOriginalData] =
     useState<ProfileFormData>(initialFormData);
   const [passwordData, setPasswordData] = useState<PasswordData>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    old_password: '',
+    new_password: '',
+    confirm_password: '',
   });
   const [files, setFiles] = useState<{
     user_profile_picture: FileData | null;
@@ -194,12 +195,18 @@ export default function SettingsPage() {
 
   const handlePasswordUpdate = async () => {
     if (isChangingPassword) return;
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
+    if (passwordData.new_password !== passwordData.confirm_password) {
       toast.error('Passwords do not match!');
       return;
     }
     try {
       await changeUserPassword(passwordData);
+      // clear fields
+      setPasswordData({
+        old_password: '',
+        new_password: '',
+        confirm_password: '',
+      });
       toast.success('Password changed successfully!');
     } catch (error) {
       toast.error('Failed to change password');

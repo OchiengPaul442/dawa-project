@@ -6,9 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 
 interface PasswordData {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
+  confirm_password: string;
+  new_password: string;
+  old_password: string;
 }
 
 interface SecurityFormProps {
@@ -39,23 +39,23 @@ export const SecurityForm: React.FC<SecurityFormProps> = ({
         >
           <FormField
             label="Current Password"
-            id="currentPassword"
+            id="old_password"
             type="password"
-            value={passwordData.currentPassword}
+            value={passwordData.old_password}
             onChange={handlePasswordChange}
           />
           <FormField
             label="New Password"
-            id="newPassword"
+            id="new_password"
             type="password"
-            value={passwordData.newPassword}
+            value={passwordData.new_password}
             onChange={handlePasswordChange}
           />
           <FormField
             label="Confirm New Password"
-            id="confirmPassword"
+            id="confirm_password"
             type="password"
-            value={passwordData.confirmPassword}
+            value={passwordData.confirm_password}
             onChange={handlePasswordChange}
           />
           <Button
