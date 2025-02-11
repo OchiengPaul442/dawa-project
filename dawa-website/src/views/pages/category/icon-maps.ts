@@ -1,243 +1,289 @@
-import {
-  Truck,
-  Home as LucideHome,
-  Phone,
-  Tv,
-  Sofa,
-  Palette,
-  Wrench,
-  ShoppingBag,
-  Activity,
-  Briefcase as LucideBriefcase,
-  Heart,
-} from 'lucide-react';
+// icons.tsx
+import React from 'react';
 
-// Import icons from react-icons/fa with replacements where needed:
+// ======================================================
+// Categories (using colorful icons from react-icons/fc)
+// ======================================================
 import {
-  FaTshirt,
-  FaMobileAlt,
-  FaTabletAlt,
-  FaHeadphones,
-  FaCar,
-  FaMotorcycle,
-  FaBus,
-  FaBuilding,
-  FaDoorOpen,
-  FaTree,
-  FaSeedling,
-  FaWarehouse,
-  FaKeyboard,
-  FaGamepad,
-  FaPlug,
-  FaCouch,
-  FaUtensils,
-  FaLightbulb,
-  FaShoePrints,
-  FaGem,
-  FaClock,
-  FaEllipsisH,
-  FaBriefcase as FaBriefcaseIcon,
-  FaChild,
-  FaPuzzlePiece,
-  FaDog,
+  FcAutomotive,
+  FcHome,
+  FcSmartphoneTablet,
+  FcCamcorderPro,
+  FcDepartment,
+  FcBiotech,
+  FcCloth,
+  FcSportsMode,
+  FcBusiness,
+  FcServices,
+  FcManager,
+  FcReddit,
+  FcLandscape,
+  FcFactory,
+  FcSupport,
+} from 'react-icons/fc';
+import { PiDogDuotone } from 'react-icons/pi';
+
+//
+// Universal fallback icon (for categories)
+//
+export const UniversalFallbackIcon = FcServices;
+
+//
+// Category Icon Map (using react-icons/fc)
+//
+export const categoryIconMap: Record<string, React.ElementType> = {
+  Vehicles: FcAutomotive, // Better represents vehicles than FcInTransit
+  Property: FcHome,
+  'Phones & Tablets': FcSmartphoneTablet,
+  Electronics: FcCamcorderPro,
+  'Home, Appliances & Furniture': FcDepartment,
+  'Health & Beauty': FcBiotech, // Chosen for its association with health
+  Fashion: FcCloth,
+  'Sports, Arts & Outdoors': FcSportsMode,
+  'Seeking Work CVs': FcBusiness,
+  Services: FcServices,
+  Jobs: FcManager,
+  'Babies & Kids': FcReddit,
+  Pets: PiDogDuotone, // Limited choice within this icon set
+  'Agriculture & Food': FcLandscape,
+  'Commercial Equipment & Tools': FcFactory,
+  'Repair & Construction': FcSupport, // Best available match
+};
+
+// ======================================================
+// Subcategories (using mostly Material Design icons from react-icons/md
+// with a few from react-icons/fa for pet-related icons so each subcategory is unique)
+// ======================================================
+import {
+  // Vehicles
+  MdDriveEta,
+  MdTwoWheeler, // <-- Use MdTwoWheeler instead of MdMotorcycle
+  MdLocalShipping,
+  MdDirectionsBus,
+  MdBuild,
+  MdDirectionsCar,
+  // Property
+  MdHome,
+  MdApartment,
+  MdLandscape,
+  MdTerrain,
+  MdBusiness,
+  MdBusinessCenter,
+  MdLocationCity,
+  // Phones & Tablets
+  MdSmartphone,
+  MdTablet,
+  MdHeadset,
+  MdPhoneAndroid,
+  // Electronics
+  MdTv,
+  MdMusicNote,
+  MdCameraAlt,
+  MdComputer,
+  MdHeadsetMic,
+  MdGames,
+  MdDevices,
+  // Home, Appliances & Furniture
+  MdWeekend,
+  MdKitchen,
+  MdRestaurant,
+  MdLocalFlorist,
+  MdNature,
+  MdOutlineHome,
+  // Health & Beauty
+  MdFace,
+  MdSettings,
+  MdLocalOffer,
+  MdContentCut,
+  MdSpa,
+  MdFavorite,
+  // Fashion
+  MdCheckroom,
+  MdDirectionsWalk,
+  MdShoppingBag,
+  MdDiamond,
+  MdWatch,
+  MdStyle,
+  // Sports, Arts & Outdoors
+  MdSportsSoccer,
+  MdQueueMusic,
+  MdPalette,
+  MdLocalFireDepartment,
+  MdDirectionsBike,
+  MdEmojiEvents,
+  // Seeking Work CVs
+  MdWork,
+  MdAssignmentInd,
+  // Services
+  MdBuildCircle,
+  MdEvent,
+  MdFaceRetouchingNatural,
+  MdCarRepair,
+  MdCleanHands,
+  MdMiscellaneousServices,
+  // Jobs
+  MdWorkOutline,
+  MdWorkHistory,
+  // Babies & Kids
+  MdChildCare,
+  MdChildFriendly,
+  MdAccessible,
+  MdAccessibilityNew,
+  MdEventSeat,
+  MdEmojiEmotions,
+  // Pets (most from md; some from fa for unique icons)
+  MdPets,
+  // Agriculture & Food
+  MdAgriculture,
+  MdEco,
+  MdLocalGroceryStore,
+  MdRestaurantMenu,
+  MdFastfood,
+  // Commercial Equipment & Tools
+  MdFactory,
+  MdFoodBank,
+  MdStore,
+  MdFireplace,
+  MdPrint,
+  MdExtension,
+  // Repair & Construction
+  MdHomeRepairService,
+  MdElectricalServices,
+  MdWaterDamage,
+  MdSecurity,
+  MdConstruction,
+} from 'react-icons/md';
+
+import {
   FaCat,
   FaDove,
   FaFish,
+  FaPaw,
   FaBone,
-  FaIndustry,
-  FaStore,
-  FaFire,
-  FaPrint,
-  FaBoxOpen,
-  FaBolt,
-  FaTint,
-  FaHammer,
-  FaShieldAlt,
-  FaCarSide,
-  FaCameraRetro,
-  FaMusic,
-  FaPaintBrush,
-  FaBicycle,
-  FaCoffee,
+  FaDrumstickBite,
 } from 'react-icons/fa';
 
-// Import icons from react-icons/md (Material Design)
-import {
-  MdClearAll,
-  MdLiveTv,
-  MdLocalShipping,
-  MdKitchen,
-  MdBuild,
-  MdLocationCity,
-  MdLocalBar,
-  MdWeekend,
-  MdMoreHoriz,
-  MdHome as MdHomeIcon,
-} from 'react-icons/md';
-
-// Import icons from react-icons/gi (Game Icons) with corrected names:
-import {
-  GiCampingTent,
-  GiTroll,
-  GiReactor,
-  GiChickenLeg,
-  GiPlantRoots,
-  GiVacuumCleaner,
-  GiWrench,
-  GiOfficeChair,
-  GiBabyBottle,
-} from 'react-icons/gi';
-
 //
-// Universal fallback icon in case any icon does not load:
-//
-export const UniversalFallbackIcon = ShoppingBag;
-
-// ----------------------------------------------------------------
-// Category Icon Map
-// (Each category is given a unique icon.)
-//
-export const categoryIconMap: Record<string, React.ElementType> = {
-  Vehicles: Truck,
-  Property: LucideHome,
-  'Phones & Tablets': Phone,
-  Electronics: Tv,
-  'Home, Appliances & Furniture': Sofa,
-  'Health & Beauty': Palette,
-  Fashion: FaTshirt,
-  'Sports, Arts & Outdoors': Activity,
-  'Seeking Work CVs': LucideBriefcase,
-  Services: Wrench,
-  Jobs: MdClearAll, // Using MdClearAll as a replacement for an unavailable icon.
-  'Babies & Kids': FaChild,
-  Pets: Heart,
-  'Agriculture & Food': GiReactor,
-  'Commercial Equipment & Tools': FaIndustry,
-  'Repair & Construction': GiWrench,
-};
-
-// ----------------------------------------------------------------
-// Subcategory Icon Map
-// (Each subcategory is given its own unique icon.)
+// Subcategory Icon Map (each subcategory gets its own unique icon)
 //
 export const subcategoryIconMap: Record<string, React.ElementType> = {
-  // Vehicles
-  Cars: FaCar,
-  'Motorcycles & Scooters': FaMotorcycle,
+  // --- Vehicles ---
+  Cars: MdDriveEta,
+  'Motorcycles & Scooters': MdTwoWheeler, // updated icon here
   'Trucks & Trailers': MdLocalShipping,
-  Buses: FaBus,
-  'Vehicle Parts & Accessories': GiWrench,
-  'Other Vehicles': FaBuilding,
+  Buses: MdDirectionsBus,
+  'Vehicle Parts & Accessories': MdBuild,
+  'Other Vehicles': MdDirectionsCar,
 
-  // Property
-  'Houses & Apartments for Sale': MdHomeIcon,
-  'Houses & Apartments for Rent': FaDoorOpen,
-  'Land & Plots for Sale': FaTree,
-  'Land & Plots for Rent': FaSeedling,
-  'Commercial Property for Sale': FaBuilding,
-  'Commercial Property for Rent': MdLocationCity,
-  'Other Property': FaWarehouse,
+  // --- Property ---
+  'Houses & Apartments for Sale': MdHome,
+  'Houses & Apartments for Rent': MdApartment,
+  'Land & Plots for Sale': MdLandscape,
+  'Land & Plots for Rent': MdTerrain,
+  'Commercial Property for Sale': MdBusiness,
+  'Commercial Property for Rent': MdBusinessCenter,
+  'Other Property': MdLocationCity,
 
-  // Phones & Tablets
-  'Mobile Phones': FaMobileAlt,
-  Tablets: FaTabletAlt,
-  'Accessories for Mobile Phones & Tablets': FaHeadphones,
-  'Other Phones & Tablets': FaEllipsisH,
+  // --- Phones & Tablets ---
+  'Mobile Phones': MdSmartphone,
+  Tablets: MdTablet,
+  'Accessories for Mobile Phones & Tablets': MdHeadset,
+  'Other Phones & Tablets': MdPhoneAndroid,
 
-  // Electronics
-  TVs: MdLiveTv,
-  'Audio & Music Equipment': FaPlug,
-  'Cameras, Video Cameras & Accessories': FaCameraRetro,
-  'Computer Accessories': FaKeyboard,
-  Headphones: FaHeadphones,
-  'Video Games & Consoles': FaGamepad,
-  'Other Electronics': FaPlug,
+  // --- Electronics ---
+  TVs: MdTv,
+  'Audio & Music Equipment': MdMusicNote,
+  'Cameras, Video Cameras & Accessories': MdCameraAlt,
+  'Computer Accessories': MdComputer,
+  Headphones: MdHeadsetMic,
+  'Video Games & Consoles': MdGames,
+  'Other Electronics': MdDevices,
 
-  // Home, Appliances & Furniture
-  Furniture: FaCouch,
+  // --- Home, Appliances & Furniture ---
+  Furniture: MdWeekend,
   'Home Appliances': MdKitchen,
-  'Kitchen & Dining': FaUtensils,
-  'Home Accessories': FaLightbulb,
-  Garden: FaShoePrints,
-  'Other Home, Appliances & Furniture': FaBoxOpen,
+  'Kitchen & Dining': MdRestaurant,
+  'Home Accessories': MdLocalFlorist,
+  Garden: MdNature,
+  'Other Home, Appliances & Furniture': MdOutlineHome,
 
-  // Health & Beauty
-  Makeup: FaGem,
-  'Tools & Accessories': GiWrench,
-  Fragrance: FaClock,
-  'Hair Beauty': FaShoePrints,
-  'Skin Care': FaLightbulb,
-  'Other Health & Beauty': FaEllipsisH,
+  // --- Health & Beauty ---
+  Makeup: MdFace,
+  'Tools & Accessories': MdSettings,
+  Fragrance: MdLocalOffer,
+  'Hair Beauty': MdContentCut,
+  'Skin Care': MdSpa,
+  'Other Health & Beauty': MdFavorite,
 
-  // Fashion
-  Clothing: FaTshirt,
-  Shoes: FaShoePrints,
-  Bags: ShoppingBag,
-  Jewelry: FaGem,
-  Watches: FaClock,
-  'Other Fashion': FaEllipsisH,
+  // --- Fashion ---
+  Clothing: MdCheckroom,
+  Shoes: MdDirectionsWalk,
+  Bags: MdShoppingBag,
+  Jewelry: MdDiamond,
+  Watches: MdWatch,
+  'Other Fashion': MdStyle,
 
-  // Sports, Arts & Outdoors
-  'Sports Equipment': FaIndustry,
-  'Musical Instruments': FaMusic,
-  'Arts & Crafts': FaPaintBrush,
-  'Camping Gear': GiCampingTent,
-  Bicycles: FaBicycle,
-  'Other Sports, Arts & Outdoors': MdMoreHoriz,
+  // --- Sports, Arts & Outdoors ---
+  'Sports Equipment': MdSportsSoccer,
+  'Musical Instruments': MdQueueMusic,
+  'Arts & Crafts': MdPalette,
+  'Camping Gear': MdLocalFireDepartment,
+  Bicycles: MdDirectionsBike,
+  'Other Sports, Arts & Outdoors': MdEmojiEvents,
 
-  // Seeking Work CVs
-  "Job Seekers' CVs": FaBriefcaseIcon,
-  'Other Seeking Work CVs': MdMoreHoriz,
+  // --- Seeking Work CVs ---
+  "Job Seekers' CVs": MdWork,
+  'Other Seeking Work CVs': MdAssignmentInd,
 
-  // Services
-  'Repair Services': MdBuild,
-  'Event Planning & Services': MdClearAll,
-  'Health & Beauty Services': MdLocalBar,
-  'Automotive Services': FaCarSide,
-  'Cleaning Services': GiVacuumCleaner,
-  'Other Services': MdMoreHoriz,
+  // --- Services ---
+  'Repair Services': MdBuildCircle,
+  'Event Planning & Services': MdEvent,
+  'Health & Beauty Services': MdFaceRetouchingNatural,
+  'Automotive Services': MdCarRepair,
+  'Cleaning Services': MdCleanHands,
+  'Other Services': MdMiscellaneousServices,
 
-  // Jobs
-  'Job Vacancies': FaBriefcaseIcon,
-  'Other Jobs': MdClearAll,
+  // --- Jobs ---
+  'Job Vacancies': MdWorkOutline,
+  'Other Jobs': MdWorkHistory,
 
-  // Babies & Kids
-  "Children's Clothing": FaChild,
-  Toys: FaPuzzlePiece,
-  'Baby & Child Care': GiBabyBottle,
-  'Prams & Strollers': GiTroll, // Using GiTroll as the alternative to GiStroller.
-  "Children's Furniture": MdWeekend,
-  'Other Babies & Kids': MdMoreHoriz,
+  // --- Babies & Kids ---
+  "Children's Clothing": MdChildCare,
+  Toys: MdChildFriendly,
+  'Baby & Child Care': MdAccessible,
+  'Prams & Strollers': MdAccessibilityNew,
+  "Children's Furniture": MdEventSeat,
+  'Other Babies & Kids': MdEmojiEmotions,
 
-  // Pets
-  'Dogs & Puppies': FaDog,
+  // --- Pets ---
+  'Dogs & Puppies': MdPets,
   'Cats & Kittens': FaCat,
   Birds: FaDove,
   Fish: FaFish,
-  'Pet Accessories': FaBone,
-  'Other Pets': FaEllipsisH,
+  'Pet Accessories': FaPaw,
+  'Other Pets': FaBone,
 
-  // Agriculture & Food
-  'Farm Machinery & Equipment': GiReactor,
-  'Livestock & Poultry': GiChickenLeg,
-  'Crops & Seeds': GiPlantRoots,
-  'Feeds, Supplements & Seeds': FaUtensils,
-  'Meals & Drinks': FaCoffee,
-  'Other Agriculture & Food': MdMoreHoriz,
+  // --- Agriculture & Food ---
+  'Farm Machinery & Equipment': MdAgriculture,
+  'Livestock & Poultry': FaDrumstickBite,
+  'Crops & Seeds': MdEco,
+  'Feeds, Supplements & Seeds': MdLocalGroceryStore,
+  'Meals & Drinks': MdRestaurantMenu,
+  'Other Agriculture & Food': MdFastfood,
 
-  // Commercial Equipment & Tools
-  'Manufacturing Equipment': FaIndustry,
-  'Restaurant & Catering Equipment': GiOfficeChair, // Using GiOfficeChair as an alternative.
-  'Store Equipment': FaStore,
-  'Industrial Ovens': FaFire,
-  'Printing Equipment': FaPrint,
-  'Other Commercial Equipment & Tools': MdMoreHoriz,
+  // --- Commercial Equipment & Tools ---
+  'Manufacturing Equipment': MdFactory,
+  'Restaurant & Catering Equipment': MdFoodBank,
+  'Store Equipment': MdStore,
+  'Industrial Ovens': MdFireplace,
+  'Printing Equipment': MdPrint,
+  'Other Commercial Equipment & Tools': MdExtension,
 
-  // Repair & Construction
-  'Building Materials': FaBoxOpen,
-  'Electrical Equipment': FaBolt,
-  'Plumbing & Water Supply': FaTint,
-  'Hand Tools': FaHammer,
-  'Safety Equipment': FaShieldAlt,
-  'Other Repair & Construction': MdMoreHoriz,
+  // --- Repair & Construction ---
+  'Building Materials': MdHomeRepairService,
+  'Electrical Equipment': MdElectricalServices,
+  'Plumbing & Water Supply': MdWaterDamage,
+  'Hand Tools': MdBuild,
+  'Safety Equipment': MdSecurity,
+  'Other Repair & Construction': MdConstruction,
 };

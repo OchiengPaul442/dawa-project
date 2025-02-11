@@ -55,6 +55,7 @@ interface FormDataState {
   item_description: string;
   item_location: string;
   item_negotiable: boolean;
+  item_status: string;
 }
 
 export function EditAdvertSheet({
@@ -73,6 +74,7 @@ export function EditAdvertSheet({
     item_description: item.description,
     item_location: item.location,
     item_negotiable: item.item_negotiable,
+    item_status: item.item_status || 'Available',
   });
   const [images, setImages] = useState(item.images || []);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -163,14 +165,12 @@ export function EditAdvertSheet({
   const confirmDeleteImage = async () => {
     if (imageToDelete) {
       try {
-        // Call the hook with the required payload:
         await deleteItemImage({ image_id: imageToDelete });
         // Remove the deleted image from the images state:
         setImages((prevImages: any) =>
           prevImages.filter((img: any) => img.image_id !== imageToDelete),
         );
         toast.success('Image deleted successfully');
-        // Refetch advert/user details:
         onUpdate();
       } catch (error: any) {
         toast.error('Failed to delete image');
@@ -204,7 +204,6 @@ export function EditAdvertSheet({
 
     try {
       const form = new FormData();
-
       Object.entries(formData).forEach(([key, value]) => {
         if (typeof value === 'boolean') {
           form.append(key, value ? 'True' : 'False');
@@ -212,11 +211,9 @@ export function EditAdvertSheet({
           form.append(key, value?.toString() || '');
         }
       });
-
       newImages.forEach((file, index) => {
         form.append(`new_images[${index}]`, file);
       });
-
       await updateProduct(form);
       toast.success('Advert updated successfully');
       onUpdate();
@@ -256,7 +253,7 @@ export function EditAdvertSheet({
               <Separator className="mt-4" />
             </SheetHeader>
 
-            <form className="space-y-6 pb-6">
+            <form className="space-y-6 pb-6" onSubmit={handleSubmit}>
               <ImageSection
                 images={images}
                 newImages={newImages}
@@ -295,6 +292,24 @@ export function EditAdvertSheet({
                   value={formData.item_price}
                   onChange={handleInputChange}
                   error={errors.item_price}
+                  required
+                />
+
+                {/* New status select field */}
+                <SelectField
+                  id="item_status"
+                  label="Status"
+                  value={formData.item_status}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      item_status: e.target.value,
+                    }))
+                  }
+                  options={[
+                    { value: 'Available', label: 'Available' },
+                    { value: 'Sold', label: 'Sold' },
+                  ]}
                   required
                 />
 
@@ -356,11 +371,7 @@ export function EditAdvertSheet({
                 <Button type="button" variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isUpdating}
-                >
+                <Button type="submit" disabled={isUpdating}>
                   {isUpdating ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -556,6 +567,47 @@ function FormField({
         className="mt-1.5"
         required={required}
       />
+      {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+    </div>
+  );
+}
+
+interface SelectFieldProps {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  error?: string;
+  options: { value: string; label: string }[];
+  required?: boolean;
+}
+
+function SelectField({
+  id,
+  label,
+  value,
+  onChange,
+  error,
+  options,
+  required = false,
+}: SelectFieldProps) {
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <select
+        id={id}
+        name={id}
+        value={value}
+        onChange={onChange}
+        className="mt-1.5 block w-full rounded-md border border-gray-300 p-2"
+        required={required}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
       {error && <p className="text-sm text-destructive mt-1">{error}</p>}
     </div>
   );
