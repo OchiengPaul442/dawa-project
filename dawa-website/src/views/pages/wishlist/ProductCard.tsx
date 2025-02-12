@@ -11,9 +11,13 @@ import { useWishlist } from '@/contexts/WishlistContext';
 import type { ProductCardProps } from '@/types/wishList';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 import { formatDate } from '@/utils/dateFormatter';
+import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
+import { useDispatch } from '@/redux-store/hooks';
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
+
+  const dispatch = useDispatch();
   const { removeItem } = useWishlist();
 
   const handleShare = useCallback(() => {
@@ -35,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   }, [product]);
 
   const handleViewDetails = useCallback(() => {
+    dispatch(setSelectedProduct(product.id as any));
     router.push(`/prod/${slugify(product.name)}`);
   }, [router, product]);
 
