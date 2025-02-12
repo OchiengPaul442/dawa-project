@@ -1,4 +1,3 @@
-// src/views/pages/messages/MakeOfferDialog.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -19,12 +18,13 @@ import { Input } from '@/components/ui/input';
 import { AlertCircle } from 'lucide-react';
 import { useSendMessage } from '@core/hooks/useProductData';
 import { formatCurrency } from '@/utils/CurrencyFormatter';
+import { toast } from 'sonner';
 
 interface MakeOfferDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receiverId: string; // from props, but must be converted to number
-  itemId: string; // from props, but must be converted to number
+  receiverId: string;
+  itemId: string;
   currentPrice: string | number;
 }
 
@@ -98,9 +98,10 @@ Thank you`;
       });
       reset();
       onOpenChange(false);
-      alert('Your offer has been sent successfully!');
+      toast.success('Your offer has been sent successfully!');
     } catch (err: any) {
       console.error('Error sending offer:', err);
+      toast.error('Failed to send your offer. Please try again.');
     }
   };
 
@@ -122,7 +123,7 @@ Thank you`;
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Current Price Display */}
           <p className="text-center text-sm text-gray-500">
-            Current Price: UGX {basePrice.toLocaleString()}
+            Current Price: {formatCurrency(basePrice)}
           </p>
 
           {/* Suggested Offers */}
@@ -132,11 +133,11 @@ Thank you`;
                 <Button
                   key={index}
                   variant="outline"
-                  type="button" // <-- Set type="button" to prevent form submit
+                  type="button" // Prevent form submission
                   onClick={() => handleSuggestedPriceClick(price)}
                   className="w-full"
                 >
-                  UGX {price.toLocaleString()}
+                  {formatCurrency(price)}
                 </Button>
               ))}
             </div>

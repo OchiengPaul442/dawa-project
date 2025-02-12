@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FaLock, FaKey } from 'react-icons/fa';
 
 import {
   Dialog,
@@ -22,6 +23,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { useReportAbuse } from '@core/hooks/useProductData';
 
 // Define the valid reason types
@@ -40,14 +42,14 @@ interface ReportAbuseDialogProps {
   itemId: string;
 }
 
-// Updated form values interface to match schema types
+// Define form values interface
 interface ReportAbuseFormValues {
   reason: ReasonType;
   otherReason: string;
   description: string;
 }
 
-// Define the schema type
+// Define the schema
 const schema: yup.ObjectSchema<ReportAbuseFormValues> = yup.object({
   reason: yup
     .string()
@@ -81,7 +83,7 @@ const ReportAbuseDialog: React.FC<ReportAbuseDialogProps> = ({
   } = useForm<ReportAbuseFormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
-      reason: 'Fake' as ReasonType, // Set a valid default value
+      reason: 'Fake' as ReasonType,
       otherReason: '',
       description: '',
     },
@@ -89,7 +91,7 @@ const ReportAbuseDialog: React.FC<ReportAbuseDialogProps> = ({
 
   const reasonWatch = watch('reason');
 
-  const onSubmit = async (data: ReportAbuseFormValues) => {
+  const onSubmit: SubmitHandler<ReportAbuseFormValues> = async (data) => {
     try {
       await reportAbuse({
         item_id: itemId,
@@ -97,15 +99,15 @@ const ReportAbuseDialog: React.FC<ReportAbuseDialogProps> = ({
         description: data.description,
       });
 
-      // Show success message
-      alert('Report submitted successfully!');
+      // Show success toast
+      toast.success('Report submitted successfully!');
 
       // Reset form and close dialog
       reset();
       onOpenChange(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error submitting report:', err);
-      alert('Failed to submit the report. Please try again.');
+      toast.error('Failed to submit the report. Please try again.');
     }
   };
 

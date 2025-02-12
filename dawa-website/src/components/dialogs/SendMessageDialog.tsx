@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSendMessage } from '@core/hooks/useProductData';
+import { toast } from 'sonner';
 
 interface SendMessageDialogProps {
   open: boolean;
@@ -59,9 +60,12 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
       });
       reset();
       onOpenChange(false);
-      alert('Message sent successfully');
-    } catch {
-      // Error is handled via the hook's error state
+      toast.success('Message sent successfully!');
+    } catch (err: any) {
+      console.error('Error submitting message:', err);
+      toast.error(
+        err.message || 'Failed to send the message. Please try again.',
+      );
     }
   };
 
@@ -74,6 +78,7 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
             Send a message to the seller about this product.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
           <div className="space-y-2">
             <Label htmlFor="message">Your Message</Label>

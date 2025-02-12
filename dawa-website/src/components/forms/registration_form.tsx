@@ -7,14 +7,13 @@ import {
   FaEnvelope,
   FaEye,
   FaEyeSlash,
+  FaPhone,
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 import InputField from '@/views/auth/InputField';
 import Link from 'next/link';
@@ -32,6 +31,25 @@ interface IFormInputs {
   terms: boolean;
 }
 
+/**
+ * Normalizes the phone number:
+ * - Removes spaces, dashes, and parentheses.
+ * - If the number does not start with a '+', prepends '+256'.
+ * - If the number starts with '0', replaces it with '+256'.
+ */
+const normalizePhone = (value: string): string => {
+  if (!value) return value;
+  let normalized = value.replace(/[\s()-]/g, '');
+  if (!normalized.startsWith('+')) {
+    if (normalized.startsWith('0')) {
+      normalized = '+256' + normalized.slice(1);
+    } else {
+      normalized = '+256' + normalized;
+    }
+  }
+  return normalized;
+};
+
 const RegistrationForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,8 +57,7 @@ const RegistrationForm: React.FC = () => {
   const router = useRouter();
   const { user } = useAuth();
 
-  // Remove auto-redirect so the registration page does not log in automatically.
-
+  // Redirect if user is already logged in.
   useEffect(() => {
     if (user) {
       router.push('/home');
@@ -68,8 +85,12 @@ const RegistrationForm: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const result = await signIn('google', { redirect: false });
-    if (result?.error) return;
-    else if (result?.ok) router.push('/');
+    if (result?.error) {
+      setLoading(false);
+      return;
+    } else if (result?.ok) {
+      router.push('/');
+    }
     setLoading(false);
   };
 
@@ -83,25 +104,25 @@ const RegistrationForm: React.FC = () => {
       firstname: data.firstName.trim(),
       lastname: data.lastName.trim(),
       user_role: 'Client',
+      // The phone number is normalized via setValueAs.
       contact: data.phone.trim(),
     };
+
     try {
-      const response = await registerUser(formattedData);
-      if (response.status === 201 || response.status === 200) {
+      // Assume registerUser returns a parsed JSON object.
+      const result = await registerUser(formattedData);
+      if (result.status === 201 || result.status === 200) {
         sessionStorage.setItem('registeredEmail', formattedData.email);
         router.push('/activate');
       } else {
-        throw new Error('Registration failed. Please try again.');
+        throw new Error(
+          result.message || 'Registration failed. Please try again.',
+        );
       }
-    } catch (error: any) {
-      console.error(
-        'Registration failed:',
-        error.response?.data?.message || error.message,
-      );
-      setApiError(
-        error.response?.data?.message ||
-          'Registration failed. Please try again.',
-      );
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unknown error occurred';
+      setApiError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -121,63 +142,41 @@ const RegistrationForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name Fields */}
         <div className="flex flex-col md:flex-row gap-4">
-          <InputField
-            label="First Name"
-            icon={FaUserCircle}
-            type="text"
-            placeholder="First name"
-            {...register('firstName')}
-            errors={errors.firstName?.message}
-          />
-          <InputField
-            label="Last Name"
-            icon={FaUserCircle}
-            type="text"
-            placeholder="Last name"
-            {...register('lastName')}
-            errors={errors.lastName?.message}
-          />
+          <div className="w-full">
+            <InputField
+              label="First Name"
+              icon={FaUserCircle}
+              type="text"
+              placeholder="First name"
+              {...register('firstName')}
+              className="w-full"
+              errors={errors.firstName?.message}
+            />
+          </div>
+          <div className="w-full">
+            <InputField
+              label="Last Name"
+              icon={FaUserCircle}
+              type="text"
+              placeholder="Last name"
+              {...register('lastName')}
+              className="w-full"
+              errors={errors.lastName?.message}
+            />
+          </div>
         </div>
 
         {/* Phone Number */}
-        <div>
-          <label className="block font-semibold text-gray-700 mb-1">
-            Phone Number{' '}
-            <span className="text-gray-400 text-sm font-normal">
-              (e.g. +256 077 788 2393)
-            </span>
-          </label>
-          <Controller
-            name="phone"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <PhoneInput
-                country="ug"
-                enableAreaCodes={true}
-                value={value}
-                onChange={(numericValue) => {
-                  let fullNumber = `+${numericValue}`.replace(/\s+/g, '');
-                  fullNumber = fullNumber.replace(/^(\+256)0/, '$1');
-                  onChange(fullNumber);
-                }}
-                inputClass={`w-full bg-gray-50 border rounded-lg p-2 ${
-                  errors.phone ? 'border-red-500' : 'border-gray-300'
-                }`}
-                containerClass="w-full"
-                buttonClass="bg-gray-50 border border-gray-300 rounded-lg"
-                inputProps={{
-                  placeholder: 'Enter phone number',
-                  className:
-                    'w-full focus:border-primary_1 outline-none bg-transparent text-gray-700 placeholder-gray-400 border rounded-md px-4 py-3',
-                }}
-                specialLabel=""
-              />
-            )}
-          />
-          {errors.phone && (
-            <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>
-          )}
-        </div>
+        <InputField
+          label="Phone Number"
+          icon={FaPhone}
+          type="text"
+          placeholder="Enter phone number (e.g. +256777888999)"
+          {...register('phone', {
+            setValueAs: (value) => normalizePhone(value),
+          })}
+          errors={errors.phone?.message}
+        />
 
         {/* Email Address */}
         <InputField
@@ -189,13 +188,15 @@ const RegistrationForm: React.FC = () => {
           errors={errors.email?.message}
         />
 
-        {/* Password Field */}
+        {/* Password Field with Toggle */}
         <div>
           <label className="block font-semibold text-gray-700 mb-1">
             Password
           </label>
           <div
-            className={`flex items-center border rounded-lg p-3 focus-within:border-primary_1 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+            className={`flex items-center border rounded-lg p-3 focus-within:border-primary_1 ${
+              errors.password ? 'border-red-500' : 'border-gray-300'
+            }`}
           >
             <FaUnlock className="text-gray-400 mr-2" />
             <input
@@ -206,11 +207,11 @@ const RegistrationForm: React.FC = () => {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500 hover:text-primary_1 ml-2 focus:outline-none"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="ml-2 p-1 rounded focus:outline-none"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
           </div>
           {errors.password && (
@@ -232,12 +233,15 @@ const RegistrationForm: React.FC = () => {
               <Checkbox
                 id="terms"
                 checked={field.value}
-                onCheckedChange={field.onChange}
-                className="h-4 w-4"
+                onCheckedChange={(checked) => field.onChange(checked)}
+                className="h-4 w-4 cursor-pointer"
               />
             )}
           />
-          <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
+          <label
+            htmlFor="terms"
+            className="ml-3 text-sm text-gray-700 cursor-pointer"
+          >
             I agree to the{' '}
             <Link
               href="/legal/terms"

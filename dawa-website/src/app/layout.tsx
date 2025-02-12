@@ -7,6 +7,10 @@ import { AuthDialog } from '@/components/dialogs/auth-dialog';
 import categoriesData from '@public/categories.json';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 
+import { ProfileProvider } from '@/contexts/profile-context';
+import { CompleteProfileModal } from '@/components/shared/CompleteProfileModal';
+import { Toaster } from 'sonner';
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '700'],
@@ -32,11 +36,15 @@ export default function RootLayout({
         <Suspense fallback={<Loader />}>
           <Provider preloadedState={preloadedState as any}>
             <WishlistProvider>
-              <main className="min-h-screen flex flex-col">{children}</main>
+              <ProfileProvider>
+                <main className="min-h-screen flex flex-col">{children}</main>
+                <CompleteProfileModal />
+              </ProfileProvider>
             </WishlistProvider>
             <AuthDialog />
           </Provider>
         </Suspense>
+        <Toaster position="top-right" expand={true} richColors />
       </body>
     </html>
   );

@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { selectCategories } from '@redux-store/slices/categories/categories';
 import { useSelector } from '@/redux-store/hooks';
 import { mutate } from 'swr';
+import { toast } from 'sonner';
 
 /** -------------------------------
  *  Define Types & Validation
@@ -120,7 +121,8 @@ export default function PostAdPage() {
 
       if (res.status === 201) {
         reset();
-        alert('Your ad has been posted successfully!');
+        // Show success message and reset form
+        toast.success('Your ad has been posted successfully!');
         setSuccessMessage('Your ad has been posted successfully!');
         setTimeout(() => setSuccessMessage(null), 5000);
         setCurrentStep(1);
@@ -129,6 +131,7 @@ export default function PostAdPage() {
         mutate('products');
       } else {
         setSuccessMessage('Failed to post ad. Please try again later.');
+        toast.error('Failed to post ad. Please try again later.');
         setTimeout(() => setSuccessMessage(null), 5000);
       }
     } catch (err) {

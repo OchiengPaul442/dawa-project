@@ -9,6 +9,7 @@ import { FaLock, FaKey } from 'react-icons/fa';
 import Button from '@/components/shared/Button';
 import { resetPassword } from '@/app/server/auth/api';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 // Define form schema using yup
 const changePasswordSchema = yup.object().shape({
@@ -44,7 +45,6 @@ const ChangePasswordForm: React.FC = () => {
   });
 
   const router = useRouter();
-  const [apiError, setApiError] = useState<string | null>(null);
 
   // Retrieve the email from sessionStorage
   const [email, setEmail] = useState<string | null>(null);
@@ -61,12 +61,11 @@ const ChangePasswordForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<ChangePasswordFormInputs> = async (data) => {
     if (!email) {
-      setApiError(
+      toast.error(
         'Email is missing. Please try resetting your password again.',
       );
       return;
     }
-    setApiError(null);
     try {
       await resetPassword({
         email,
@@ -75,9 +74,10 @@ const ChangePasswordForm: React.FC = () => {
         confirm_password: data.confirm_password,
       });
       sessionStorage.removeItem('resetEmail');
+      toast.success('Password reset successfully!');
       router.push('/login');
     } catch (error: any) {
-      setApiError(error.message || 'Something went wrong. Please try again.');
+      toast.error(error.message || 'Something went wrong. Please try again.');
     }
   };
 
@@ -87,7 +87,7 @@ const ChangePasswordForm: React.FC = () => {
       <Controller
         name="otp"
         control={control}
-        defaultValue={0} // <-- Set default value as 0 (a number) to fix the type error
+        defaultValue={0} // Set default value as 0 to fix the type error
         render={({ field }) => (
           <InputField
             type="number"
@@ -133,11 +133,6 @@ const ChangePasswordForm: React.FC = () => {
           />
         )}
       />
-
-      {/* API Error Message */}
-      {apiError && (
-        <p className="text-red-500 text-sm text-center">{apiError}</p>
-      )}
 
       {/* Submit Button */}
       <Button

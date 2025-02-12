@@ -2,12 +2,12 @@
   {
     "id": 1,
     "category_name": "Vehicles",
-    "category_item_count": 4,
+    "category_item_count": 5,
     "subcategories": [
       {
         "id": 1,
         "subcategory_name": "Cars",
-        "subcategory_item_count": 4
+        "subcategory_item_count": 5
       },
       {
         "id": 2,
@@ -39,17 +39,17 @@
   {
     "id": 2,
     "category_name": "Property",
-    "category_item_count": 5,
+    "category_item_count": 7,
     "subcategories": [
       {
         "id": 7,
         "subcategory_name": "Houses & Apartments for Sale",
-        "subcategory_item_count": 2
+        "subcategory_item_count": 3
       },
       {
         "id": 8,
         "subcategory_name": "Houses & Apartments for Rent",
-        "subcategory_item_count": 2
+        "subcategory_item_count": 3
       },
       {
         "id": 9,
@@ -81,12 +81,12 @@
   {
     "id": 3,
     "category_name": "Phones & Tablets",
-    "category_item_count": 1,
+    "category_item_count": 2,
     "subcategories": [
       {
         "id": 14,
         "subcategory_name": "Mobile Phones",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 15,
@@ -224,17 +224,17 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 3,
+    "category_item_count": 5,
     "subcategories": [
       {
         "id": 37,
         "subcategory_name": "Clothing",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 38,
         "subcategory_name": "Shoes",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 39,
@@ -315,7 +315,7 @@
   {
     "id": 10,
     "category_name": "Services",
-    "category_item_count": 1,
+    "category_item_count": 2,
     "subcategories": [
       {
         "id": 50,
@@ -325,7 +325,7 @@
       {
         "id": 51,
         "subcategory_name": "Event Planning & Services",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 52,
@@ -443,12 +443,12 @@
   {
     "id": 14,
     "category_name": "Agriculture & Food",
-    "category_item_count": 4,
+    "category_item_count": 5,
     "subcategories": [
       {
         "id": 71,
         "subcategory_name": "Farm Machinery & Equipment",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 72,
@@ -554,7 +554,7 @@
   {
     "id": 17,
     "category_name": "Tours And Travel",
-    "category_item_count": 0,
+    "category_item_count": 1,
     "subcategories": [
       {
         "id": 91,
@@ -564,7 +564,7 @@
       {
         "id": 89,
         "subcategory_name": "Travel Agents & Services",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 90,
