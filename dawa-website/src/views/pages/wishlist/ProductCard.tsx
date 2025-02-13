@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const handleViewDetails = useCallback(() => {
     dispatch(setSelectedProduct(product.id as any));
     router.push(`/prod/${slugify(product.name)}`);
-  }, [router, product]);
+  }, [router, product, dispatch]);
 
   const handleRemoveFromWishlist = useCallback(() => {
     removeItem(product.id);
