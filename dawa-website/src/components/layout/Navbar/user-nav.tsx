@@ -20,6 +20,10 @@ import {
 import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
+import { useDispatch } from '@/redux-store/hooks';
+
+import { useAuth } from '@/@core/hooks/use-auth';
 
 const formatCount = (count: number) => {
   if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
@@ -33,6 +37,8 @@ export function UserNav({
   user: any;
   onLogout: () => void;
 }) {
+  const { user: currentUser } = useAuth();
+  const dispatch = useDispatch();
   // Use the wishlist context to get the count.
   const { wishlistCount } = useWishlist();
 
@@ -124,8 +130,15 @@ export function UserNav({
                 href="/my-shop"
                 className="cursor-pointer flex items-center"
               >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                <span>My Shop</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(setSelectedUserId(currentUser?.id as any));
+                  }}
+                >
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  <span>My Shop</span>
+                </button>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

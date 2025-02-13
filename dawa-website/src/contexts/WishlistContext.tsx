@@ -73,8 +73,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
           : [...prev, productId],
       );
 
-      console.info('productData', productData);
-
       globalMutate(
         'userWishlist',
         (existingData: Product[] = []) => {

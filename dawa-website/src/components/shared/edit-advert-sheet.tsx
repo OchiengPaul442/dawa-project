@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { AnimatePresence, motion } from 'framer-motion';
 import {
   Sheet,
   SheetContent,
@@ -39,6 +38,7 @@ import { Separator } from '@/components/ui/separator';
 import { ImageSkeleton } from './ImageSkeleton';
 import { LocationDialog } from '@/components/dialogs/location-dialog';
 import { locations } from '@/data/locations';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface EditAdvertSheetProps {
   isOpen: boolean;
@@ -85,6 +85,25 @@ export function EditAdvertSheet({
 
   const categories = useSelector(selectCategories);
 
+  // Whenever the incoming "item" changes, update the form state.
+  useEffect(() => {
+    setFormData({
+      item_id: item.id,
+      item_name: item.name,
+      item_price: item.price,
+      item_subcategory: item.subcategory_id
+        ? Number(item.subcategory_id)
+        : null,
+      item_description: item.description,
+      item_location: item.location,
+      item_negotiable: item.item_negotiable,
+      item_status: item.status || 'Available',
+    });
+    setImages(item.images || []);
+    setNewImages([]);
+    setErrors({});
+  }, [item]);
+
   // Store the initial form data to compare later for changes.
   const initialFormDataRef = useRef<FormDataState>(formData);
   useEffect(() => {
@@ -102,39 +121,11 @@ export function EditAdvertSheet({
     };
   }, [item]);
 
-  // If no subcategory is selected yet, try to find a match from the provided item.subcategory
-  useEffect(() => {
-    if (
-      !formData.item_subcategory &&
-      item.subcategory &&
-      Array.isArray(categories) &&
-      categories.length > 0
-    ) {
-      for (const category of categories) {
-        if (category.subcategories && category.subcategories.length > 0) {
-          const match = category.subcategories.find(
-            (sub: { id: string; subcategory_name: string }) =>
-              sub.subcategory_name.toLowerCase() ===
-              item.subcategory.toLowerCase(),
-          );
-          if (match) {
-            setFormData((prev) => ({
-              ...prev,
-              item_subcategory: Number(match.id),
-            }));
-            break;
-          }
-        }
-      }
-    }
-  }, [item.subcategory, formData.item_subcategory, categories]);
-
   // Simulate image loading delay (e.g. for a skeleton)
   useEffect(() => {
     const timer = setTimeout(() => {
       setImagesLoading(false);
-    }, 1500); // Adjust delay as needed
-
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -161,7 +152,6 @@ export function EditAdvertSheet({
     }
   };
 
-  // Handler for location selection from LocationDialog
   const handleLocationSelect = (location: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -172,18 +162,15 @@ export function EditAdvertSheet({
     }
   };
 
-  // Open delete dialog for selected image
   const handleDeleteImage = (imageId: number) => {
     setImageToDelete(imageId);
     setIsDeleteDialogOpen(true);
   };
 
-  // Confirm deletion of an image using the useDeleteItemImage hook.
   const confirmDeleteImage = async () => {
     if (imageToDelete) {
       try {
         await deleteItemImage({ image_id: imageToDelete });
-        // Remove the deleted image from the images state:
         setImages((prevImages: any) =>
           prevImages.filter((img: any) => img.image_id !== imageToDelete),
         );
@@ -220,13 +207,9 @@ export function EditAdvertSheet({
     }
 
     try {
-      // Compare current form data with the initial values
       const initial = initialFormDataRef.current;
       const changedFields: Partial<FormDataState> = {};
-
-      // Always include the item_id for the API
       changedFields.item_id = formData.item_id;
-
       if (formData.item_name !== initial.item_name) {
         changedFields.item_name = formData.item_name;
       }
@@ -249,7 +232,6 @@ export function EditAdvertSheet({
         changedFields.item_status = formData.item_status;
       }
 
-      // Prepare FormData with only changed fields
       const form = new FormData();
       Object.entries(changedFields).forEach(([key, value]) => {
         if (typeof value === 'boolean') {
@@ -258,8 +240,6 @@ export function EditAdvertSheet({
           form.append(key, value?.toString() || '');
         }
       });
-
-      // Always include any new images under the "images" field
       newImages.forEach((file) => {
         form.append('images', file);
       });
@@ -286,7 +266,6 @@ export function EditAdvertSheet({
           <ScrollArea className="h-full px-6">
             <SheetHeader className="sticky w-full top-0 z-10 bg-background pt-6 pb-4">
               <SheetTitle>Edit Advert</SheetTitle>
-              {/* Explicit close button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -297,8 +276,7 @@ export function EditAdvertSheet({
                 <X className="h-5 w-5" />
               </Button>
               <SheetDescription className="mt-1 text-sm text-gray-600">
-                Make changes to your advert here. Click save when you&apos;re
-                done.
+                Make changes to your advert here. Click save when you're done.
               </SheetDescription>
               <Separator className="mt-4" />
             </SheetHeader>
@@ -345,7 +323,6 @@ export function EditAdvertSheet({
                   required
                 />
 
-                {/* New status select field */}
                 <SelectField
                   id="item_status"
                   label="Status"
@@ -437,7 +414,6 @@ export function EditAdvertSheet({
         </SheetContent>
       </Sheet>
 
-      {/* Alert dialog for image deletion */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}

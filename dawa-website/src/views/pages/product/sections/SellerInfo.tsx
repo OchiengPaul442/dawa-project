@@ -5,6 +5,8 @@ import CustomImage from '@/components/shared/CustomImage';
 import { SellerType } from '@/types/product';
 import { Star } from 'lucide-react';
 import Link from 'next/link';
+import { useDispatch } from '@/redux-store/hooks';
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 
 function getValidImageUrl(
   url: string | null | undefined,
@@ -25,6 +27,7 @@ interface SellerInfoProps {
 }
 
 export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
+  const dispatch = useDispatch();
   // Initialize the image source using the helper function.
   const initialSrc = getValidImageUrl(
     seller.seller_profile_picture,
@@ -70,8 +73,17 @@ export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
             ({reviews.length} review{reviews.length > 1 && 's'})
           </span>
         </div>
+
         <Link href="/my-shop">
-          <Button variant="outline" size="sm" className="text-primary_1">
+          <Button
+            type="button"
+            onClick={() => {
+              dispatch(setSelectedUserId(seller?.seller_id as any));
+            }}
+            variant="outline"
+            size="sm"
+            className="text-primary_1"
+          >
             <FaStore className="mr-2" /> View Store
           </Button>
         </Link>

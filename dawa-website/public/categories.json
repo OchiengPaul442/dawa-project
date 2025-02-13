@@ -39,7 +39,7 @@
   {
     "id": 2,
     "category_name": "Property",
-    "category_item_count": 7,
+    "category_item_count": 8,
     "subcategories": [
       {
         "id": 7,
@@ -54,7 +54,7 @@
       {
         "id": 9,
         "subcategory_name": "Land & Plots for Sale",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 10,
@@ -81,12 +81,12 @@
   {
     "id": 3,
     "category_name": "Phones & Tablets",
-    "category_item_count": 2,
+    "category_item_count": 4,
     "subcategories": [
       {
         "id": 14,
         "subcategory_name": "Mobile Phones",
-        "subcategory_item_count": 2
+        "subcategory_item_count": 4
       },
       {
         "id": 15,
@@ -108,7 +108,7 @@
   {
     "id": 4,
     "category_name": "Electronics",
-    "category_item_count": 1,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 18,
@@ -118,7 +118,7 @@
       {
         "id": 19,
         "subcategory_name": "Audio & Music Equipment",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 20,
@@ -128,7 +128,7 @@
       {
         "id": 21,
         "subcategory_name": "Computer Accessories",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 22,
@@ -150,7 +150,7 @@
   {
     "id": 5,
     "category_name": "Home, Appliances & Furniture",
-    "category_item_count": 3,
+    "category_item_count": 4,
     "subcategories": [
       {
         "id": 25,
@@ -170,7 +170,7 @@
       {
         "id": 28,
         "subcategory_name": "Home Accessories",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 29,
@@ -224,7 +224,7 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 5,
+    "category_item_count": 7,
     "subcategories": [
       {
         "id": 37,
@@ -234,7 +234,7 @@
       {
         "id": 38,
         "subcategory_name": "Shoes",
-        "subcategory_item_count": 2
+        "subcategory_item_count": 3
       },
       {
         "id": 39,
@@ -254,19 +254,19 @@
       {
         "id": 42,
         "subcategory_name": "Other Fashion",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       }
     ]
   },
   {
     "id": 8,
     "category_name": "Sports, Arts & Outdoors",
-    "category_item_count": 1,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 43,
         "subcategory_name": "Sports Equipment",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 3
       },
       {
         "id": 44,
@@ -315,7 +315,7 @@
   {
     "id": 10,
     "category_name": "Services",
-    "category_item_count": 2,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 50,
@@ -345,7 +345,7 @@
       {
         "id": 62,
         "subcategory_name": "Other Services",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       }
     ]
   },
@@ -517,7 +517,7 @@
   {
     "id": 16,
     "category_name": "Repair & Construction",
-    "category_item_count": 2,
+    "category_item_count": 3,
     "subcategories": [
       {
         "id": 83,
@@ -547,7 +547,7 @@
       {
         "id": 88,
         "subcategory_name": "Other Repair & Construction",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       }
     ]
   },

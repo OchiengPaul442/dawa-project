@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency } from '@/utils/CurrencyFormatter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { EditAdvertSheet } from './edit-advert-sheet';
+import { EditAdvertSheet } from '../../../../components/shared/edit-advert-sheet';
 import Link from 'next/link';
 import CustomPagination from '@/components/shared/CustomPagination';
 import { AdvertCard } from './AdvertCard';

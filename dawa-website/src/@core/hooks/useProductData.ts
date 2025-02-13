@@ -12,6 +12,7 @@ import {
   updateProduct,
   deleteProductImage,
 } from '@/app/server/products/api';
+import { getShopData } from '@/app/server/my-shop/api';
 import {
   fetchUserProfile,
   updateUserProfile,
@@ -261,5 +262,20 @@ export const useDeleteItemImage = () => {
     data,
     error,
     isMutating,
+  };
+};
+
+export const useShopData = (userId: any | null) => {
+  const { data, error, isLoading, mutate } = useSWR<any>(
+    userId ? [`/getshopprofile`, userId] : null,
+    () => getShopData('/getshopprofile/', { user_id: userId }),
+    swrOptions,
+  );
+
+  return {
+    shopData: data?.data || null,
+    isLoading,
+    isError: error,
+    mutate,
   };
 };

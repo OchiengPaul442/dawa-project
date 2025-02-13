@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 import ImportedProductCard from './GridCardLayout';
 import ListLayout from './ListCardLayout';
 import { SimilarItem } from '@/types/product';
@@ -8,24 +8,37 @@ import { SimilarItem } from '@/types/product';
 interface CardLayoutProps {
   product: SimilarItem;
   viewType: 'grid' | 'list';
+  onEdit?: (product: SimilarItem) => void;
+  isAdmin?: boolean;
 }
 
-// 1) Extract the prop types from the imported grid card
 type ProductCardPropsType = React.ComponentProps<typeof ImportedProductCard>;
-
-// 2) Re-assign to maintain correct prop types for the grid card
 const ProductCard = ImportedProductCard as React.FC<ProductCardPropsType>;
 
-const CardLayout: React.FC<CardLayoutProps> = ({ product, viewType }) => {
-  // Prepare a common object for both layouts
-  const transformedProduct = {
-    ...product,
-  };
+const CardLayout: React.FC<CardLayoutProps> = ({
+  product,
+  viewType,
+  onEdit,
+  isAdmin = false,
+}) => {
+  const transformedProduct = { ...product };
 
   if (viewType === 'grid') {
-    return <ProductCard product={transformedProduct} />;
+    return (
+      <ProductCard
+        product={transformedProduct}
+        onEdit={onEdit}
+        isAdmin={isAdmin}
+      />
+    );
   } else {
-    return <ListLayout product={transformedProduct} />;
+    return (
+      <ListLayout
+        product={transformedProduct}
+        onEdit={onEdit}
+        isAdmin={isAdmin}
+      />
+    );
   }
 };
 
