@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import CustomImage from '@/components/shared/CustomImage';
 import { SellerType } from '@/types/product';
 import { Star } from 'lucide-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';
 import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 
@@ -27,6 +27,7 @@ interface SellerInfoProps {
 }
 
 export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
+  const router = useRouter();
   const dispatch = useDispatch();
   // Initialize the image source using the helper function.
   const initialSrc = getValidImageUrl(
@@ -74,19 +75,18 @@ export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
           </span>
         </div>
 
-        <Link href="/my-shop">
-          <Button
-            type="button"
-            onClick={() => {
-              dispatch(setSelectedUserId(seller?.seller_id as any));
-            }}
-            variant="outline"
-            size="sm"
-            className="text-primary_1"
-          >
-            <FaStore className="mr-2" /> View Store
-          </Button>
-        </Link>
+        <Button
+          type="button"
+          onClick={() => {
+            dispatch(setSelectedUserId(seller?.seller_id as any));
+            router.push('/my-shop');
+          }}
+          variant="outline"
+          size="sm"
+          className="text-primary_1"
+        >
+          <FaStore className="mr-2" /> View Store
+        </Button>
       </div>
     </div>
   );
