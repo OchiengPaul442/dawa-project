@@ -126,17 +126,15 @@ export function UserNav({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link
-                href="/my-shop"
-                className="cursor-pointer flex items-center"
-              >
+              <Link href="/my-shop">
                 <button
                   type="button"
+                  className="cursor-pointer flex items-center"
                   onClick={() => {
                     dispatch(setSelectedUserId(currentUser?.id as any));
                   }}
                 >
-                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  <ShoppingCart className="mr-4 h-4 w-4" />
                   <span>My Shop</span>
                 </button>
               </Link>
