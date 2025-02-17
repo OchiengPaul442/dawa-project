@@ -224,12 +224,12 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 7,
+    "category_item_count": 8,
     "subcategories": [
       {
         "id": 37,
         "subcategory_name": "Clothing",
-        "subcategory_item_count": 2
+        "subcategory_item_count": 3
       },
       {
         "id": 38,
@@ -517,7 +517,7 @@
   {
     "id": 16,
     "category_name": "Repair & Construction",
-    "category_item_count": 3,
+    "category_item_count": 4,
     "subcategories": [
       {
         "id": 83,
@@ -547,7 +547,7 @@
       {
         "id": 88,
         "subcategory_name": "Other Repair & Construction",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       }
     ]
   },
