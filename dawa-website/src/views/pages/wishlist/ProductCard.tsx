@@ -1,4 +1,3 @@
-// src/components/shared/ProductCard.tsx
 'use client';
 
 import React, { useCallback } from 'react';
@@ -13,15 +12,23 @@ import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
 import { formatDate } from '@/utils/dateFormatter';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
+import { encrypt } from '@/utils/crypto';
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();
-
   const dispatch = useDispatch();
   const { removeItem } = useWishlist();
 
+  // Create the encrypted share URL
+  const createShareUrl = useCallback((): string => {
+    // Convert product.id to string if needed
+    const encryptedId = encrypt(String(product.id));
+    // Build the URL using window.location.origin (this runs on client)
+    return `${window.location.origin}/prod?p=${encodeURIComponent(encryptedId)}`;
+  }, [product.id]);
+
   const handleShare = useCallback(() => {
-    const url = window.location.href;
+    const url = createShareUrl();
     if (navigator.share) {
       navigator
         .share({
@@ -36,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
         .then(() => alert('Link copied to clipboard!'))
         .catch((error) => console.error('Error copying link', error));
     }
-  }, [product]);
+  }, [createShareUrl, product.name, product.description]);
 
   const handleViewDetails = useCallback(() => {
     dispatch(setSelectedProduct(product.id as any));
