@@ -73,7 +73,6 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
           ? prev.filter((id) => id !== productId)
           : [...prev, productId],
       );
-
       globalMutate(
         'userWishlist',
         (existingData: Product[] = []) => {

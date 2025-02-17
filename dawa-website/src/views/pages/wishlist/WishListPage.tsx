@@ -1,4 +1,3 @@
-// src/app/wishlist/WishlistPage.tsx
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';

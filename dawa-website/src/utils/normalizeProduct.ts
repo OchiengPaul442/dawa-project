@@ -1,4 +1,3 @@
-// src/utils/normalizeProduct.ts
 import type { Product } from '@/types/wishList';
 
 export const normalizeProduct = (item: any): Product => ({
@@ -16,7 +15,7 @@ export const normalizeProduct = (item: any): Product => ({
       : ''),
   rating: item.rating || 0,
   orders: item.orders || 0,
-  // Use created_at or location (if location holds a date string)
-  dateAdded: item.created_at || item.location || '',
+  // Only use created_at since location is not a date.
+  dateAdded: item.created_at || '',
   description: item.description || item.item_description || '',
 });

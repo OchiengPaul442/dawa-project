@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { Trash2, ExternalLink, Share2 } from 'lucide-react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { useRouter } from 'next/navigation';
 import { slugify } from '@/utils/slugify';
@@ -53,7 +53,6 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const handleRemoveFromWishlist = useCallback(() => {
     removeItem(product.id);
   }, [removeItem, product.id]);
-
   return (
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-2 sm:p-4">
