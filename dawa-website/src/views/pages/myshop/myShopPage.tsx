@@ -16,7 +16,6 @@ const MyShop: React.FC = () => {
   const dispatch = useDispatch();
   const selectedUserId = useSelector((state: any) => state.myShop.userId);
   const { shopData, isLoading, isError } = useShopData(selectedUserId);
-  console.info(shopData);
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [filterOption, setFilterOption] = useState<FilterOption>('default');
