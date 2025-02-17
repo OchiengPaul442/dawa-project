@@ -3,11 +3,11 @@
 import React, { useState, useCallback } from 'react';
 
 import { useTrendingProducts } from '@core/hooks/useProductData';
-import { toggleWishlistItem } from '@/app/server/wishList/api';
 import ProductCard from '@/components/ProductCards/GridCardLayout';
 import CustomPagination from '@/components/shared/CustomPagination';
-import Loader from '@/components/Loader';
 import { SimilarItem } from '@/types/product';
+import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
+import { OopsComponent } from '@/components/shared/oops-component';
 
 const ITEMS_PER_PAGE = 16;
 
@@ -24,11 +24,25 @@ const ProductPage: React.FC = () => {
   //   LOADING / ERROR   //
   //=====================//
   if (isLoading) {
-    return <Loader />;
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-primary_1">
+          Trending Products
+        </h2>
+        <ProductCardSkeleton ITEMS_PER_PAGE={ITEMS_PER_PAGE} />
+      </div>
+    );
   }
 
   if (isError) {
-    return <div className="text-red-500">Failed to load products.</div>;
+    return (
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-primary_1">
+          Trending Products
+        </h2>
+        <OopsComponent />
+      </div>
+    );
   }
 
   //=====================//

@@ -8,6 +8,7 @@ import Button from '@/components/shared/Button';
 import { useWishlist } from '@/contexts/WishlistContext';
 import type { Product } from '@/types/wishList';
 import { normalizeProduct } from '@/utils/normalizeProduct';
+import CustomizableNoData from '@/components/shared/no-data';
 
 const WishlistPage = () => {
   const { rawWishlist, isLoading } = useWishlist();
@@ -66,9 +67,10 @@ const WishlistPage = () => {
       )}
 
       {!isLoading && sortedProducts.length === 0 && (
-        <div className="flex justify-center mt-8">
-          <p className="text-gray-500">Your wishlist is empty.</p>
-        </div>
+        <CustomizableNoData
+          title="No products found."
+          description="You don't have any products in your wishlist yet."
+        />
       )}
     </>
   );

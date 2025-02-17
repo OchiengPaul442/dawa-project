@@ -9,7 +9,6 @@ import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
 import CustomPagination from '@/components/shared/CustomPagination';
-import Loader from '@/components/Loader';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 import { slugify } from '@/utils/slugify';
@@ -29,6 +28,8 @@ import {
 import { Button } from '@/components/ui/button';
 
 import type { Category, Subcategory } from '@/types/category';
+import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
+import CustomizableNoData from '@/components/shared/no-data';
 
 type FilterOptionType =
   | 'default'
@@ -280,6 +281,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
         {/* Main Content */}
         <main className="lg:col-span-3">
           <div className="space-y-6">
+            {/* Filters and sorting controls */}
             <FiltersAndSorting
               category={category}
               viewType={viewType}
@@ -288,30 +290,36 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               handleFilterChange={handleFilterChange}
             />
 
+            {/* Loading State */}
             {isLoading ? (
-              <Loader />
+              <ProductCardSkeleton ITEMS_PER_PAGE={16} />
             ) : (
-              <div
-                className={
-                  viewType === 'grid'
-                    ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6'
-                    : 'flex flex-col gap-4'
-                }
-              >
+              <>
+                {/* Check if there are any products */}
                 {paginatedProducts.length > 0 ? (
-                  paginatedProducts.map((product) => (
-                    <CardLayout
-                      key={product.id}
-                      product={product}
-                      viewType={viewType}
-                    />
-                  ))
+                  // Apply grid or list layout only to the product cards
+                  <div
+                    className={
+                      viewType === 'grid'
+                        ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6'
+                        : 'flex flex-col gap-4'
+                    }
+                  >
+                    {paginatedProducts.map((product) => (
+                      <CardLayout
+                        key={product.id}
+                        product={product}
+                        viewType={viewType}
+                      />
+                    ))}
+                  </div>
                 ) : (
-                  <p className="text-center text-gray-500 w-full col-span-full">
-                    No products found matching the selected filters.
-                  </p>
+                  <CustomizableNoData
+                    title="No products found"
+                    description="No products found matching the selected filters."
+                  />
                 )}
-              </div>
+              </>
             )}
           </div>
 
