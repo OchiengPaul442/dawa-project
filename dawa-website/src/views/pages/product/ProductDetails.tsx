@@ -117,7 +117,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
             {/* Product tabs and share section */}
             <div className="w-full flex flex-col gap-10">
-              <ShareSection title={product.name} />
+              <ShareSection productId={product.id} title={product.name} />
               <ProductTabs product={product} />
             </div>
 

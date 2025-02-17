@@ -7,6 +7,8 @@ import { ProductDetails } from './ProductDetails';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ProductSkeleton from './product-skeleton';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { decrypt } from '@/utils/crypto';
 
 interface ProdPageProps {
   params: { slug: string[] };
@@ -17,8 +19,15 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
   const selectedProductId = useSelector(
     (state) => state.product.selectedProductId,
   );
+  const searchParams = useSearchParams();
+  const encryptedId = searchParams.get('p');
+  const productIdFromQuery = encryptedId ? decrypt(encryptedId) : null;
+
+  // Use the product ID from Redux if available, otherwise from the query string.
+  const effectiveProductId = productIdFromQuery || selectedProductId;
+
   const { productData, isLoading, isError } =
-    useProductDetails(selectedProductId);
+    useProductDetails(effectiveProductId);
 
   if (isLoading) return <ProductSkeleton />;
 
@@ -32,7 +41,8 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
     );
   }
 
-  if (!productData || slug.length === 0) {
+  // Remove the slug check; if productData exists, render it.
+  if (!productData) {
     return (
       <div className="text-center">
         <p className="text-gray-500">

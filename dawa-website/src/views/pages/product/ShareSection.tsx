@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   FaLinkedin,
@@ -6,68 +8,86 @@ import {
   FaLink,
   FaXTwitter,
 } from 'react-icons/fa6';
+import { toast } from 'sonner';
+import { encrypt } from '@/utils/crypto';
 
 interface ShareSectionProps {
+  productId: string;
   url?: string;
   title: string;
   description?: string;
 }
 
 const ShareSection: React.FC<ShareSectionProps> = ({
-  url = window.location.href,
-  title = document.title,
+  productId,
+  url,
+  title,
   description = '',
 }) => {
+  // Encrypt the productId.
+  const encryptedId = encrypt(productId);
+
+  // Build a base share URL. If an external URL is not provided,
+  // use the current origin with a query parameter "p" containing the encrypted productId.
+  const baseShareUrl =
+    url ||
+    (typeof window !== 'undefined'
+      ? `${window.location.origin}/prod?p=${encodeURIComponent(encryptedId)}`
+      : '');
+
+  // Define the share links for various platforms.
   const shareLinks = [
     {
       name: 'LinkedIn',
       icon: FaLinkedin,
-      color: 'blue',
       bgColor: 'bg-blue-100',
       hoverBgColor: 'hover:bg-blue-200',
       textColor: 'text-blue-600',
       getShareUrl: () =>
-        `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+        `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+          baseShareUrl,
+        )}`,
     },
     {
-      name: 'X', // Updated name
-      icon: FaXTwitter, // Updated icon
-      color: 'neutral', // Updated color scheme for X
-      bgColor: 'bg-gray-100', // Changed to a neutral gray
+      name: 'X',
+      icon: FaXTwitter,
+      bgColor: 'bg-gray-100',
       hoverBgColor: 'hover:bg-gray-200',
-      textColor: 'text-black', // X uses black as its primary color
+      textColor: 'text-black',
       getShareUrl: () =>
-        `https://x.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+        `https://x.com/intent/tweet?text=${encodeURIComponent(
+          title,
+        )}&url=${encodeURIComponent(baseShareUrl)}`,
     },
     {
       name: 'Facebook',
       icon: FaFacebook,
-      color: 'blue',
       bgColor: 'bg-blue-100',
       hoverBgColor: 'hover:bg-blue-200',
       textColor: 'text-blue-700',
       getShareUrl: () =>
-        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          baseShareUrl,
+        )}`,
     },
     {
       name: 'WhatsApp',
       icon: FaWhatsapp,
-      color: 'green',
       bgColor: 'bg-green-100',
       hoverBgColor: 'hover:bg-green-200',
       textColor: 'text-green-500',
       getShareUrl: () =>
-        `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
+        `https://wa.me/?text=${encodeURIComponent(`${title} ${baseShareUrl}`)}`,
     },
   ];
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard!');
+      await navigator.clipboard.writeText(baseShareUrl);
+      toast.success('Link copied to clipboard!');
     } catch (err) {
       console.error('Failed to copy link:', err);
-      alert('Failed to copy link to clipboard');
+      toast.error('Failed to copy link to clipboard');
     }
   };
 
@@ -78,7 +98,6 @@ const ShareSection: React.FC<ShareSectionProps> = ({
   return (
     <div className="mt-10 flex items-center space-x-4">
       <span className="font-bold text-gray-800">Share:</span>
-
       {shareLinks.map((platform) => {
         const Icon = platform.icon;
         return (
@@ -92,7 +111,6 @@ const ShareSection: React.FC<ShareSectionProps> = ({
           </button>
         );
       })}
-
       <button
         onClick={handleCopyLink}
         className="w-10 h-10 flex items-center justify-center bg-orange-100 hover:bg-orange-200 rounded-xl transition duration-300"

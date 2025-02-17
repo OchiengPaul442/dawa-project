@@ -39,6 +39,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.7",
     "embla-carousel-autoplay": "^8.5.1",
@@ -74,6 +75,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
+    "@types/crypto-js": "^4.2.2",
     "@types/jest": "^29.5.14",
     "@types/jwt-decode": "^3.1.0",
     "@types/node": "^22.10.7",
