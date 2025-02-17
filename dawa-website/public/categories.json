@@ -224,12 +224,12 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 8,
+    "category_item_count": 9,
     "subcategories": [
       {
         "id": 37,
         "subcategory_name": "Clothing",
-        "subcategory_item_count": 3
+        "subcategory_item_count": 4
       },
       {
         "id": 38,

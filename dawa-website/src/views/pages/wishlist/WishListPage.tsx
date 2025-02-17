@@ -7,6 +7,7 @@ import ProductList from './ProductList';
 import Button from '@/components/shared/Button';
 import { useWishlist } from '@/contexts/WishlistContext';
 import type { Product } from '@/types/wishList';
+import { normalizeProduct } from '@/utils/normalizeProduct';
 
 const WishlistPage = () => {
   const { rawWishlist, isLoading } = useWishlist();
@@ -14,21 +15,9 @@ const WishlistPage = () => {
   const [sortBy, setSortBy] = useState<string>('date-added');
   const [visibleProducts, setVisibleProducts] = useState<number>(10);
 
-  // Map raw wishlist data (assumed to be Product objects) to our local array.
-  // If the API data already matches the Product type, this mapping may be trivial.
+  // Normalize each item in rawWishlist.
   const products: Product[] = useMemo(() => {
-    return rawWishlist.map((item: any) => ({
-      id: item.id,
-      name: item.item_name,
-      price: item.item_price, // Assumed to be string; convert if needed.
-      originalPrice: item.original_price ? item.original_price : '0',
-      discount: 0,
-      image: item.images?.[0]?.image || '',
-      rating: item.rating || 0,
-      orders: item.orders || 0,
-      dateAdded: item.created_at,
-      description: item.item_description,
-    }));
+    return rawWishlist.map(normalizeProduct);
   }, [rawWishlist]);
 
   const sortedProducts: Product[] = useMemo(() => {

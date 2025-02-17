@@ -14,6 +14,7 @@ import { getUserWishList, toggleWishlistItem } from '@/app/server/wishList/api';
 import { swrOptions } from '@core/swrConfig';
 import { useAuth } from '@core/hooks/use-auth';
 import type { Product } from '@/types/wishList';
+import { normalizeProduct } from '@/utils/normalizeProduct';
 
 interface WishlistContextProps {
   rawWishlist: Product[];
@@ -80,17 +81,20 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
           if (currentlyInWishlist) {
             return existingData.filter((item) => item.id !== productId);
           } else {
+            // Normalize the productData here.
             const newItem = productData
-              ? productData
+              ? normalizeProduct(productData)
               : {
                   id: productId,
                   name: '',
                   price: '',
-                  image: '',
-                  dateAdded: '',
                   originalPrice: '0',
                   discount: 0,
+                  image: '',
+                  rating: 0,
                   orders: 0,
+                  dateAdded: new Date().toISOString(),
+                  description: '',
                 };
             return [...existingData, newItem];
           }
