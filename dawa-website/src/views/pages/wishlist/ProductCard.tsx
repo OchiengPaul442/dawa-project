@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
-import { Trash2, ExternalLink, Share2 } from 'lucide-react';
+import { Trash2, ExternalLink, Share2, CalendarDays } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { useRouter } from 'next/navigation';
@@ -102,8 +102,9 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
 
             {/* Date & Pricing */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm">
-              <span className="text-gray-500 text-xs sm:text-sm">
-                Added {formatDate(product.dateAdded)}
+              <span className="text-sm text-gray-500 flex items-center">
+                <CalendarDays className="w-4 h-4 mr-1" />
+                Posted {formatDate(product.dateAdded)}
               </span>
             </div>
 
