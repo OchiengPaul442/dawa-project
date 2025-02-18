@@ -49,7 +49,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({ similarItems }) => {
           <span className="sr-only">View all similar products</span>
         </Button>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {renderedItems}
       </div>
     </div>

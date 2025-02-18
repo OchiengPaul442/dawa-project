@@ -16,6 +16,6 @@ export const normalizeProduct = (item: any): Product => ({
   rating: item.rating || 0,
   orders: item.orders || 0,
   // Only use created_at since location is not a date.
-  dateAdded: item.created_at || '',
+  dateAdded: item.created_at || item.dateAdded || '',
   description: item.description || item.item_description || '',
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState, memo } from 'react';
 import Image from 'next/image';
 import {
   ChevronLeft,
@@ -8,7 +8,6 @@ import {
   Expand,
   ZoomIn,
   ZoomOut,
-  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -24,29 +23,73 @@ interface ImageCarouselProps {
   images: ImageType[];
 }
 
+// Navigation buttons component for reuse.
+interface NavigationButtonsProps {
+  onPrevious: () => void;
+  onNext: () => void;
+  leftButtonClasses?: string;
+  rightButtonClasses?: string;
+  iconSize?: 'small' | 'large';
+}
+
+const NavigationButtons: React.FC<NavigationButtonsProps> = memo(
+  ({
+    onPrevious,
+    onNext,
+    leftButtonClasses = '',
+    rightButtonClasses = '',
+    iconSize = 'small',
+  }) => {
+    const iconClass = iconSize === 'small' ? 'h-4 w-4' : 'h-6 w-6';
+    return (
+      <>
+        <Button
+          variant="secondary"
+          size="icon"
+          className={`absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg ${leftButtonClasses}`}
+          onClick={onPrevious}
+          aria-label="Previous image"
+        >
+          <ChevronLeft className={iconClass} />
+          <VisuallyHidden>Previous image</VisuallyHidden>
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          className={`absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg ${rightButtonClasses}`}
+          onClick={onNext}
+          aria-label="Next image"
+        >
+          <ChevronRight className={iconClass} />
+          <VisuallyHidden>Next image</VisuallyHidden>
+        </Button>
+      </>
+    );
+  },
+);
+
+NavigationButtons.displayName = 'NavigationButtons';
+
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [showFullscreen, setShowFullscreen] = useState(false);
 
-  // Safely get current image
+  // Safely retrieve the current image.
   const currentImage = images[currentIndex] || images[0];
 
-  const handlePrevious = () => {
-    setCurrentIndex((current) =>
-      current === 0 ? images.length - 1 : current - 1,
-    );
-  };
+  // Memoize navigation callbacks.
+  const handlePrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [images.length]);
 
-  const handleNext = () => {
-    setCurrentIndex((current) =>
-      current === images.length - 1 ? 0 : current + 1,
-    );
-  };
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [images.length]);
 
-  const toggleZoom = () => {
-    setIsZoomed(!isZoomed);
-  };
+  const toggleZoom = useCallback(() => {
+    setIsZoomed((prev) => !prev);
+  }, []);
 
   if (!images || images.length === 0) {
     return (
@@ -81,35 +124,20 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
           {/* Navigation Controls */}
           {images.length > 1 && (
-            <>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
-                onClick={handlePrevious}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <VisuallyHidden>Previous image</VisuallyHidden>
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
-                onClick={handleNext}
-              >
-                <ChevronRight className="h-4 w-4" />
-                <VisuallyHidden>Next image</VisuallyHidden>
-              </Button>
-            </>
+            <NavigationButtons
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+            />
           )}
 
-          {/* Controls */}
+          {/* Action Controls */}
           <div className="absolute bottom-4 left-4 flex items-center gap-2">
             <Button
               variant="secondary"
               size="icon"
               className="bg-white/80 hover:bg-white shadow-lg"
               onClick={toggleZoom}
+              aria-label={isZoomed ? 'Zoom out' : 'Zoom in'}
             >
               {isZoomed ? (
                 <ZoomOut className="h-4 w-4" />
@@ -125,6 +153,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               size="icon"
               className="bg-white/80 hover:bg-white shadow-lg"
               onClick={() => setShowFullscreen(true)}
+              aria-label="View fullscreen"
             >
               <Expand className="h-4 w-4" />
               <VisuallyHidden>View fullscreen</VisuallyHidden>
@@ -146,21 +175,21 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               key={image.image_id}
               onClick={() => setCurrentIndex(index)}
               className={`
-                relative aspect-square rounded-lg overflow-hidden
-                transition-all duration-200
+                relative aspect-square rounded-lg overflow-hidden transition-all duration-200
                 ${
                   currentIndex === index
                     ? 'ring-2 ring-primary ring-offset-2'
                     : 'hover:ring-2 hover:ring-primary/50 hover:ring-offset-1'
                 }
               `}
+              aria-label={`View image ${index + 1}`}
             >
               <Image
                 src={image.image_url || '/placeholder.svg'}
                 alt={`Thumbnail ${index + 1}`}
                 fill
                 className={`
-                  object-cover
+                  object-cover 
                   ${currentIndex === index ? 'opacity-100' : 'opacity-70 hover:opacity-100'}
                 `}
                 sizes="(max-width: 768px) 20vw, 10vw"
@@ -182,37 +211,13 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               className="object-contain"
               priority
             />
-            <Button
-              variant="secondary"
-              size="icon"
-              className="absolute top-4 right-4 bg-white/80 hover:bg-white shadow-lg"
-              onClick={() => setShowFullscreen(false)}
-            >
-              <X className="h-4 w-4" />
-              <VisuallyHidden>Close fullscreen view</VisuallyHidden>
-            </Button>
 
             {images.length > 1 && (
-              <>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
-                  onClick={handlePrevious}
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                  <VisuallyHidden>Previous image</VisuallyHidden>
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
-                  onClick={handleNext}
-                >
-                  <ChevronRight className="h-6 w-6" />
-                  <VisuallyHidden>Next image</VisuallyHidden>
-                </Button>
-              </>
+              <NavigationButtons
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                iconSize="large"
+              />
             )}
           </div>
         </DialogContent>

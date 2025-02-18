@@ -39,7 +39,7 @@ const MobileNav: React.FC<any> = ({
 
   return (
     <motion.div
-      className="lg:hidden bg-white shadow-md"
+      className="md:hidden bg-white shadow-md"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
