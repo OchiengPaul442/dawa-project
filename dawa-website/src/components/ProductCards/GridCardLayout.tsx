@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
-import { useRouter } from 'next/navigation';
 import { slugify } from '@/utils/slugify';
 import { LikeButton } from '@/components/shared/LikeButton';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
@@ -27,19 +27,25 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(
   ({ product, onEdit, isAdmin = false }) => {
-    const router = useRouter();
     const dispatch = useDispatch();
-
-    const handleCardClick = useCallback(() => {
-      dispatch(setSelectedProduct(product.id as any));
-      router.push(`/prod/${slugify(product.name)}`);
-    }, [router, dispatch, product.id, product.name]);
-
+    const router = useRouter();
     const image = product.images[0]?.image_url || '';
 
-    const handleEditClick = (e: React.MouseEvent) => {
+    // Click on the card navigates to the product page after storing the product ID.
+    const handleCardClick = () => {
+      dispatch(setSelectedProduct(product.id as any));
+      router.push(`/prod/${slugify(product.name)}`);
+    };
+
+    // Clicking the edit button should not trigger navigation.
+    const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       onEdit && onEdit(product);
+    };
+
+    // Clicking the like button should not trigger navigation.
+    const handleLikeClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
     };
 
     return (
@@ -65,7 +71,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
                         variant="ghost"
                         size="icon"
                         onClick={handleEditClick}
-                        className="z-10 right-1 bg-white h-8 w-8 md:h-10 md:w-10 shadow-lg hover:shadow-xl relative rounded-full transition-all duration-300"
+                        className="z-10 pointer-events-auto bg-white h-8 w-8 md:h-10 md:w-10 shadow-lg hover:shadow-xl relative rounded-full transition-all duration-300"
                         aria-label="Edit"
                       >
                         <Edit className="h-4 w-4 text-gray-700" />
@@ -82,18 +88,20 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
                 </TooltipProvider>
               )}
 
-              <LikeButton
-                productId={product.id}
-                product={product as any}
-                className="z-10"
-              />
+              {/* The LikeButton wrapper stops event propagation */}
+              <div
+                onClick={handleLikeClick}
+                className="z-10 pointer-events-auto"
+              >
+                <LikeButton productId={product.id} product={product as any} />
+              </div>
             </div>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start m-0 p-2 space-y-2">
           <h3 className="font-medium text-sm line-clamp-2">{product.name}</h3>
           <p className="text-primary_1 font-semibold text-sm">
-            <CurrencyFormatter price={product.price as any} />
+            <CurrencyFormatter price={Number(product.price)} />
           </p>
         </CardFooter>
       </Card>

@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { Button } from '@/components/ui/button';
 import { LikeButton } from '@/components/shared/LikeButton';
 import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
-import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
@@ -31,25 +31,33 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   onEdit,
   isAdmin = false,
 }) => {
-  const router = useRouter();
   const dispatch = useDispatch();
-
-  const handleCardClick = useCallback(() => {
-    dispatch(setSelectedProduct(product.id as any));
-    router.push(`/prod/${slugify(product.name)}`);
-  }, [router, dispatch, product.id, product.name]);
-
+  const router = useRouter();
   const image = product.images[0]?.image_url || '/placeholder.jpg';
 
-  const handleEditClick = (e: React.MouseEvent) => {
+  // When the card is clicked, store product ID and navigate.
+  const handleCardClick = () => {
+    dispatch(setSelectedProduct(product.id as any));
+    router.push(`/prod/${slugify(product.name)}`);
+  };
+
+  // Prevent navigation when clicking the edit button.
+  const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    onEdit && onEdit(product);
+    if (onEdit) {
+      onEdit(product);
+    }
+  };
+
+  // Prevent navigation when clicking the like button.
+  const handleLikeClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
   };
 
   return (
     <Card
-      className="overflow-hidden transition-shadow hover:shadow-lg w-full cursor-pointer"
       onClick={handleCardClick}
+      className="overflow-hidden transition-shadow hover:shadow-lg w-full cursor-pointer"
     >
       <div className="flex flex-col sm:flex-row">
         <div className="relative w-full sm:w-48 md:w-64 aspect-square sm:aspect-auto sm:h-48 md:h-64">
@@ -83,18 +91,11 @@ const ListLayout: React.FC<ListLayoutProps> = ({
           <div className="flex flex-col items-end justify-end mt-4 sm:mt-0 sm:ml-4">
             <div className="flex flex-col items-baseline gap-1">
               <span className="text-primary_1 text-xl font-bold">
-                <CurrencyFormatter price={product.price as any} />
+                <CurrencyFormatter price={Number(product.price)} />
               </span>
             </div>
 
             <div className="flex items-center gap-3 mt-4">
-              <Button
-                onClick={handleCardClick}
-                className="bg-gray-700 text-white text-sm px-4 py-2 rounded"
-              >
-                View more
-              </Button>
-
               {isAdmin && onEdit && (
                 <TooltipProvider>
                   <Tooltip delayDuration={300}>
@@ -103,7 +104,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
                         variant="ghost"
                         size="icon"
                         onClick={handleEditClick}
-                        className="left-2 z-10 bg-white h-8 w-8 md:h-10 md:w-10 bg-transparent hover:bg-transparent border border-primary text-primary p-2 rounded transition-all duration-300"
+                        className="z-10 pointer-events-auto bg-white h-8 w-8 md:h-10 md:w-10 border border-primary text-primary p-2 rounded transition-all duration-300"
                         aria-label="Edit"
                       >
                         <Edit className="h-4 w-4 text-gray-700" />
@@ -120,11 +121,17 @@ const ListLayout: React.FC<ListLayoutProps> = ({
                 </TooltipProvider>
               )}
 
-              <LikeButton
-                productId={product.id}
-                product={product as any}
-                className="bg-transparent hover:bg-transparent border border-primary text-primary p-2 rounded"
-              />
+              {/* The LikeButton container stops event propagation */}
+              <div
+                onClick={handleLikeClick}
+                className="z-10 pointer-events-auto"
+              >
+                <LikeButton
+                  productId={product.id}
+                  product={product as any}
+                  className="bg-transparent hover:bg-transparent border border-primary text-primary p-2 rounded"
+                />
+              </div>
             </div>
           </div>
         </div>

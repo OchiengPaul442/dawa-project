@@ -265,7 +265,7 @@ export const useDeleteItemImage = () => {
   };
 };
 
-export const useShopData = (userId: any | null) => {
+export const useShopData = (userId: any) => {
   const swrOptions = {
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
