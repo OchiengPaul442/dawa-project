@@ -10,7 +10,7 @@ import type {
   User,
   MessageGroup,
 } from '@/types/message';
-import { useChat } from '../../../contexts/ChatContext';
+import { useChat } from '@/contexts/ChatContext';
 import { MessageInput } from './MessageInput';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -141,7 +141,7 @@ export function ChatArea({ onBack, className }: ChatAreaProps) {
         illustration={<MessageSquare />}
         title="Your Messages"
         illustrationClassName="w-12 h-12"
-        containerClassName="flex-1 flex flex-col items-center justify-center bg-gray-50/50"
+        containerClassName="flex-1 hidden md:flex flex-col items-center justify-center bg-gray-50/50"
         description="Select a chat to view your messages"
       />
     );
