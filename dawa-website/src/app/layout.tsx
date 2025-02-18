@@ -47,8 +47,8 @@ export default function RootLayout({
             <AuthDialog />
           </Provider>
         </Suspense>
-        <Toaster position="top-right" expand={true} richColors /> // TODO:
-        Remove this once SpeedInsights is ready
+        <Toaster position="top-right" expand={true} richColors />
+        // TODO:Remove this once SpeedInsights is ready
         <SpeedInsights />
       </body>
     </html>
