@@ -8,17 +8,10 @@ import {
   HelpCircle,
   FileText,
   LogOut,
-  SquareMenu,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+
 import { useAuth } from '@core/hooks/use-auth';
 import { useProfile } from '@/contexts/profile-context';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -106,51 +99,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ userProfile, isLoading }) => (
   </div>
 );
 
-export const MobileNav: React.FC = () => {
-  const pathname = usePathname();
-  const { logout } = useAuth();
-  const { userProfile, isLoading } = useProfile();
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger
-        asChild
-        className="bg-background rounded-xl w-full flex justify-end items-center"
-      >
-        <button className="p-2 ">
-          <SquareMenu size={26} />
-          <span className="sr-only">Open menu</span>
-        </button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-        <SheetHeader className="border-b pb-4 mb-4">
-          {/* Add a title for accessibility */}
-          <SheetTitle className="sr-only">User Menu</SheetTitle>
-          <UserInfo userProfile={userProfile} isLoading={isLoading} />
-        </SheetHeader>
-        <nav className="space-y-2">
-          {menuItems.map((item) => (
-            <NavItem
-              key={item.href}
-              item={item}
-              pathname={pathname}
-              onClick={() => setOpen(false)}
-            />
-          ))}
-        </nav>
-        <div className="mt-auto pt-4 border-t">
-          <LogoutButton
-            onClick={() => {
-              logout();
-              setOpen(false);
-            }}
-          />
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-};
 
 interface SidebarProps {
   className?: string;

@@ -1,13 +1,12 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, X, Search } from 'lucide-react';
-import { useDispatch } from '@redux-store/hooks';
-import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
+import { Search, X } from 'lucide-react';
+import { useDispatch } from '@/redux-store/hooks';
+import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
 import Button from '@/components/shared/Button';
 import { Input } from '@/components/ui/input';
@@ -15,17 +14,40 @@ import MainConfigs from '@/configs/mainConfigs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import BackButton from '@/components/shared/BackButton';
 
+// Import dropdown components (adjust import paths as needed)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+import {
+  MessageSquare,
+  Settings,
+  User,
+  ShoppingCart,
+  LogOut,
+} from 'lucide-react';
+
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
+import { useAuth } from '@/@core/hooks/use-auth';
+
 const MobileNav: React.FC<any> = ({
   isHomePage,
   user,
   normalizedUserProfile,
   normalizedUserFromAuth,
+  onLogout,
 }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+  const toggleSearch = () => setIsSearchOpen((prev) => !prev);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -61,26 +83,104 @@ const MobileNav: React.FC<any> = ({
               <span className="sr-only">Search</span>
             </Button>
             {user ? (
-              <Link href="/account">
-                <Avatar className="h-8 w-8 ring-2 ring-primary_1/50">
-                  <AvatarImage
-                    src={
-                      normalizedUserProfile?.user_profile_picture ||
-                      normalizedUserFromAuth?.user_profile_picture
-                    }
-                    alt={`${normalizedUserProfile?.first_name || normalizedUserFromAuth?.first_name} ${
-                      normalizedUserProfile?.last_name ||
-                      normalizedUserFromAuth?.last_name
-                    }`}
-                  />
-                  <AvatarFallback className="bg-primary_1 text-white">
-                    {(
-                      normalizedUserProfile?.first_name ||
-                      normalizedUserFromAuth?.first_name
-                    )?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
+              // Instead of linking directly, we use a dropdown menu for the user avatar.
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="ghost"
+                      className="relative rounded-full h-10 w-10 p-1 overflow-hidden"
+                    >
+                      <Avatar className="h-full w-full">
+                        <AvatarImage
+                          src={
+                            normalizedUserProfile?.user_profile_picture ||
+                            normalizedUserFromAuth?.user_profile_picture
+                          }
+                          alt={`${normalizedUserProfile?.first_name || normalizedUserFromAuth?.first_name} ${
+                            normalizedUserProfile?.last_name ||
+                            normalizedUserFromAuth?.last_name
+                          }`}
+                        />
+                        <AvatarFallback className="bg-primary_1 text-white">
+                          {(
+                            normalizedUserProfile?.first_name ||
+                            normalizedUserFromAuth?.first_name
+                          )?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </motion.div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-56 mt-2"
+                  align="end"
+                  forceMount
+                >
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {`${normalizedUserProfile?.first_name || normalizedUserFromAuth?.first_name} ${
+                          normalizedUserProfile?.last_name ||
+                          normalizedUserFromAuth?.last_name
+                        }`}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild>
+                      <Link href="/account">
+                        <div className="flex items-center cursor-pointer">
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Account</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-shop">
+                        <button
+                          type="button"
+                          className="flex items-center cursor-pointer"
+                          onClick={() => {
+                            // Store the selected seller ID in localStorage if needed
+                            localStorage.setItem(
+                              'selectedShopId',
+                              String(user.id),
+                            );
+                            dispatch(setSelectedUserId(user.id as any));
+                          }}
+                        >
+                          <ShoppingCart className="mr-2 h-4 w-4" />
+                          <span>My Shop</span>
+                        </button>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/account/settings">
+                        <div className="flex items-center cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Settings</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={onLogout}
+                    className="text-red-600 flex items-center"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 variant="ghost"
