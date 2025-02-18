@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 
 // TODO: Remove this once SpeedInsights is ready
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -50,6 +51,7 @@ export default function RootLayout({
         <Toaster position="top-right" expand={true} richColors />
         // TODO:Remove this once SpeedInsights is ready
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
