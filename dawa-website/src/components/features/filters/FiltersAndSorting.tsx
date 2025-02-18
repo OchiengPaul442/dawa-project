@@ -154,7 +154,7 @@ const FiltersAndSorting: React.FC<FiltersAndSortingProps> = React.memo(
         </div>
 
         {/* View type buttons and filter selector */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button
               variant={viewType === 'grid' ? 'default' : 'outline'}

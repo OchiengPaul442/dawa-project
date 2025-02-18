@@ -17,12 +17,6 @@ import {
 } from '@redux-store/slices/categories/categorySlice';
 import { useCategoryData } from '@core/hooks/useProductData';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 import type { Category, Subcategory } from '@/types/category';
@@ -53,7 +47,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  // Grab categories from the Redux store (extended type)
+  // Grab categories from the Redux store
   const categories = useSelector(
     (state: any) => state.categories.categories,
   ) as ExtendedCategory[];
@@ -71,11 +65,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     [],
   );
 
-  // State to control mobile modals
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
-
-  // Derive selectedCategory based on the URL slug
+  // Derive selectedCategory based on URL slug
   const selectedCategory = useMemo(() => {
     return categories.find(
       (cat) => slugify(cat.category_name) === slugify(category[0] || ''),
@@ -89,7 +79,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     );
   }, [selectedCategory, category]);
 
-  // Dispatch to Redux for global reference
+  // Dispatch global references
   useEffect(() => {
     dispatch(setSelectedCategory(selectedCategory || null));
   }, [selectedCategory, dispatch]);
@@ -98,7 +88,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     dispatch(setSelectedSubcategory(selectedSubcategory || null));
   }, [selectedSubcategory, dispatch]);
 
-  // Custom hook to fetch data for this category or subcategory
+  // Fetch category data
   const {
     data: fetchedData,
     error,
@@ -108,7 +98,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     selectedSubcategory,
   });
 
-  // Update products state on fetch
   useEffect(() => {
     if (fetchedData && fetchedData.data) {
       setProducts(fetchedData.data);
@@ -119,7 +108,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     }
   }, [fetchedData]);
 
-  // Filtering and Sorting Logic
+  // Filtering and sorting
   const applyFilters = useCallback(
     (
       priceRange: [number, number],
@@ -127,22 +116,18 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
       selectedColors: string[],
     ) => {
       let updated = [...products];
-
       if (location) {
         updated = updated.filter((product) => product.location === location);
       }
-
       updated = updated.filter(
         (product) =>
           product.price >= priceRange[0] && product.price <= priceRange[1],
       );
-
       if (selectedColors.length > 0) {
         updated = updated.filter((product) =>
           selectedColors.includes(product.color),
         );
       }
-
       setFilteredProducts(updated);
     },
     [products],
@@ -184,7 +169,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
           sorted.sort((a, b) => b.price - a.price);
           break;
         default:
-          // 'default' case: no sorting
           break;
       }
       setFilteredProducts(sorted);
@@ -192,7 +176,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     [filteredProducts],
   );
 
-  // If no category is found, show nothing (or consider redirecting)
   if (!selectedCategory) {
     return null;
   }
@@ -207,27 +190,9 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
         />
       </div>
 
-      {/* Mobile header buttons for Filters and Categories */}
-      <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow-sm">
-        <Button
-          variant="outline"
-          onClick={() => setMobileCategoriesOpen(true)}
-          className="w-1/2 mr-2"
-        >
-          Categories
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => setMobileFiltersOpen(true)}
-          className="w-1/2 ml-2"
-        >
-          Filters
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
-        {/* Desktop Sidebar */}
-        <aside className="hidden lg:flex flex-col space-y-6">
+        {/* Sidebar */}
+        <aside className="flex lg:flex-col gap-6">
           <CategoriesAndSubcategories
             categoryName={selectedCategory.category_name}
             categoryCount={selectedCategory.category_item_count}
@@ -237,21 +202,18 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
             }))}
             parentCategory={category[0]}
           />
-          <div className="mt-6">
-            <ProductFilter
-              appliedPriceRange={appliedPriceRange}
-              appliedLocation={appliedLocation}
-              appliedSelectedColors={appliedSelectedColors}
-              onApplyFilters={handleApplyFilters}
-              onResetFilters={resetFilters}
-            />
-          </div>
+          <ProductFilter
+            appliedPriceRange={appliedPriceRange}
+            appliedLocation={appliedLocation}
+            appliedSelectedColors={appliedSelectedColors}
+            onApplyFilters={handleApplyFilters}
+            onResetFilters={resetFilters}
+          />
         </aside>
 
         {/* Main Content */}
         <main className="lg:col-span-3">
           <div className="space-y-6">
-            {/* Filters and Sorting Controls */}
             <FiltersAndSorting
               category={category}
               viewType={viewType}
@@ -259,8 +221,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               filterOption={filterOption}
               handleFilterChange={handleFilterChange}
             />
-
-            {/* Loading State */}
             {isLoading ? (
               <ProductCardSkeleton ITEMS_PER_PAGE={16} />
             ) : (
@@ -269,7 +229,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
                   <div
                     className={
                       viewType === 'grid'
-                        ? 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6'
+                        ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6'
                         : 'flex flex-col gap-4'
                     }
                   >
@@ -292,68 +252,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
           </div>
         </main>
       </div>
-
-      {/* Mobile Categories Modal */}
-      <Dialog
-        open={mobileCategoriesOpen}
-        onOpenChange={setMobileCategoriesOpen}
-      >
-        <DialogContent className="p-0 m-0 w-full h-full max-w-full">
-          <DialogHeader className="px-4 py-4 border-b border-gray-200">
-            <DialogTitle className="text-xl font-semibold">
-              Categories
-            </DialogTitle>
-          </DialogHeader>
-          <div className="p-4 overflow-auto h-full">
-            <CategoriesAndSubcategories
-              categoryName={selectedCategory.category_name}
-              categoryCount={selectedCategory.category_item_count}
-              subcategories={selectedCategory.subcategories.map((sub) => ({
-                name: sub.subcategory_name,
-                count: sub.subcategory_item_count,
-              }))}
-              parentCategory={category[0]}
-            />
-            <div className="mt-4">
-              <Button
-                onClick={() => setMobileCategoriesOpen(false)}
-                className="w-full bg-[#FFA200] text-white hover:bg-[#FF8C00] transition-all"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Mobile Filters Modal */}
-      <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-        <DialogContent className="p-0 m-0 w-full h-full max-w-full">
-          <DialogHeader className="px-4 py-4 border-b border-gray-200">
-            <DialogTitle className="text-xl font-semibold">Filters</DialogTitle>
-          </DialogHeader>
-          <div className="p-4 overflow-auto h-full">
-            <ProductFilter
-              appliedPriceRange={appliedPriceRange}
-              appliedLocation={appliedLocation}
-              appliedSelectedColors={appliedSelectedColors}
-              onApplyFilters={(priceRange, location, colors) => {
-                handleApplyFilters(priceRange, location, colors);
-                setMobileFiltersOpen(false);
-              }}
-              onResetFilters={resetFilters}
-            />
-            <div className="mt-4">
-              <Button
-                onClick={() => setMobileFiltersOpen(false)}
-                className="w-full bg-[#FFA200] text-white hover:bg-[#FF8C00] transition-all"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };

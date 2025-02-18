@@ -43,7 +43,7 @@ const ProductPage: React.FC = () => {
       <h2 className="text-2xl font-bold mb-4 text-primary_1">
         Trending Products
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {productsData.map((product: SimilarItem) => (
           <ProductCard key={product.id} product={product} />
         ))}

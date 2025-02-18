@@ -104,7 +104,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
         <div className="flex flex-col lg:flex-row gap-6">
           <aside className="w-full lg:w-72 shrink-0">
             <div className="lg:sticky lg:top-[88px] space-y-6">
-              <ScrollArea className="h-[calc(100vh-180px)]">
+              <ScrollArea className="lg:h-[calc(100vh-180px)]">
                 <ProductFilter
                   appliedPriceRange={appliedPriceRange}
                   appliedLocation={appliedLocation}
@@ -141,7 +141,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
               <div
                 className={`grid gap-6 ${
                   viewType === 'grid'
-                    ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
                     : 'grid-cols-1'
                 }`}
               >
