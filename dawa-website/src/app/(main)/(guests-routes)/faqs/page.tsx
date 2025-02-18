@@ -3,7 +3,7 @@ import FAQPage from '@views/pages/faqs/FAQPage';
 
 const page = () => {
   return (
-    <Layout>
+    <Layout addFooter={true}>
       <FAQPage />
     </Layout>
   );

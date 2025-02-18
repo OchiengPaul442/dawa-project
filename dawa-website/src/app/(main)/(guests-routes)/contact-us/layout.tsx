@@ -5,5 +5,5 @@ export default function ProdLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Layout addFooter={false}>{children}</Layout>;
+  return <Layout addFooter={true}>{children}</Layout>;
 }

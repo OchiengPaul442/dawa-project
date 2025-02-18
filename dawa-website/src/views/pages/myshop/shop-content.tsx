@@ -139,7 +139,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
               />
             ) : (
               <div
-                className={`grid gap-6 ${
+                className={`grid gap-3 ${
                   viewType === 'grid'
                     ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
                     : 'grid-cols-1'
