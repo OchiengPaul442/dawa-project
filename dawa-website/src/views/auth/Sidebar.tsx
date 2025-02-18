@@ -3,16 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  Settings,
-  HelpCircle,
-  FileText,
-  LogOut,
-} from 'lucide-react';
+import { Settings, HelpCircle, FileText, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-import { useAuth } from '@core/hooks/use-auth';
+import { useAuth } from '@/@core/hooks/use-auth';
 import { useProfile } from '@/contexts/profile-context';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -98,7 +92,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ userProfile, isLoading }) => (
     </div>
   </div>
 );
-
 
 interface SidebarProps {
   className?: string;
