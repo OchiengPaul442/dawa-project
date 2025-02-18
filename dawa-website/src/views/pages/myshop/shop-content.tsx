@@ -29,6 +29,7 @@ interface ShopContentProps {
   ) => void;
   handleResetFilters: () => void;
   isAdmin?: boolean;
+  mutate: () => void;
 }
 
 const transformItemToSimilarItem = (item: any): SimilarItem => {
@@ -59,6 +60,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
   handleApplyFilters,
   handleResetFilters,
   isAdmin = false,
+  mutate,
 }) => {
   // State to control the EditAdvertSheet
   const [editSheetOpen, setEditSheetOpen] = useState(false);
@@ -168,7 +170,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
           onClose={() => setEditSheetOpen(false)}
           item={selectedProductForEdit}
           onUpdate={() => {
-            // Refresh list or show a toast as needed.
+            mutate();
           }}
         />
       )}

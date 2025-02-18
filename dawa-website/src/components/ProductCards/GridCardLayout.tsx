@@ -62,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
             />
-            <div className="absolute bottom-2 flex justify-end w-full px-2">
+            <div className="absolute bottom-2 flex justify-end gap-1 w-full px-2">
               {isAdmin && onEdit && (
                 <TooltipProvider>
                   <Tooltip delayDuration={300}>

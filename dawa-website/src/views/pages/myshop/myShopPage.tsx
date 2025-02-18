@@ -16,7 +16,7 @@ const MyShop: React.FC = () => {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const selectedUserId = useSelector((state) => state.myShop.userId);
-  const { shopData, isLoading, isError } = useShopData(selectedUserId);
+  const { shopData, isLoading, isError, mutate } = useShopData(selectedUserId);
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [filterOption, setFilterOption] = useState<FilterOption>('default');
@@ -123,6 +123,7 @@ const MyShop: React.FC = () => {
           handleApplyFilters={handleApplyFilters}
           handleResetFilters={handleResetFilters}
           isAdmin={isAdmin}
+          mutate={mutate}
         />
       </div>
     </div>
