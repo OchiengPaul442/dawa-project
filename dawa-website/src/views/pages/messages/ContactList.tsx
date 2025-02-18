@@ -10,7 +10,7 @@ import CustomizableNoData from '@/components/shared/no-data';
 
 interface ContactListProps {
   messageGroups: MessageGroup[];
-  selectedGroupId: string | null;
+  selectedGroupId: string | number | null;
   currentUser: User | null;
   onSelectGroup: (groupId: string) => void;
   className?: string;
@@ -19,7 +19,7 @@ interface ContactListProps {
 const ContactItem: React.FC<{
   group: MessageGroup;
   currentUser: User;
-  selectedGroupId: string | null;
+  selectedGroupId: string | number | null;
   onSelectGroup: (groupId: string) => void;
 }> = React.memo(({ group, currentUser, selectedGroupId, onSelectGroup }) => {
   const receiver = group.participants.find(
