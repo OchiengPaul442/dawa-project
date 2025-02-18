@@ -1,4 +1,4 @@
-import CategoryPage from './CategoryPage';
+import CategoryPage from '@/views/pages/category/CategoryPage';
 
 interface PageProps {
   params: Promise<{

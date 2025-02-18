@@ -131,6 +131,11 @@ export function UserNav({
                   type="button"
                   className="cursor-pointer flex items-center"
                   onClick={() => {
+                    // Store the selected seller ID in localStorage
+                    localStorage.setItem(
+                      'selectedShopId',
+                      String(currentUser?.id),
+                    );
                     dispatch(setSelectedUserId(currentUser?.id as any));
                   }}
                 >

@@ -8,7 +8,6 @@ import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
-import CustomPagination from '@/components/shared/CustomPagination';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 
 import { slugify } from '@/utils/slugify';
@@ -23,7 +22,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -38,9 +36,6 @@ type FilterOptionType =
   | 'price_high_to_low';
 type ViewType = 'grid' | 'list';
 
-const ITEMS_PER_PAGE = 12;
-
-// Extend your types if needed
 interface ExtendedSubcategory extends Subcategory {
   subcategory_item_count: number;
 }
@@ -65,7 +60,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
 
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
-  const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
 
@@ -97,19 +91,11 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
 
   // Dispatch to Redux for global reference
   useEffect(() => {
-    if (selectedCategory) {
-      dispatch(setSelectedCategory(selectedCategory));
-    } else {
-      dispatch(setSelectedCategory(null));
-    }
+    dispatch(setSelectedCategory(selectedCategory || null));
   }, [selectedCategory, dispatch]);
 
   useEffect(() => {
-    if (selectedSubcategory) {
-      dispatch(setSelectedSubcategory(selectedSubcategory));
-    } else {
-      dispatch(setSelectedSubcategory(null));
-    }
+    dispatch(setSelectedSubcategory(selectedSubcategory || null));
   }, [selectedSubcategory, dispatch]);
 
   // Custom hook to fetch data for this category or subcategory
@@ -133,19 +119,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     }
   }, [fetchedData]);
 
-  // Pagination
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
-
-  const resultsSummary = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-    const end = Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length);
-    return `Showing ${start}-${end} of ${filteredProducts.length} results`;
-  }, [currentPage, filteredProducts]);
-
-  // Filter & Sorting Logic
+  // Filtering and Sorting Logic
   const applyFilters = useCallback(
     (
       priceRange: [number, number],
@@ -170,7 +144,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
       }
 
       setFilteredProducts(updated);
-      setCurrentPage(1);
     },
     [products],
   );
@@ -194,13 +167,11 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     setAppliedLocation('');
     setAppliedSelectedColors([]);
     setFilteredProducts(products);
-    setCurrentPage(1);
   }, [products]);
 
   const handleFilterChange = useCallback(
     (selectedOption: string) => {
       setFilterOption(selectedOption as FilterOptionType);
-
       let sorted = [...filteredProducts];
       switch (selectedOption) {
         case 'rating':
@@ -213,17 +184,15 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
           sorted.sort((a, b) => b.price - a.price);
           break;
         default:
-          // 'default' case, no sorting needed
+          // 'default' case: no sorting
           break;
       }
-
       setFilteredProducts(sorted);
-      setCurrentPage(1);
     },
     [filteredProducts],
   );
 
-  // If no category is found, show the categories listing page
+  // If no category is found, show nothing (or consider redirecting)
   if (!selectedCategory) {
     return null;
   }
@@ -237,6 +206,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
           subcategoryName={selectedSubcategory?.subcategory_name}
         />
       </div>
+
       {/* Mobile header buttons for Filters and Categories */}
       <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow-sm">
         <Button
@@ -281,7 +251,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
         {/* Main Content */}
         <main className="lg:col-span-3">
           <div className="space-y-6">
-            {/* Filters and sorting controls */}
+            {/* Filters and Sorting Controls */}
             <FiltersAndSorting
               category={category}
               viewType={viewType}
@@ -295,9 +265,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               <ProductCardSkeleton ITEMS_PER_PAGE={16} />
             ) : (
               <>
-                {/* Check if there are any products */}
-                {paginatedProducts.length > 0 ? (
-                  // Apply grid or list layout only to the product cards
+                {filteredProducts.length > 0 ? (
                   <div
                     className={
                       viewType === 'grid'
@@ -305,7 +273,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
                         : 'flex flex-col gap-4'
                     }
                   >
-                    {paginatedProducts.map((product) => (
+                    {filteredProducts.map((product) => (
                       <CardLayout
                         key={product.id}
                         product={product}
@@ -322,22 +290,6 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               </>
             )}
           </div>
-
-          {!isLoading && filteredProducts.length > 0 && (
-            <div className="border-t border-gray-200 mt-8 pt-6 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="text-sm text-gray-600">{resultsSummary}</div>
-                <div className="w-full">
-                  <CustomPagination
-                    currentPage={currentPage}
-                    totalItems={filteredProducts.length}
-                    itemsPerPage={ITEMS_PER_PAGE}
-                    onPageChange={setCurrentPage}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
         </main>
       </div>
 
