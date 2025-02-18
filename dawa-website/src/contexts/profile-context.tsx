@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-import { useUserProfile } from '@core/hooks/useProductData';
+import { useAuth } from '@/@core/hooks/use-auth';
+import { useUserProfile } from '@/@core/hooks/useProductData';
 
 interface UserProfile {
   id: number;
@@ -29,9 +30,14 @@ interface ProfileContextType {
   mutate: () => void;
 }
 
+// Create the context with an undefined default value.
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-export function ProfileProvider({ children }: { children: ReactNode }) {
+/**
+ * This component is rendered when a user is logged in.
+ * It calls `useUserProfile` and provides its values via context.
+ */
+function ProfileProviderWithUser({ children }: { children: ReactNode }) {
   const { userProfile, items, isLoading, isError, mutate } = useUserProfile();
 
   return (
@@ -43,6 +49,38 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * The main ProfileProvider checks if the user is logged in.
+ * - If not, it provides default values without calling `useUserProfile`.
+ * - If a user exists, it renders the child provider that calls the hook.
+ */
+export function ProfileProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+
+  if (!user) {
+    const defaultValue: ProfileContextType = {
+      userProfile: null,
+      items: [],
+      isLoading: false,
+      isError: null,
+      mutate: () => {
+        /* no-op */
+      },
+    };
+
+    return (
+      <ProfileContext.Provider value={defaultValue}>
+        {children}
+      </ProfileContext.Provider>
+    );
+  }
+
+  return <ProfileProviderWithUser>{children}</ProfileProviderWithUser>;
+}
+
+/**
+ * Custom hook to access the ProfileContext.
+ */
 export function useProfile() {
   const context = useContext(ProfileContext);
   if (context === undefined) {

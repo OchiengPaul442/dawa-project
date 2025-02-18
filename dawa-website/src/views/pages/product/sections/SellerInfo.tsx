@@ -78,8 +78,11 @@ export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
         <Button
           type="button"
           onClick={() => {
+            // Store the selected seller ID in localStorage
+            localStorage.setItem('selectedShopId', String(seller.seller_id));
+            // Dispatch the Redux action to update the store
             dispatch(setSelectedUserId(seller.seller_id as any));
-            router.push('/my-shop');
+            router.push('/shop');
           }}
           variant="outline"
           size="sm"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChatProvider, useChat } from './ChatContext';
+import { ChatProvider, useChat } from '../../../contexts/ChatContext';
 import { ContactList } from './ContactList';
 import { ChatArea } from './ChatArea';
 import { Card, CardContent } from '@/components/ui/card';

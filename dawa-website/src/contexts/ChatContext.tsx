@@ -6,6 +6,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  type ReactNode,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type {
@@ -31,24 +32,24 @@ const isSimilarMessage = (msg1: Message, msg2: Message): boolean =>
   msg1.itemId === msg2.itemId &&
   msg1.message.trim() === msg2.message.trim();
 
-export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
+/**
+ * This component is rendered only if a user is logged in.
+ * It calls the hooks for messages and sending messages.
+ */
+const ChatProviderWithUser: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  // State hooks for chat logic.
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [optimisticMessages, setOptimisticMessages] = useState<
     OptimisticMessage[]
   >([]);
 
-  // Get the authenticated user.
-  const { user, loading: authLoading } = useAuth() as {
-    user: User | null;
-    loading: boolean;
-  };
+  // We already know a user exists here. (For safety, we use optional chaining later.)
+  const { user } = useAuth() as any; // user.id is a string
 
-  // Fetch messages from the API via SWR.
+  // Call hooks to fetch messages and send messages.
   const { messagesData, isLoading: messagesLoading, mutate } = useMessages();
-
-  // SWR mutation hook to send messages.
   const { sendMessage: sendMessageMutation } = useSendMessage();
 
   // Handler to set the active conversation.
@@ -65,8 +66,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         ...msg,
         createdAt: msg.created_at,
         itemId: group.subject.item_id,
-        senderId: Number(msg.senderId),
-        receiverId: Number(msg.receiverId),
+        // IDs are handled as strings.
+        senderId: String(msg.senderId),
+        receiverId: String(msg.receiverId),
       })),
     }));
   }, [messagesData]);
@@ -74,9 +76,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   // Helper: Get the other participant in a conversation.
   const getOtherParticipant = useCallback(
     (group: MessageGroup): User | null => {
-      if (!user) return null;
+      // Use user?.id with a fallback to an empty string.
       return (
-        group.participants.find((p) => Number(p.id) !== Number(user.id)) || null
+        group.participants.find(
+          (p: any) => String(p.id) !== (user?.id || ''),
+        ) || null
       );
     },
     [user],
@@ -85,18 +89,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   // Send a message with an optimistic update.
   const sendMessage = useCallback(
     async (payload: SendMessagePayload) => {
+      // Extra safety: if somehow user is not logged in, do nothing.
       if (!user) return;
 
       // Determine the proper receiver.
       let finalReceiverId = payload.receiver_id;
-      if (!finalReceiverId || Number(finalReceiverId) === Number(user.id)) {
+      if (!finalReceiverId || finalReceiverId === user?.id) {
         const selectedGroup = convertedGroups.find(
           (group) => group.id.toString() === selectedGroupId,
         );
         if (selectedGroup) {
           const otherUser = getOtherParticipant(selectedGroup);
           if (otherUser) {
-            finalReceiverId = Number(otherUser.id);
+            finalReceiverId = String(otherUser.id);
           } else {
             console.error('Other participant not found.');
             return;
@@ -107,7 +112,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
 
-      if (Number(finalReceiverId) === Number(user.id)) {
+      if (finalReceiverId === user?.id) {
         console.error('Self-messaging is not allowed.');
         return;
       }
@@ -116,8 +121,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       const optimisticMessage: OptimisticMessage = {
         id: uuidv4(),
         itemId: payload.item_id,
-        senderId: Number(user.id),
-        receiverId: Number(finalReceiverId),
+        senderId: user?.id || '',
+        receiverId: finalReceiverId,
         message: payload.message,
         createdAt: new Date().toISOString(),
         read: false,
@@ -195,12 +200,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [combinedMessageGroups]);
 
-  // Compute unread messages count.
+  // Compute unread messages count safely.
   const newMessagesCount = useMemo(() => {
-    if (!user) return 0;
+    // Use user?.id with a fallback.
+    const currentUserId = user?.id || '';
     return sortedMessageGroups.reduce((acc, group) => {
       const unread = group.messages.filter(
-        (msg) => Number(msg.receiverId) === Number(user.id) && !msg.read,
+        (msg) => msg.receiverId === currentUserId && !msg.read,
       ).length;
       return acc + unread;
     }, 0);
@@ -213,8 +219,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       currentUser: user,
       selectGroup,
       sendMessage,
-      isLoading: authLoading || messagesLoading,
-      isAuthenticated: !!user,
+      isLoading: messagesLoading, // auth loading is already handled in ChatProvider.
+      isAuthenticated: true,
       newMessagesCount,
     }),
     [
@@ -223,7 +229,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       user,
       selectGroup,
       sendMessage,
-      authLoading,
       messagesLoading,
       newMessagesCount,
     ],
@@ -234,6 +239,45 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+/**
+ * Main ChatProvider that checks if the user is logged in.
+ * If not, it provides a default context without calling chat hooks.
+ */
+export const ChatProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const { user, loading: authLoading } = useAuth() as {
+    user: User | null;
+    loading: boolean;
+  };
+
+  if (!user) {
+    const defaultValue: ChatContextType = {
+      messageGroups: [],
+      selectedGroupId: null,
+      currentUser: null,
+      selectGroup: () => {},
+      sendMessage: async () => {
+        /* no-op */
+      },
+      isLoading: authLoading,
+      isAuthenticated: false,
+      newMessagesCount: 0,
+    };
+
+    return (
+      <ChatContext.Provider value={defaultValue}>
+        {children}
+      </ChatContext.Provider>
+    );
+  }
+
+  return <ChatProviderWithUser>{children}</ChatProviderWithUser>;
+};
+
+/**
+ * Custom hook to access the ChatContext.
+ */
 export const useChat = (): ChatContextType => {
   const context = useContext(ChatContext);
   if (!context) {

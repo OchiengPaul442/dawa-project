@@ -80,7 +80,7 @@ const FiltersAndSorting: React.FC<FiltersAndSortingProps> = React.memo(
     }, [emblaApi]);
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 bg-white">
         {/* Category section header with optional navigation arrows */}
         {categoryTitle !== '' && (
           <div className="flex items-center justify-between">

@@ -8,6 +8,7 @@ import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { EditAdvertSheet } from '@/components/shared/edit-advert-sheet'; // adjust the path as needed
+import CustomizableNoData from '@/components/shared/no-data';
 
 interface ShopContentProps {
   shopData: ShopData;
@@ -130,16 +131,15 @@ export const ShopContent: React.FC<ShopContentProps> = ({
             </div>
 
             {sortedItems.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg">
-                <p className="text-lg text-gray-600">
-                  No items found matching your criteria
-                </p>
-              </div>
+              <CustomizableNoData
+                title="No items found"
+                description="Sorry, we couldn't find any items that match your criteria. Please try again with different filters."
+              />
             ) : (
               <div
                 className={`grid gap-6 ${
                   viewType === 'grid'
-                    ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                    ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
                     : 'grid-cols-1'
                 }`}
               >
@@ -163,7 +163,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
 
       {selectedProductForEdit && (
         <EditAdvertSheet
-          key={selectedProductForEdit.id} // Force remount on product change.
+          key={selectedProductForEdit.id}
           isOpen={editSheetOpen}
           onClose={() => setEditSheetOpen(false)}
           item={selectedProductForEdit}

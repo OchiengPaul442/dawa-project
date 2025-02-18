@@ -1,6 +1,6 @@
 // src/types/message.ts
 export interface User {
-  id: number;
+  id: string | number;
   full_name: string;
   profile_picture: string | null;
 }
@@ -12,9 +12,9 @@ export interface Subject {
 
 export interface Message {
   id: number | string;
-  senderId: number;
-  receiverId: number;
-  itemId: number;
+  senderId: string | number;
+  receiverId: string | number;
+  itemId: string | number;
   message: string;
   createdAt: string; // our internal name for API’s "created_at"
   read: boolean;
@@ -25,7 +25,7 @@ export interface OptimisticMessage extends Message {
 }
 
 export interface MessageGroup {
-  id: number;
+  id: string | number;
   subject: Subject; // e.g. { item_id: 25, item_name: 'Worlds Fastest Super cars' }
   participants: User[]; // e.g. [ {id: 10, ...}, {id: 25, ...} ]
   messages: Message[];
@@ -35,14 +35,14 @@ export interface MessageGroup {
  * API payload for sending a message.
  */
 export interface SendMessagePayload {
-  receiver_id: number;
-  item_id: number;
+  receiver_id: string | number;
+  item_id: string | number;
   message: string;
 }
 
 export interface ChatContextType {
   messageGroups: MessageGroup[];
-  selectedGroupId: string | null;
+  selectedGroupId: string | number | null;
   currentUser: User | null;
   selectGroup: (groupId: string | number) => void;
   sendMessage: (payload: SendMessagePayload) => Promise<void>;

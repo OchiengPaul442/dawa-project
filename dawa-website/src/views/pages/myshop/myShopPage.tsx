@@ -7,14 +7,15 @@ import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice
 import { ShopHeader } from './shop-header';
 import { ShopContent } from './shop-content';
 import { ShopSkeleton } from './shop-skeleton';
-import { ErrorDisplay } from './error-display';
 import type { FilterOption } from './types';
 import { useAuth } from '@/@core/hooks/use-auth';
+import { OopsComponent } from '@/components/shared/oops-component';
+import CustomizableNoData from '@/components/shared/no-data';
 
 const MyShop: React.FC = () => {
   const { user } = useAuth();
   const dispatch = useDispatch();
-  const selectedUserId = useSelector((state: any) => state.myShop.userId);
+  const selectedUserId = useSelector((state) => state.myShop.userId);
   const { shopData, isLoading, isError } = useShopData(selectedUserId);
 
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
@@ -28,6 +29,23 @@ const MyShop: React.FC = () => {
     [],
   );
 
+  // If Redux does not have a selectedUserId, try to get it from localStorage.
+  useEffect(() => {
+    if (!selectedUserId) {
+      const storedId = localStorage.getItem('selectedShopId');
+      if (storedId) {
+        dispatch(setSelectedUserId(storedId));
+      }
+    }
+  }, [dispatch, selectedUserId]);
+
+  // Set the selected user id only if it's not already set and if the current user is available.
+  useEffect(() => {
+    if (!selectedUserId && user?.id) {
+      dispatch(setSelectedUserId(user.id));
+    }
+  }, [dispatch, selectedUserId, user]);
+
   // Fix the type error by explicitly casting the mapped category value to a string.
   const categories = useMemo(() => {
     if (!shopData?.items?.item_details) return ['all'];
@@ -38,13 +56,6 @@ const MyShop: React.FC = () => {
     );
     return ['all', ...uniqueCategories];
   }, [shopData?.items?.item_details]);
-
-  // Set the selected user id only if it's not already set.
-  useEffect(() => {
-    if (!selectedUserId && user?.id) {
-      dispatch(setSelectedUserId(user.id as any));
-    }
-  }, [dispatch, selectedUserId, user]);
 
   const handleFilterChange = (value: FilterOption) => {
     setFilterOption(value);
@@ -77,15 +88,20 @@ const MyShop: React.FC = () => {
   }
 
   if (isError) {
-    return <ErrorDisplay />;
+    return <OopsComponent />;
   }
 
   if (!shopData) {
-    return <ErrorDisplay message="No shop data available" />;
+    return (
+      <CustomizableNoData
+        title="No Data Found"
+        description="There are no items in shop yet."
+      />
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <ShopHeader
           user={shopData.user_profile}

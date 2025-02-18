@@ -54,7 +54,7 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
                   <TooltipTrigger asChild>
                     <Badge variant="secondary" className="gap-1">
                       <FaMapMarkerAlt className="h-3 w-3" />
-                      {user.address}
+                      {user.address || 'Unknown'}
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -95,7 +95,7 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
                     </span>
                   </div>
                   <div className="text-sm">
-                    <p className="text-gray-600">Sold</p>
+                    <p className="text-gray-600">Sold Out</p>
                   </div>
                 </div>
               )}
@@ -125,11 +125,11 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
 
     <div className="px-6 py-3 bg-gray-50/50 flex flex-wrap gap-4 text-sm text-gray-600">
       <div className="flex items-center gap-2">
-        <FaPhone className="h-4 w-4 text-gray-400" />
+        <FaPhone className="h-4 w-4 text-primary_1" />
         <span>{user.contact}</span>
       </div>
       <div className="flex items-center gap-2">
-        <FaEnvelope className="h-4 w-4 text-gray-400" />
+        <FaEnvelope className="h-4 w-4 text-primary_1" />
         <span>{user.user.email}</span>
       </div>
     </div>

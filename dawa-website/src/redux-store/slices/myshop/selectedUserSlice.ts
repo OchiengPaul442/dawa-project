@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SelectedUserState {
-  userId: number | null;
+  userId: any | null;
 }
 
 const initialState: SelectedUserState = {
@@ -12,7 +12,7 @@ const selectedUserSlice = createSlice({
   name: 'selectedUser',
   initialState,
   reducers: {
-    setSelectedUserId(state, action: PayloadAction<number>) {
+    setSelectedUserId(state, action: PayloadAction<any>) {
       state.userId = action.payload;
     },
     clearSelectedUserId(state) {

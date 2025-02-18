@@ -85,6 +85,9 @@ export function EditAdvertSheet({
 
   const categories = useSelector(selectCategories);
 
+  console.info(item);
+  console.info(categories);
+
   // Whenever the incoming "item" changes, update the form state.
   useEffect(() => {
     setFormData({
@@ -255,7 +258,6 @@ export function EditAdvertSheet({
       }
     }
   };
-
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onClose}>

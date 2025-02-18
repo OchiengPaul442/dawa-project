@@ -10,7 +10,7 @@ import type {
   User,
   MessageGroup,
 } from '@/types/message';
-import { useChat } from './ChatContext';
+import { useChat } from '../../../contexts/ChatContext';
 import { MessageInput } from './MessageInput';
 import { EmptyState } from './EmptyState';
 import { ScrollArea } from '@/components/ui/scroll-area';

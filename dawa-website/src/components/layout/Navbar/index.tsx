@@ -8,7 +8,7 @@ import { useDispatch } from '@redux-store/hooks';
 import { useAuth } from '@core/hooks/use-auth';
 import { useProfile } from '@/contexts/profile-context';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
-import { ChatProvider } from '@/views/pages/messages/ChatContext';
+import { ChatProvider } from '@/contexts/ChatContext';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 

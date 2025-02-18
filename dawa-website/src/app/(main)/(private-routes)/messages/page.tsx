@@ -1,5 +1,5 @@
 import ChatApp from '@/views/pages/messages/ChatApp';
-import { ChatProvider } from '@/views/pages/messages/ChatContext';
+import { ChatProvider } from '@/contexts/ChatContext';
 
 const page = () => {
   return (
