@@ -41,9 +41,8 @@ const MobileNav: React.FC<any> = ({
   user,
   normalizedUserProfile,
   normalizedUserFromAuth,
-  onLogout,
 }) => {
-  const router = useRouter();
+  const { logout } = useAuth();
   const dispatch = useDispatch();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -173,7 +172,7 @@ const MobileNav: React.FC<any> = ({
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={onLogout}
+                    onClick={logout}
                     className="text-red-600 flex items-center"
                   >
                     <LogOut className="mr-2 h-4 w-4" />

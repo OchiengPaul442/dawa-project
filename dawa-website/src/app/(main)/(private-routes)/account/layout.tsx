@@ -11,7 +11,7 @@ export default function AuthenticatedLayout({
       <Sidebar className="hidden lg:block" />
       <div className="flex flex-1 flex-col">
         <main className="flex-1 bg-gray-100">
-          <div className="md:px-8 py-8">{children}</div>
+          <div className="md:px-8">{children}</div>
         </main>
       </div>
     </div>
