@@ -12,9 +12,9 @@ import type {
 } from '@/types/message';
 import { useChat } from '../../../contexts/ChatContext';
 import { MessageInput } from './MessageInput';
-import { EmptyState } from './EmptyState';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import CustomizableNoData from '@/components/shared/no-data';
 
 interface MessageItemProps {
   message: Message | OptimisticMessage;
@@ -137,29 +137,25 @@ export function ChatArea({ onBack, className }: ChatAreaProps) {
 
   if (!selectedGroupId || !selectedGroup) {
     return (
-      <div
-        className={`flex-1 flex items-center justify-center bg-gray-50/50 ${className}`}
-      >
-        <EmptyState
-          icon={MessageSquare}
-          title="Your Messages"
-          description="Select a chat to view your messages"
-        />
-      </div>
+      <CustomizableNoData
+        illustration={<MessageSquare />}
+        title="Your Messages"
+        illustrationClassName="w-12 h-12"
+        containerClassName="flex-1 flex flex-col items-center justify-center bg-gray-50/50"
+        description="Select a chat to view your messages"
+      />
     );
   }
 
   if (!currentUser || !otherUser) {
     return (
-      <div
-        className={`flex-1 flex items-center justify-center bg-gray-50/50 ${className}`}
-      >
-        <EmptyState
-          icon={MessageSquare}
-          title="User Not Found"
-          description="There was an error loading user info"
-        />
-      </div>
+      <CustomizableNoData
+        illustration={<MessageSquare />}
+        title="User Not Found"
+        illustrationClassName="w-12 h-12"
+        containerClassName="flex-1 flex flex-col items-center justify-center bg-gray-50/50"
+        description="There was an error loading user info"
+      />
     );
   }
 

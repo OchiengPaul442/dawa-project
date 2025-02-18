@@ -5,8 +5,8 @@ import { format, isValid } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, X, AlertCircle } from 'lucide-react';
 import type { MessageGroup, User, Message } from '@/types/message';
-import { EmptyState } from './EmptyState';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import CustomizableNoData from '@/components/shared/no-data';
 
 interface ContactListProps {
   messageGroups: MessageGroup[];
@@ -109,9 +109,11 @@ export function ContactList({
 
   if (!currentUser) {
     return (
-      <EmptyState
-        icon={AlertCircle}
+      <CustomizableNoData
+        illustration={<AlertCircle />}
         title="Not Authenticated"
+        illustrationClassName="w-12 h-12"
+        containerClassName="flex-1 flex flex-col items-center justify-center"
         description="Please sign in to view messages."
       />
     );
@@ -143,9 +145,11 @@ export function ContactList({
       </div>
       <ScrollArea className="flex-1">
         {filteredGroups.length === 0 ? (
-          <EmptyState
-            icon={AlertCircle}
+          <CustomizableNoData
+            illustration={<AlertCircle />}
             title="No results found"
+            illustrationClassName="w-12 h-12"
+            containerClassName="flex-1 h-full flex flex-col items-center justify-center"
             description="Try adjusting your search terms."
           />
         ) : (

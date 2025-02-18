@@ -18,7 +18,7 @@ interface NoDataProps {
 
 const DefaultIllustration = () => (
   <div className="w-full h-full flex items-center justify-center">
-    <FileQuestion className="w-24 h-24 text-gray-400" />
+    <FileQuestion className="w-20 h-20 text-gray-400" />
   </div>
 );
 
@@ -30,9 +30,9 @@ export default function CustomizableNoData({
   onCtaClick,
   customButton,
   containerClassName = 'flex flex-col items-center justify-center p-8 text-center w-full',
-  illustrationClassName = 'w-full h-48 mb-3',
+  illustrationClassName = 'w-full h-28 mb-2',
   titleClassName = 'text-2xl font-semibold text-gray-900',
-  descriptionClassName = 'text-sm text-gray-500 mt-2',
+  descriptionClassName = 'text-sm text-gray-500 mt-2 max-w-md',
   ctaClassName = 'mt-4',
 }: NoDataProps) {
   return (
