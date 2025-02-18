@@ -11,6 +11,9 @@ import { ProfileProvider } from '@/contexts/profile-context';
 import { CompleteProfileModal } from '@/components/shared/CompleteProfileModal';
 import { Toaster } from 'sonner';
 
+// TODO: Remove this once SpeedInsights is ready
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '700'],
@@ -44,7 +47,9 @@ export default function RootLayout({
             <AuthDialog />
           </Provider>
         </Suspense>
-        <Toaster position="top-right" expand={true} richColors />
+        <Toaster position="top-right" expand={true} richColors /> // TODO:
+        Remove this once SpeedInsights is ready
+        <SpeedInsights />
       </body>
     </html>
   );
