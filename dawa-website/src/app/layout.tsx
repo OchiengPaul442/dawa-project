@@ -6,7 +6,6 @@ import Loader from '@/components/features/loader/Loading';
 import { AuthDialog } from '@/components/dialogs/auth-dialog';
 import categoriesData from '@public/categories.json';
 import { WishlistProvider } from '@/contexts/WishlistContext';
-
 import { ProfileProvider } from '@/contexts/profile-context';
 import { CompleteProfileModal } from '@/components/shared/CompleteProfileModal';
 import { Toaster } from 'sonner';
@@ -49,7 +48,8 @@ export default function RootLayout({
           </Provider>
         </Suspense>
         <Toaster position="top-right" expand={true} richColors />
-        // TODO:Remove this once SpeedInsights is ready
+
+        {/* TODO: Remove this once SpeedInsights is ready */}
         <SpeedInsights />
         <Analytics />
       </body>
