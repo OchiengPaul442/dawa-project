@@ -266,6 +266,11 @@ export const useDeleteItemImage = () => {
 };
 
 export const useShopData = (userId: any | null) => {
+  const swrOptions = {
+    revalidateOnFocus: true,
+    revalidateOnReconnect: true,
+  };
+
   const { data, error, isLoading, mutate } = useSWR<any>(
     userId ? [`/getshopprofile`, userId] : null,
     () => getShopData('/getshopprofile/', { user_id: userId }),

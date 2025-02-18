@@ -6,10 +6,7 @@ import { SellerType } from '@/types/product';
 import { Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';
-import {
-  setSelectedUserId,
-  clearSelectedUserId,
-} from '@/redux-store/slices/myshop/selectedUserSlice';
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 
 function getValidImageUrl(
   url: string | null | undefined,
@@ -81,7 +78,6 @@ export const SellerInfo: React.FC<SellerInfoProps> = ({ seller, reviews }) => {
         <Button
           type="button"
           onClick={() => {
-            dispatch(clearSelectedUserId());
             dispatch(setSelectedUserId(seller.seller_id as any));
             router.push('/my-shop');
           }}
