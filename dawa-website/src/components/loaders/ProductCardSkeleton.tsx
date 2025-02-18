@@ -16,7 +16,7 @@ const ProductCardSkeleton: React.FC<ProductCardSkeletonProps> = ({
   gridClass,
 }) => {
   const defaultGridClass =
-    'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+    'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
   return (
     <div className={gridClass ? gridClass : defaultGridClass}>
       {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
