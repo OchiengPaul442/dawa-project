@@ -58,6 +58,31 @@ interface FormDataState {
   item_status: string;
 }
 
+/**
+ * Look up the subcategory id using the item data and available categories.
+ * If the item provides a subcategory id (item.subcategory_id), that is used.
+ * Otherwise, if the item provides a subcategory name (item.subcategory), we try to
+ * find a matching subcategory (case-insensitive) in the categories data.
+ */
+function getSubcategoryId(item: any, categories: any[]): number | null {
+  if (item.subcategory_id) {
+    return Number(item.subcategory_id);
+  }
+  if (item.subcategory && Array.isArray(categories)) {
+    for (const cat of categories) {
+      if (cat.subcategories && Array.isArray(cat.subcategories)) {
+        const match = cat.subcategories.find(
+          (sub: any) =>
+            sub.subcategory_name.toLowerCase() ===
+            item.subcategory.toLowerCase(),
+        );
+        if (match) return Number(match.id);
+      }
+    }
+  }
+  return null;
+}
+
 export function EditAdvertSheet({
   isOpen,
   onClose,
@@ -66,11 +91,14 @@ export function EditAdvertSheet({
 }: EditAdvertSheetProps) {
   const { updateProduct, isLoading: isUpdating } = useUpdateProduct();
   const { deleteItemImage } = useDeleteItemImage();
+  const categories = useSelector(selectCategories);
+
+  // Initialize form state using getSubcategoryId to set item_subcategory.
   const [formData, setFormData] = useState<FormDataState>({
     item_id: item.id,
     item_name: item.name,
     item_price: item.price,
-    item_subcategory: item.subcategory_id ? Number(item.subcategory_id) : null,
+    item_subcategory: getSubcategoryId(item, categories),
     item_description: item.description,
     item_location: item.location,
     item_negotiable: item.item_negotiable,
@@ -83,20 +111,13 @@ export function EditAdvertSheet({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [imageToDelete, setImageToDelete] = useState<number | null>(null);
 
-  const categories = useSelector(selectCategories);
-
-  console.info(item);
-  console.info(categories);
-
-  // Whenever the incoming "item" changes, update the form state.
+  // Whenever the incoming "item" or "categories" change, update the form state.
   useEffect(() => {
     setFormData({
       item_id: item.id,
       item_name: item.name,
       item_price: item.price,
-      item_subcategory: item.subcategory_id
-        ? Number(item.subcategory_id)
-        : null,
+      item_subcategory: getSubcategoryId(item, categories),
       item_description: item.description,
       item_location: item.location,
       item_negotiable: item.item_negotiable,
@@ -105,7 +126,7 @@ export function EditAdvertSheet({
     setImages(item.images || []);
     setNewImages([]);
     setErrors({});
-  }, [item]);
+  }, [item, categories]);
 
   // Store the initial form data to compare later for changes.
   const initialFormDataRef = useRef<FormDataState>(formData);
@@ -114,15 +135,13 @@ export function EditAdvertSheet({
       item_id: item.id,
       item_name: item.name,
       item_price: item.price,
-      item_subcategory: item.subcategory_id
-        ? Number(item.subcategory_id)
-        : null,
+      item_subcategory: getSubcategoryId(item, categories),
       item_description: item.description,
       item_location: item.location,
       item_negotiable: item.item_negotiable,
       item_status: item.status || 'Available',
     };
-  }, [item]);
+  }, [item, categories]);
 
   // Simulate image loading delay (e.g. for a skeleton)
   useEffect(() => {
@@ -258,6 +277,7 @@ export function EditAdvertSheet({
       }
     }
   };
+
   return (
     <>
       <Sheet open={isOpen} onOpenChange={onClose}>
