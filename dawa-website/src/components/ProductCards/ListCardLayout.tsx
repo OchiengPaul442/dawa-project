@@ -122,6 +122,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
 
               <LikeButton
                 productId={product.id}
+                product={product as any}
                 className="bg-transparent hover:bg-transparent border border-primary text-primary p-2 rounded"
               />
             </div>
