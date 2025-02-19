@@ -12,6 +12,9 @@ export interface NormalizedProduct {
   description?: string;
   category?: string;
   subcategory?: string;
+  created_at: string;
+  updated_at: string;
+  dateAdded: string;
 }
 
 export function normalizeProduct(product: any): NormalizedProduct {
@@ -29,6 +32,9 @@ export function normalizeProduct(product: any): NormalizedProduct {
     description: product.item_description,
     category: product.category,
     subcategory: product.subcategory,
+    dateAdded: product.created_at,
+    created_at: product.created_at,
+    updated_at: product.updated_at,
   };
 }
 
