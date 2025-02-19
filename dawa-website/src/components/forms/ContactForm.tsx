@@ -5,16 +5,19 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Button from '../shared/Button';
+import { toast } from 'sonner';
+import { useContactUs } from '@core/hooks/useProductData';
 
-// Define the shape of form data
-interface IFormInput {
+// Define the shape of form data, including phone_number as expected by your API.
+export interface IFormInput {
   name: string;
   email: string;
+  phone_number: string;
   subject: string;
   message: string;
 }
 
-// Define validation schema using Yup
+// Define the validation schema using Yup.
 const schema = yup
   .object({
     name: yup
@@ -25,6 +28,7 @@ const schema = yup
       .string()
       .required('Email is required')
       .email('Invalid email address'),
+    phone_number: yup.string().required('Phone number is required'),
     subject: yup
       .string()
       .required('Subject is required')
@@ -37,36 +41,31 @@ const schema = yup
   .required();
 
 const ContactForm: React.FC = () => {
-  // Initialize the form with react-hook-form and Yup resolver
+  // Use the custom hook to handle contact submission.
+  // The hook returns a "contactUs" function (the trigger), a loading state, and any error.
+  const { contactUs, isLoading, error } = useContactUs();
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     reset,
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
   });
 
-  // Handle form submission
+  // Handle form submission using the SWR mutation from our custom hook.
+  // The custom hook expects a plain object that matches IFormInput.
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        alert('Your message has been sent successfully!');
-        reset();
-      } else {
-        alert('Something went wrong. Please try again later.');
-      }
-    } catch (error) {
-      console.error('Error submitting the form:', error);
-      alert('An unexpected error occurred. Please try again.');
+      // Call the trigger function from the hook.
+      // Under the hood, the hook passes data as { arg: data } to the fetcher.
+      await contactUs(data);
+      toast.success('Your message has been sent successfully!');
+      reset();
+    } catch (err) {
+      console.error('Error submitting the form:', err);
+      toast.error('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -82,16 +81,16 @@ const ContactForm: React.FC = () => {
       {/* Name Field */}
       <div className="mb-4">
         <label htmlFor="name" className="block text-gray-700 mb-2">
-          Name<span className="text-red-500">*</span>
+          Name <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           id="name"
           {...register('name')}
+          placeholder="Your Name"
           className={`w-full px-4 py-2 border ${
             errors.name ? 'border-red-500' : 'border-gray-300'
           } rounded-md focus:outline-none focus:ring-2 focus:ring-primary_1`}
-          placeholder="Your Name"
         />
         {errors.name && (
           <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -101,35 +100,56 @@ const ContactForm: React.FC = () => {
       {/* Email Field */}
       <div className="mb-4">
         <label htmlFor="email" className="block text-gray-700 mb-2">
-          Email<span className="text-red-500">*</span>
+          Email <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
           id="email"
           {...register('email')}
+          placeholder="your.email@example.com"
           className={`w-full px-4 py-2 border ${
             errors.email ? 'border-red-500' : 'border-gray-300'
           } rounded-md focus:outline-none focus:ring-2 focus:ring-primary_1`}
-          placeholder="your.email@dawa.com"
         />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
         )}
       </div>
 
+      {/* Phone Number Field */}
+      <div className="mb-4">
+        <label htmlFor="phone_number" className="block text-gray-700 mb-2">
+          Phone Number <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="phone_number"
+          {...register('phone_number')}
+          placeholder="+1234567890"
+          className={`w-full px-4 py-2 border ${
+            errors.phone_number ? 'border-red-500' : 'border-gray-300'
+          } rounded-md focus:outline-none focus:ring-2 focus:ring-primary_1`}
+        />
+        {errors.phone_number && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.phone_number.message}
+          </p>
+        )}
+      </div>
+
       {/* Subject Field */}
       <div className="mb-4">
         <label htmlFor="subject" className="block text-gray-700 mb-2">
-          Subject<span className="text-red-500">*</span>
+          Subject <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
           id="subject"
           {...register('subject')}
+          placeholder="Subject"
           className={`w-full px-4 py-2 border ${
             errors.subject ? 'border-red-500' : 'border-gray-300'
           } rounded-md focus:outline-none focus:ring-2 focus:ring-primary_1`}
-          placeholder="Subject"
         />
         {errors.subject && (
           <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
@@ -139,29 +159,36 @@ const ContactForm: React.FC = () => {
       {/* Message Field */}
       <div className="mb-4">
         <label htmlFor="message" className="block text-gray-700 mb-2">
-          Message<span className="text-red-500">*</span>
+          Message <span className="text-red-500">*</span>
         </label>
         <textarea
           id="message"
           {...register('message')}
           rows={5}
+          placeholder="Your message..."
           className={`w-full px-4 py-2 border ${
             errors.message ? 'border-red-500' : 'border-gray-300'
           } rounded-md focus:outline-none focus:ring-2 focus:ring-primary_1`}
-          placeholder="Your message..."
         ></textarea>
         {errors.message && (
           <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
         )}
       </div>
 
+      {/* Optional: Display an error from the hook if one exists */}
+      {error && (
+        <p className="text-red-500 text-sm mb-4">
+          {error.message || 'An error occurred while sending your message.'}
+        </p>
+      )}
+
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isLoading}
         className="w-full bg-primary_1 h-12 text-white py-2 px-4 rounded-md hover:bg-primary_1 transition duration-300 disabled:opacity-50"
       >
-        {isSubmitting ? 'Sending...' : 'Send Message'}
+        {isLoading ? 'Sending...' : 'Send Message'}
       </Button>
     </form>
   );

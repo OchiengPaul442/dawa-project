@@ -25,6 +25,12 @@ import { getMessages, sendMessage } from '@/app/server/messages/api';
 import { SendMessagePayload } from '@/types/message';
 import { ProductUploadProps } from '@/types/product';
 import { ReportAbuseProps } from '@/types/reportAbuse';
+import {
+  getFaqs,
+  subscribeToNewsletter,
+  contactUs,
+} from '@/app/server/faqs_newLetter_contactUs/api';
+import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
 
 export function useTrendingProducts() {
   const { data, error, isLoading, mutate } = useSWR(
@@ -276,5 +282,53 @@ export const useShopData = (userId: any) => {
     isLoading,
     isError: error,
     mutate,
+  };
+};
+
+// Get FAQs
+export const useFaqs = () => {
+  const { data, error, isLoading, mutate } = useSWR(
+    'faqs',
+    getFaqs,
+    swrOptions,
+  );
+
+  return {
+    faqsData: data || [],
+    isLoading,
+    isError: error,
+    mutate,
+  };
+};
+
+// Subscribe to newsletter
+export const useSubscribeToNewsletter = () => {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any,
+    any,
+    string,
+    SubscribePayload
+  >('/subscribe/', subscribeToNewsletter);
+
+  return {
+    subscribeToNewsletter: trigger,
+    isLoading: isMutating,
+    error,
+  };
+};
+
+// Contact us
+export const useContactUs = () => {
+  const { trigger, isMutating, error } = useSWRMutation<
+    any,
+    any,
+    string,
+    ContactUsPayload
+  >('/contactus/', contactUs);
+
+  return {
+    contactUs: trigger,
+    isLoading: isMutating,
+    error,
   };
 };

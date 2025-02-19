@@ -1,16 +1,34 @@
-import type React from 'react';
-import { useState } from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { useSubscribeToNewsletter } from '@core/hooks/useProductData';
 
 const NewsletterForm: React.FC = () => {
   const [email, setEmail] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Use the custom hook for subscribing to the newsletter.
+  const { subscribeToNewsletter, isLoading, error } =
+    useSubscribeToNewsletter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement newsletter subscription logic
-    console.log('Subscribing email:', email);
-    setEmail('');
+
+    try {
+      // Prepare the payload with a fixed name and the entered email.
+      await subscribeToNewsletter({
+        name: 'subscribe', // Fixed name field as per your instruction
+        email,
+      });
+
+      toast.success('Subscribed successfully!');
+      setEmail('');
+    } catch (err) {
+      console.error('Subscription error:', err);
+      toast.error('Failed to subscribe. Please try again.');
+    }
   };
 
   return (
@@ -32,11 +50,17 @@ const NewsletterForm: React.FC = () => {
         />
         <Button
           type="submit"
+          disabled={isLoading}
           className="bg-primary_1 hover:bg-primary_1/90 text-white"
         >
-          Subscribe
+          {isLoading ? 'Subscribing...' : 'Subscribe'}
         </Button>
       </div>
+      {error && (
+        <p className="text-red-500 text-sm">
+          {error.message || 'An error occurred while subscribing.'}
+        </p>
+      )}
     </form>
   );
 };
