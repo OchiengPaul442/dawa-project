@@ -1,6 +1,13 @@
 'use client';
 
-import React, { useState, useMemo, useCallback, useEffect, FC } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  FC,
+  useRef,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
@@ -8,17 +15,23 @@ import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
+import CustomizableNoData from '@/components/shared/no-data';
+import { OopsComponent } from '@/components/shared/oops-component';
 
 import { slugify } from '@/utils/slugify';
 import {
   setSelectedCategory,
   setSelectedSubcategory,
 } from '@redux-store/slices/categories/categorySlice';
-import { useCategoryData } from '@core/hooks/useProductData';
+import { useProductsData } from '@core/hooks/useProductData';
 
 import type { Category, Subcategory } from '@/types/category';
 import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
-import CustomizableNoData from '@/components/shared/no-data';
+import useInfiniteScroll, {
+  UseInfiniteScrollOptions,
+} from '@/@core/hooks/useInfiniteScroll';
+import SingleSkeletonCard from '@/components/loaders/SingleSkeletonCard';
+import { normalizeProducts } from '@/utils/normalizeProductData';
 
 type FilterOptionType =
   | 'default'
@@ -43,16 +56,15 @@ interface CategoryPageProps {
 const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
   const dispatch = useDispatch();
 
-  // Grab categories from the Redux store
+  // Get categories from Redux.
   const categories = useSelector(
     (state: any) => state.categories.categories,
   ) as ExtendedCategory[];
 
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
-  const [products, setProducts] = useState<any[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
 
+  // Filter/sort related states (if needed).
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
     0, 1000000000,
   ]);
@@ -61,21 +73,21 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     [],
   );
 
-  // Derive selectedCategory based on URL slug
+  // Derive selected category from the URL slug.
   const selectedCategory = useMemo(() => {
     return categories.find(
       (cat) => slugify(cat.category_name) === slugify(category[0] || ''),
     );
   }, [categories, category]);
 
-  // Derive selectedSubcategory
+  // Derive selected subcategory.
   const selectedSubcategory = useMemo(() => {
     return selectedCategory?.subcategories.find(
       (sub) => slugify(sub.subcategory_name) === slugify(category[1] || ''),
     );
   }, [selectedCategory, category]);
 
-  // Dispatch global references
+  // Dispatch global selected values.
   useEffect(() => {
     dispatch(setSelectedCategory(selectedCategory || null));
   }, [selectedCategory, dispatch]);
@@ -84,51 +96,45 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     dispatch(setSelectedSubcategory(selectedSubcategory || null));
   }, [selectedSubcategory, dispatch]);
 
-  // Fetch category data
-  const {
-    data: fetchedData,
-    error,
-    isLoading,
-  } = useCategoryData({
-    selectedCategory,
-    selectedSubcategory,
-  });
-
-  useEffect(() => {
-    if (fetchedData && fetchedData.data) {
-      setProducts(fetchedData.data);
-      setFilteredProducts(fetchedData.data);
-    } else {
-      setProducts([]);
-      setFilteredProducts([]);
+  // Generate the request body for products API.
+  const productsBody = useMemo(() => {
+    if (selectedSubcategory) {
+      return { subcategory_id: selectedSubcategory.id };
+    } else if (selectedCategory) {
+      return { category_id: selectedCategory.id };
     }
-  }, [fetchedData]);
+    return null;
+  }, [selectedCategory, selectedSubcategory]);
 
-  // Filtering and sorting
-  const applyFilters = useCallback(
-    (
-      priceRange: [number, number],
-      location: string,
-      selectedColors: string[],
-    ) => {
-      let updated = [...products];
-      if (location) {
-        updated = updated.filter((product) => product.location === location);
-      }
-      updated = updated.filter(
-        (product) =>
-          product.price >= priceRange[0] && product.price <= priceRange[1],
-      );
-      if (selectedColors.length > 0) {
-        updated = updated.filter((product) =>
-          selectedColors.includes(product.color),
-        );
-      }
-      setFilteredProducts(updated);
+  // Use the hook to fetch paginated product data.
+  const {
+    productsData,
+    nextPageUrl,
+    isLoading: isProductsLoading,
+    isError: productsError,
+
+    setSize,
+  } = useProductsData(productsBody);
+
+  // Normalize the raw products.
+  const normalizedProductsData = useMemo(() => {
+    return normalizeProducts(productsData);
+  }, [productsData]);
+
+  // Infinite scroll: attach observer to load more pages.
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  useInfiniteScroll(
+    loadMoreRef,
+    () => {
+      setSize((prevSize: number) => prevSize + 1);
     },
-    [products],
+    {
+      threshold: 1,
+      enabled: !!nextPageUrl && !isProductsLoading,
+    } as UseInfiniteScrollOptions,
   );
 
+  // UI Handlers for filtering/sorting.
   const handleApplyFilters = useCallback(
     (
       newPriceRange: [number, number],
@@ -138,39 +144,21 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
       setAppliedPriceRange(newPriceRange);
       setAppliedLocation(newLocation);
       setAppliedSelectedColors(newSelectedColors);
-      applyFilters(newPriceRange, newLocation, newSelectedColors);
+      // Additional filtering logic can be implemented here if needed.
     },
-    [applyFilters],
+    [],
   );
 
   const resetFilters = useCallback(() => {
     setAppliedPriceRange([0, 1000000000]);
     setAppliedLocation('');
     setAppliedSelectedColors([]);
-    setFilteredProducts(products);
-  }, [products]);
+  }, []);
 
-  const handleFilterChange = useCallback(
-    (selectedOption: string) => {
-      setFilterOption(selectedOption as FilterOptionType);
-      let sorted = [...filteredProducts];
-      switch (selectedOption) {
-        case 'rating':
-          sorted.sort((a, b) => b.rating - a.rating);
-          break;
-        case 'price_low_to_high':
-          sorted.sort((a, b) => a.price - b.price);
-          break;
-        case 'price_high_to_low':
-          sorted.sort((a, b) => b.price - a.price);
-          break;
-        default:
-          break;
-      }
-      setFilteredProducts(sorted);
-    },
-    [filteredProducts],
-  );
+  const handleFilterChange = useCallback((selectedOption: string) => {
+    setFilterOption(selectedOption as FilterOptionType);
+    // Sorting logic if needed.
+  }, []);
 
   if (!selectedCategory) {
     return null;
@@ -217,33 +205,48 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               filterOption={filterOption}
               handleFilterChange={handleFilterChange}
             />
-            {isLoading ? (
-              <ProductCardSkeleton ITEMS_PER_PAGE={16} />
-            ) : (
+            {isProductsLoading ? (
+              <ProductCardSkeleton
+                ITEMS_PER_PAGE={16}
+                gridClass="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
+              />
+            ) : productsError ? (
+              <OopsComponent />
+            ) : normalizedProductsData.length > 0 ? (
               <>
-                {filteredProducts.length > 0 ? (
-                  <div
-                    className={
-                      viewType === 'grid'
-                        ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6'
-                        : 'flex flex-col gap-4'
-                    }
-                  >
-                    {filteredProducts.map((product) => (
-                      <CardLayout
-                        key={product.id}
-                        product={product}
-                        viewType={viewType}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <CustomizableNoData
-                    title="No products found"
-                    description="No products found matching the selected filters."
-                  />
-                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {normalizedProductsData.map((product, index) => (
+                    <CardLayout
+                      key={`${product.id}-${index}`}
+                      product={product as unknown as any}
+                      viewType={viewType}
+                    />
+                  ))}
+                  {isProductsLoading &&
+                    // Calculate skeleton cards: fill remaining cells plus one extra full row.
+                    (() => {
+                      const columns = 4;
+                      const productCount = normalizedProductsData.length;
+                      const remainder = productCount % columns;
+                      const fillCount = remainder > 0 ? columns - remainder : 0;
+                      const additionalSkeletonCount = columns;
+                      const totalSkeletonCount =
+                        fillCount + additionalSkeletonCount;
+                      return Array.from({ length: totalSkeletonCount }).map(
+                        (_, idx) => (
+                          <SingleSkeletonCard key={`skeleton-${idx}`} />
+                        ),
+                      );
+                    })()}
+                </div>
+                {/* Sentinel element */}
+                <div ref={loadMoreRef} className="h-1" />
               </>
+            ) : (
+              <CustomizableNoData
+                title="No products found"
+                description="No products found matching the selected filters."
+              />
             )}
           </div>
         </main>
