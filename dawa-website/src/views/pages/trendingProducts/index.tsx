@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { useTrendingProducts } from '@core/hooks/useProductData';
+import { useProductsData } from '@core/hooks/useProductData';
 import ProductCard from '@/components/ProductCards/GridCardLayout';
 import { OopsComponent } from '@/components/shared/oops-component';
 import { SimilarItem } from '@/types/product';
@@ -12,13 +12,13 @@ import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
 
 const ProductPage: React.FC = () => {
   const { productsData, isLoading, isError, nextPageUrl, size, setSize } =
-    useTrendingProducts();
+    useProductsData({});
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Normalize the raw product data.
   const normalizedProductsData = normalizeProducts(productsData);
 
-  // Use our custom infinite scroll hook.
+  // Use the custom infinite scroll hook.
   useInfiniteScroll(
     loadMoreRef,
     () => {
@@ -34,10 +34,7 @@ const ProductPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-primary_1">
           Trending Products
         </h2>
-        <ProductCardSkeleton
-          ITEMS_PER_PAGE={16}
-          gridClass="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
-        />
+        <ProductCardSkeleton ITEMS_PER_PAGE={16} />
       </div>
     );
   }
@@ -57,10 +54,9 @@ const ProductPage: React.FC = () => {
   // Assume a 4-column grid layout.
   const columns = 4;
   const productCount = normalizedProductsData.length;
-  // Determine how many items exist in the current (possibly incomplete) row.
   const remainder = productCount % columns;
-  // Calculate the number of skeleton cards needed to fill the current row.
   const fillCount = remainder > 0 ? columns - remainder : 0;
+  // Additionally, add one extra full row of skeleton cards.
   const additionalSkeletonCount = columns;
   const totalSkeletonCount = fillCount + additionalSkeletonCount;
 

@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import {
-  getTrendingProductsList,
+  getProductsList,
   getPromotedProductsList,
   getCategoryData,
   addNewProduct,
@@ -34,9 +34,7 @@ import {
 import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
 
 /**
- * Deduplicate an array of products by using the product id as the unique key.
- * @param products - Array of raw product objects.
- * @returns Array of unique product objects.
+ * Helper to remove duplicate products based on their id.
  */
 function deduplicateProducts(products: any[]): any[] {
   const uniqueMap = new Map<number, any>();
@@ -47,23 +45,35 @@ function deduplicateProducts(products: any[]): any[] {
 }
 
 /**
- * Uses SWR Infinite to fetch paginated trending products and returns a deduplicated flat list.
+ * useProductsData accepts an optional body object that will be sent on the initial request.
+ * The body is included in the key for the first page so that changing it will revalidate the data.
  */
-export function useTrendingProducts() {
+export function useProductsData(body?: any) {
+  // Create a stable string key from the body (if provided).
+  const bodyKey = body ? JSON.stringify(body) : null;
+
+  // The getKey function: for the first page include the bodyKey, subsequent pages use the next URL.
   const getKey = (
     pageIndex: number,
     previousPageData: TrendingProductsResponse | null,
   ): string | null => {
-    if (previousPageData && !previousPageData.next) return null; // End reached.
-    if (pageIndex === 0) return '/getitems/'; // First page.
-    return previousPageData!.next; // Subsequent pages.
+    if (previousPageData && !previousPageData.next) return null;
+    if (pageIndex === 0)
+      return bodyKey
+        ? `/getitems/?body=${encodeURIComponent(bodyKey)}`
+        : '/getitems/';
+    return previousPageData!.next;
   };
 
   const { data, error, size, setSize, mutate } =
-    useSWRInfinite<TrendingProductsResponse>(getKey, getTrendingProductsList, {
-      revalidateAll: false,
-      revalidateOnFocus: false,
-    });
+    useSWRInfinite<TrendingProductsResponse>(
+      getKey,
+      (url: string) => getProductsList(url, body),
+      {
+        revalidateAll: false,
+        revalidateOnFocus: false,
+      },
+    );
 
   // Flatten pages into a single array and deduplicate products by id.
   const rawProductsData = data ? data.flatMap((page) => page.results.data) : [];

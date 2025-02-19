@@ -29,11 +29,12 @@ export const getCategoryData = async (body: any): Promise<any> => {
 };
 
 // Fetch products
-export const getTrendingProductsList = async (
+export const getProductsList = async (
   url: string,
+  body: any = {},
 ): Promise<TrendingProductsResponse> => {
   try {
-    const response = await openApiClient.post(url, {});
+    const response = await openApiClient.post(url, body);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
