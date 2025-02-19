@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useEffect, FC } from 'react';
-import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 
 import CardLayout from '@/components/ProductCards/CardLayout';
@@ -16,8 +15,6 @@ import {
   setSelectedSubcategory,
 } from '@redux-store/slices/categories/categorySlice';
 import { useCategoryData } from '@core/hooks/useProductData';
-
-import { Button } from '@/components/ui/button';
 
 import type { Category, Subcategory } from '@/types/category';
 import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
@@ -44,7 +41,6 @@ interface CategoryPageProps {
 }
 
 const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
-  const router = useRouter();
   const dispatch = useDispatch();
 
   // Grab categories from the Redux store

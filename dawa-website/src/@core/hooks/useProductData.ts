@@ -1,6 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
+import useSWRInfinite from 'swr/infinite';
 import {
   getTrendingProductsList,
   getPromotedProductsList,
@@ -23,7 +24,7 @@ import { swrOptions } from '../swrConfig';
 import useSWRMutation from 'swr/mutation';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
 import { SendMessagePayload } from '@/types/message';
-import { ProductUploadProps } from '@/types/product';
+import { ProductUploadProps, TrendingProductsResponse } from '@/types/product';
 import { ReportAbuseProps } from '@/types/reportAbuse';
 import {
   getFaqs,
@@ -32,18 +33,57 @@ import {
 } from '@/app/server/faqs_newLetter_contactUs/api';
 import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
 
+/**
+ * Deduplicate an array of products by using the product id as the unique key.
+ * @param products - Array of raw product objects.
+ * @returns Array of unique product objects.
+ */
+function deduplicateProducts(products: any[]): any[] {
+  const uniqueMap = new Map<number, any>();
+  products.forEach((product) => {
+    uniqueMap.set(product.id, product);
+  });
+  return Array.from(uniqueMap.values());
+}
+
+/**
+ * Uses SWR Infinite to fetch paginated trending products and returns a deduplicated flat list.
+ */
 export function useTrendingProducts() {
-  const { data, error, isLoading, mutate } = useSWR(
-    'products',
-    getTrendingProductsList,
-    swrOptions,
-  );
+  const getKey = (
+    pageIndex: number,
+    previousPageData: TrendingProductsResponse | null,
+  ): string | null => {
+    if (previousPageData && !previousPageData.next) return null; // End reached.
+    if (pageIndex === 0) return '/getitems/'; // First page.
+    return previousPageData!.next; // Subsequent pages.
+  };
+
+  const { data, error, size, setSize, mutate } =
+    useSWRInfinite<TrendingProductsResponse>(getKey, getTrendingProductsList, {
+      revalidateAll: false,
+      revalidateOnFocus: false,
+    });
+
+  // Flatten pages into a single array and deduplicate products by id.
+  const rawProductsData = data ? data.flatMap((page) => page.results.data) : [];
+  const productsData = deduplicateProducts(rawProductsData);
+  const totalCount = data?.[0]?.count || 0;
+  const nextPageUrl = data?.[data.length - 1]?.next || null;
+  const isLoadingInitialData = !data && !error;
+  const isLoadingMore =
+    isLoadingInitialData ||
+    (size > 0 && data && typeof data[size - 1] === 'undefined');
 
   return {
-    productsData: data?.data || [],
-    isLoading,
+    productsData,
+    totalCount,
+    nextPageUrl,
+    isLoading: isLoadingMore,
     isError: error,
     mutate,
+    size,
+    setSize,
   };
 }
 

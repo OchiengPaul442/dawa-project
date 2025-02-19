@@ -71,3 +71,12 @@ export interface Review {
   reviewer_name: string;
   created_at: string;
 }
+
+export interface TrendingProductsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: {
+    data: any[]; // Replace `any` with a more specific type if available
+  };
+}

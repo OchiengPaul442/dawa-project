@@ -3,7 +3,7 @@ import {
   openApiClient,
   secureMultipartApiClient,
 } from '@/utils/apiClient';
-import { ProductUploadProps } from '@/types/product';
+import { ProductUploadProps, TrendingProductsResponse } from '@/types/product';
 import { ReportAbuseProps } from '@/types/reportAbuse';
 
 // Fetch categories
@@ -29,9 +29,11 @@ export const getCategoryData = async (body: any): Promise<any> => {
 };
 
 // Fetch products
-export const getTrendingProductsList = async (): Promise<any> => {
+export const getTrendingProductsList = async (
+  url: string,
+): Promise<TrendingProductsResponse> => {
   try {
-    const response = await openApiClient.post('/getitems/', {});
+    const response = await openApiClient.post(url, {});
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
