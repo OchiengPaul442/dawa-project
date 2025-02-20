@@ -19,7 +19,7 @@ import {
   updateUserProfile,
   changeUserPassword,
 } from '@/app/server/auth/api';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { swrOptions } from '../swrConfig';
 import useSWRMutation from 'swr/mutation';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
@@ -32,6 +32,7 @@ import {
   contactUs,
 } from '@/app/server/faqs_newLetter_contactUs/api';
 import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
+import { search } from '@/app/server/search/api';
 
 /**
  * Helper to remove duplicate products based on their id.
@@ -380,5 +381,34 @@ export const useContactUs = () => {
     contactUs: trigger,
     isLoading: isMutating,
     error,
+  };
+};
+
+// search products
+export const useSearchProducts = (query: string) => {
+  const fetcher = useCallback(() => {
+    const controller = new AbortController();
+    const promise = search(query, controller.signal);
+    // Abort the request once it's finished to avoid lingering requests.
+    promise.finally(() => {
+      controller.abort();
+    });
+    return promise;
+  }, [query]);
+
+  const { data, error, mutate, isValidating } = useSWR(
+    query ? ['search', query] : null,
+    fetcher,
+    swrOptions,
+  );
+
+  return {
+    searchQuery: data?.search_query || '',
+    productsData: data?.data || [],
+    status: data?.status || 0,
+    isLoading: query ? !data && !error : false,
+    isError: error,
+    mutate,
+    isValidating,
   };
 };

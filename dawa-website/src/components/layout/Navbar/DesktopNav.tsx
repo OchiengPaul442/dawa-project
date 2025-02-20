@@ -1,11 +1,9 @@
 'use client';
 
-import type React from 'react';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch } from 'react-icons/fa';
 import { FiGrid } from 'react-icons/fi';
 import { Menu } from 'lucide-react';
 import { useDispatch } from '@redux-store/hooks';
@@ -15,10 +13,10 @@ import { UserNav } from './user-nav';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '@/components/shared/Button';
-import { Input } from '@/components/ui/input';
 import Sidebar from '@/views/pages/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import MainConfigs from '@/configs/mainConfigs';
+import SearchBar from '@/components/shared/SearchBar';
 
 interface DesktopNavProps {
   isSticky: boolean;
@@ -126,17 +124,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
         </div>
 
         <div className="hidden lg:flex items-center flex-grow mx-8">
-          <div className="relative w-full max-w-2xl">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              className="w-full h-12 pl-5 pr-12 bg-gray-100 rounded-lg border-0 focus-visible:ring-2 focus-visible:ring-primary_1 transition-all duration-300"
-            />
-            <Button
-              icon={FaSearch}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary_1 text-white hover:bg-primary_1/90 rounded-lg h-8 w-8 transition-all duration-300"
-            />
-          </div>
+          <SearchBar />
         </div>
 
         <div className="flex items-center gap-4">

@@ -61,10 +61,11 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     (state: any) => state.categories.categories,
   ) as ExtendedCategory[];
 
+  // View and sorting states.
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [filterOption, setFilterOption] = useState<FilterOptionType>('default');
 
-  // Filter/sort related states (if needed).
+  // Filter criteria states.
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
     0, 1000000000,
   ]);
@@ -96,7 +97,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     dispatch(setSelectedSubcategory(selectedSubcategory || null));
   }, [selectedSubcategory, dispatch]);
 
-  // Generate the request body for products API.
+  // Prepare the request body for the products API.
   const productsBody = useMemo(() => {
     if (selectedSubcategory) {
       return { subcategory_id: selectedSubcategory.id };
@@ -106,17 +107,16 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     return null;
   }, [selectedCategory, selectedSubcategory]);
 
-  // Use the hook to fetch paginated product data.
+  // Fetch paginated products.
   const {
     productsData,
     nextPageUrl,
     isLoading: isProductsLoading,
     isError: productsError,
-
     setSize,
   } = useProductsData(productsBody);
 
-  // Normalize the raw products.
+  // Normalize the fetched product data.
   const normalizedProductsData = useMemo(() => {
     return normalizeProducts(productsData);
   }, [productsData]);
@@ -134,7 +134,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
     } as UseInfiniteScrollOptions,
   );
 
-  // UI Handlers for filtering/sorting.
+  // Handler for applying filters from the ProductFilter component.
   const handleApplyFilters = useCallback(
     (
       newPriceRange: [number, number],
@@ -144,21 +144,76 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
       setAppliedPriceRange(newPriceRange);
       setAppliedLocation(newLocation);
       setAppliedSelectedColors(newSelectedColors);
-      // Additional filtering logic can be implemented here if needed.
     },
     [],
   );
 
+  // Handler for resetting filters.
   const resetFilters = useCallback(() => {
     setAppliedPriceRange([0, 1000000000]);
     setAppliedLocation('');
     setAppliedSelectedColors([]);
   }, []);
 
+  // Handle sorting option change.
   const handleFilterChange = useCallback((selectedOption: string) => {
     setFilterOption(selectedOption as FilterOptionType);
-    // Sorting logic if needed.
   }, []);
+
+  // Front-end filtering of the normalized products.
+  const filteredProducts = useMemo(() => {
+    return normalizedProductsData.filter((product) => {
+      // Price filter.
+      const price = Number(product.price);
+      if (price < appliedPriceRange[0] || price > appliedPriceRange[1]) {
+        return false;
+      }
+      // Location filter (case-insensitive).
+      if (
+        appliedLocation &&
+        product.location &&
+        !product.location.toLowerCase().includes(appliedLocation.toLowerCase())
+      ) {
+        return false;
+      }
+      // Colors filter (if applicable).
+      if (appliedSelectedColors.length > 0) {
+        const productColors: string[] = (product as any).colors || [];
+        if (
+          !appliedSelectedColors.some((color) => productColors.includes(color))
+        ) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [
+    normalizedProductsData,
+    appliedPriceRange,
+    appliedLocation,
+    appliedSelectedColors,
+  ]);
+
+  // Sorting logic based on the selected filter option.
+  const sortedProducts = useMemo(() => {
+    const products = [...filteredProducts];
+    switch (filterOption) {
+      case 'price_low_to_high':
+        products.sort((a, b) => Number(a.price) - Number(b.price));
+        break;
+      case 'price_high_to_low':
+        products.sort((a, b) => Number(b.price) - Number(a.price));
+        break;
+      default:
+        // Default: newest first using dateAdded.
+        products.sort(
+          (a, b) =>
+            new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
+        );
+        break;
+    }
+    return products;
+  }, [filteredProducts, filterOption]);
 
   if (!selectedCategory) {
     return null;
@@ -176,7 +231,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Sidebar */}
-        <aside className="flex lg:flex-col gap-6">
+        <aside className="flex flex-col gap-6">
           <CategoriesAndSubcategories
             categoryName={selectedCategory.category_name}
             categoryCount={selectedCategory.category_item_count}
@@ -212,21 +267,21 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
               />
             ) : productsError ? (
               <OopsComponent />
-            ) : normalizedProductsData.length > 0 ? (
+            ) : sortedProducts.length > 0 ? (
               <>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {normalizedProductsData.map((product, index) => (
+                  {sortedProducts.map((product, index) => (
                     <CardLayout
                       key={`${product.id}-${index}`}
-                      product={product as unknown as any}
+                      product={product as any}
                       viewType={viewType}
                     />
                   ))}
                   {isProductsLoading &&
-                    // Calculate skeleton cards: fill remaining cells plus one extra full row.
+                    // Render additional skeleton cards to fill the grid if needed.
                     (() => {
                       const columns = 4;
-                      const productCount = normalizedProductsData.length;
+                      const productCount = sortedProducts.length;
                       const remainder = productCount % columns;
                       const fillCount = remainder > 0 ? columns - remainder : 0;
                       const additionalSkeletonCount = columns;
@@ -239,7 +294,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
                       );
                     })()}
                 </div>
-                {/* Sentinel element */}
+                {/* Sentinel element for infinite scroll */}
                 <div ref={loadMoreRef} className="h-1" />
               </>
             ) : (
