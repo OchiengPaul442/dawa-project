@@ -1,12 +1,7 @@
 import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  FaWhatsapp,
-  FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
-} from 'react-icons/fa';
+import { FaWhatsapp, FaPhone, FaEnvelope } from 'react-icons/fa';
 import type { UserProfile } from './types';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -15,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { MapPin } from 'lucide-react';
 
 interface ShopHeaderProps {
   user: UserProfile;
@@ -53,7 +49,7 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Badge variant="secondary" className="gap-1">
-                      <FaMapMarkerAlt className="h-3 w-3" />
+                      <MapPin className="h-3 w-3" />
                       {user.address || 'Unknown'}
                     </Badge>
                   </TooltipTrigger>

@@ -11,7 +11,7 @@ import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
 import { slugify } from '@/utils/slugify';
 import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
-import { Edit } from 'lucide-react';
+import { Edit, MapPin } from 'lucide-react';
 import type { SimilarItem } from '@/types/product';
 import {
   Tooltip,
@@ -35,7 +35,13 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   const router = useRouter();
   const image = product.images[0]?.image_url || '/placeholder.jpg';
 
-  // When the card is clicked, store product ID and navigate.
+  // Only display location if it contains alphabetic characters.
+  const locationDisplay =
+    product.location && /[A-Za-z]/.test(product.location)
+      ? product.location
+      : null;
+
+  // Navigate to product detail on card click.
   const handleCardClick = () => {
     dispatch(setSelectedProduct(product.id as any));
     router.push(`/prod/${slugify(product.name)}`);
@@ -44,9 +50,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
   // Prevent navigation when clicking the edit button.
   const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (onEdit) {
-      onEdit(product);
-    }
+    onEdit && onEdit(product);
   };
 
   // Prevent navigation when clicking the like button.
@@ -65,17 +69,22 @@ const ListLayout: React.FC<ListLayoutProps> = ({
             src={image}
             alt={product.name}
             fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 384px"
+            className="object-cover rounded-none"
+            containerClassName="rounded-none"
+            sizes="(max-width: 640px) 100vw, 484px"
             priority={false}
           />
         </div>
-
         <div className="flex flex-col sm:flex-row justify-between w-full p-4">
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-lg capitalize truncate">
               {product.name}
             </h3>
+            {product.description && (
+              <p className="text-sm text-gray-600 line-clamp-3">
+                {product.description}
+              </p>
+            )}
             {product.features && (
               <ul className="text-sm text-gray-500 mt-2 space-y-1">
                 {product.features.map((feature, index) => (
@@ -86,15 +95,19 @@ const ListLayout: React.FC<ListLayoutProps> = ({
                 ))}
               </ul>
             )}
+            {locationDisplay && (
+              <div className="flex items-center text-sm text-gray-500 mt-1 line-clamp-1">
+                <MapPin className="h-4 w-4 mr-1" />
+                <span>{locationDisplay}</span>
+              </div>
+            )}
           </div>
-
           <div className="flex flex-col items-end justify-end mt-4 sm:mt-0 sm:ml-4">
             <div className="flex flex-col items-baseline gap-1">
               <span className="text-primary_1 text-xl font-bold">
                 <CurrencyFormatter price={Number(product.price)} />
               </span>
             </div>
-
             <div className="flex items-center gap-3 mt-4">
               {isAdmin && onEdit && (
                 <TooltipProvider>
@@ -121,7 +134,6 @@ const ListLayout: React.FC<ListLayoutProps> = ({
                 </TooltipProvider>
               )}
 
-              {/* The LikeButton container stops event propagation */}
               <div
                 onClick={handleLikeClick}
                 className="z-10 pointer-events-auto"

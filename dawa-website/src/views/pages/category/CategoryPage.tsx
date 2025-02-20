@@ -231,7 +231,7 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Sidebar */}
-        <aside className="flex flex-col gap-6">
+        <aside className="flex lg:flex-col gap-6">
           <CategoriesAndSubcategories
             categoryName={selectedCategory.category_name}
             categoryCount={selectedCategory.category_item_count}
