@@ -8,7 +8,7 @@ import CustomImage from '@/components/shared/CustomImage';
 import { formatCurrency } from '@/utils/CurrencyFormatter';
 import { usePromotedProducts } from '@core/hooks/useProductData';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, MapPin } from 'lucide-react';
 import { useDispatch } from '@/redux-store/hooks';
 import { useRouter } from 'next/navigation';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
@@ -81,60 +81,70 @@ export function ProductCarousel() {
     <div className="relative h-[400px] overflow-hidden rounded-lg bg-white shadow-sm">
       <div className="absolute inset-0" ref={emblaRef}>
         <div className="flex h-full">
-          {productsData.map((item: any) => (
-            <div key={item.id} className="relative flex-[0_0_100%] h-full">
-              <div className="absolute inset-0 flex flex-col md:flex-row">
-                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
-                  <div className="space-y-1 mb-2">
-                    <span className="text-sm font-medium text-gray-500">
-                      {item.category} • {item.subcategory}
-                    </span>
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-800">
-                      {item.name}
-                    </h3>
-                  </div>
-                  <p className="text-gray-600 mb-4 text-sm md:text-base line-clamp-2">
-                    {item.description}
-                  </p>
-                  <div className="space-y-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-lg md:text-xl font-bold text-primary_1">
-                        {formatCurrency(item.price)}
+          {productsData.map((item: any) => {
+            // Only show location if it contains at least one alphabetic character.
+            const locationDisplay =
+              item.location && /[A-Za-z]/.test(item.location)
+                ? item.location
+                : null;
+            return (
+              <div key={item.id} className="relative flex-[0_0_100%] h-full">
+                <div className="absolute inset-0 flex flex-col md:flex-row">
+                  <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
+                    <div className="space-y-1 mb-2">
+                      <span className="text-sm font-medium text-gray-500">
+                        {item.category} • {item.subcategory}
                       </span>
-                      <span className="text-sm text-gray-500">
-                        {item.location}
-                      </span>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-800">
+                        {item.name}
+                      </h3>
                     </div>
-                    <div className="flex gap-3 items-center">
-                      <Button
-                        asChild
-                        onClick={() => {
-                          dispatch(setSelectedProduct(item.id as any));
-                          router.push(`/prod/${slugify(item.name)}`);
-                        }}
-                        className="bg-gray-700 cursor-pointer hover:bg-gray-700/90"
-                      >
-                        <span>View Details</span>
-                      </Button>
-                      {item.item_negotiable && (
-                        <span className="text-sm font-medium text-green-600">
-                          Negotiable
+                    <p className="text-gray-600 mb-4 text-sm md:text-base line-clamp-2">
+                      {item.description}
+                    </p>
+                    <div className="space-y-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-lg md:text-xl font-bold text-primary_1">
+                          {formatCurrency(item.price)}
                         </span>
-                      )}
+                        {locationDisplay && (
+                          <span className="text-sm text-gray-500 flex items-center line-clamp-1">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {locationDisplay}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex gap-3 items-center">
+                        <Button
+                          asChild
+                          onClick={() => {
+                            dispatch(setSelectedProduct(item.id as any));
+                            router.push(`/prod/${slugify(item.name)}`);
+                          }}
+                          className="bg-gray-700 cursor-pointer hover:bg-gray-700/90"
+                        >
+                          <span>View Details</span>
+                        </Button>
+                        {item.item_negotiable && (
+                          <span className="text-sm font-medium text-green-600">
+                            Negotiable
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="w-full md:w-1/2 relative bg-gray-100">
-                  <CustomImage
-                    src={item.images[0]?.image_url || '/placeholder.png'}
-                    alt={item.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+                  <div className="w-full md:w-1/2 relative bg-gray-100">
+                    <CustomImage
+                      src={item.images[0]?.image_url || '/placeholder.png'}
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
