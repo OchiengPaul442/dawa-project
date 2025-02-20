@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { FiPlus, FiMinus, FiFilter } from 'react-icons/fi';
 import { FaCheckCircle } from 'react-icons/fa';
-import { FiMinus, FiPlus, FiFilter } from 'react-icons/fi';
 import { Range, getTrackBackground } from 'react-range';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -60,12 +60,10 @@ const formatCurrency = (value: number) => {
   });
 };
 
-/** Extend ProductFilterProps with an optional onClose callback **/
 interface FilterContentProps extends ProductFilterProps {
   onClose?: () => void;
 }
 
-/** Internal component for the filtering UI **/
 const FilterContent: React.FC<FilterContentProps> = (props) => {
   const {
     appliedPriceRange,
@@ -75,18 +73,18 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
     onResetFilters,
     onClose,
   } = props;
-  const [tempPriceRange, setTempPriceRange] =
+  const [priceRangeValue, setPriceRangeValue] =
     useState<[number, number]>(appliedPriceRange);
   const [tempLocation, setTempLocation] = useState<string>(appliedLocation);
   const [tempSelectedColors, setTempSelectedColors] = useState<string[]>(
     appliedSelectedColors,
   );
   const [showMoreColors, setShowMoreColors] = useState(false);
-  const [minInput, setMinInput] = useState(formatCurrency(tempPriceRange[0]));
-  const [maxInput, setMaxInput] = useState(formatCurrency(tempPriceRange[1]));
+  const [minInput, setMinInput] = useState(formatCurrency(priceRangeValue[0]));
+  const [maxInput, setMaxInput] = useState(formatCurrency(priceRangeValue[1]));
 
   useEffect(() => {
-    setTempPriceRange(appliedPriceRange);
+    setPriceRangeValue(appliedPriceRange);
     setTempLocation(appliedLocation);
     setTempSelectedColors(appliedSelectedColors);
     setMinInput(formatCurrency(appliedPriceRange[0]));
@@ -94,7 +92,7 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
   }, [appliedPriceRange, appliedLocation, appliedSelectedColors]);
 
   const handlePriceChange = (values: number[]) => {
-    setTempPriceRange([values[0], values[1]]);
+    setPriceRangeValue([values[0], values[1]]);
     setMinInput(formatCurrency(values[0]));
     setMaxInput(formatCurrency(values[1]));
   };
@@ -103,13 +101,13 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
     const numValue = parseInt(value.replace(/[^0-9]/g, '')) || 0;
     if (isMin) {
       setMinInput(formatCurrency(numValue));
-      if (numValue <= tempPriceRange[1]) {
-        setTempPriceRange([numValue, tempPriceRange[1]]);
+      if (numValue <= priceRangeValue[1]) {
+        setPriceRangeValue([numValue, priceRangeValue[1]]);
       }
     } else {
       setMaxInput(formatCurrency(numValue));
-      if (numValue >= tempPriceRange[0]) {
-        setTempPriceRange([tempPriceRange[0], numValue]);
+      if (numValue >= priceRangeValue[0]) {
+        setPriceRangeValue([priceRangeValue[0], numValue]);
       }
     }
   };
@@ -132,18 +130,18 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
   );
 
   const handleApply = () => {
-    onApplyFilters(tempPriceRange, tempLocation, tempSelectedColors);
-    if (onClose) onClose(); // Close dialog if in mobile mode
+    onApplyFilters(priceRangeValue, tempLocation, tempSelectedColors);
+    if (onClose) onClose();
   };
 
   const handleReset = () => {
-    setTempPriceRange([DEFAULT_MIN, DEFAULT_MAX]);
+    setPriceRangeValue([DEFAULT_MIN, DEFAULT_MAX]);
     setMinInput(formatCurrency(DEFAULT_MIN));
     setMaxInput(formatCurrency(DEFAULT_MAX));
     setTempLocation('');
     setTempSelectedColors([]);
     onResetFilters();
-    if (onClose) onClose(); // Close dialog if in mobile mode
+    if (onClose) onClose();
   };
 
   return (
@@ -179,7 +177,7 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
       {/* Price Range Slider */}
       <div className="px-2">
         <Range
-          values={tempPriceRange}
+          values={priceRangeValue}
           step={STEP}
           min={MIN_PRICE}
           max={MAX_PRICE}
@@ -193,7 +191,7 @@ const FilterContent: React.FC<FilterContentProps> = (props) => {
                 className="w-full h-1 bg-gray-200 rounded-full"
                 style={{
                   background: getTrackBackground({
-                    values: tempPriceRange,
+                    values: priceRangeValue,
                     colors: ['#E0E0E0', '#FFA200', '#E0E0E0'],
                     min: MIN_PRICE,
                     max: MAX_PRICE,
@@ -311,8 +309,10 @@ const ProductFilter: React.FC<ProductFilterProps> = (props) => {
   const { width } = useWindowSize();
   const isMobile = width < 1024;
   const [dialogOpen, setDialogOpen] = useState(false);
+  // State for collapsible content (desktop view)
+  const [open, setOpen] = useState(true);
 
-  // In mobile view, render a simple button that opens a dialog.
+  // Mobile view: render a button that opens a dialog.
   if (isMobile) {
     return (
       <>
@@ -332,7 +332,6 @@ const ProductFilter: React.FC<ProductFilterProps> = (props) => {
                   Filters
                 </DialogTitle>
               </DialogHeader>
-              {/* Pass onClose callback so that FilterContent can close the dialog after Apply/Reset */}
               <FilterContent {...props} onClose={() => setDialogOpen(false)} />
             </div>
           </DialogContent>
@@ -341,17 +340,18 @@ const ProductFilter: React.FC<ProductFilterProps> = (props) => {
     );
   }
 
-  // Otherwise (desktop), render the collapsible filter panel.
+  // Desktop view: render collapsible filter panel.
   return (
     <Collapsible
-      open={true}
+      open={open}
+      onOpenChange={setOpen}
       className="bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-300"
     >
       <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
         <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="w-9 font-thin p-0">
-            <FiMinus />
+            {open ? <FiMinus /> : <FiPlus />}
           </Button>
         </CollapsibleTrigger>
       </div>

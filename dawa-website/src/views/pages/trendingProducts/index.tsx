@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useProductsData } from '@core/hooks/useProductData';
-import ProductCard from '@/components/ProductCards/GridCardLayout';
 import { OopsComponent } from '@/components/shared/oops-component';
 import { SimilarItem } from '@/types/product';
 import { normalizeProducts } from '@/utils/normalizeProductData';
 import useInfiniteScroll from '@/@core/hooks/useInfiniteScroll';
 import SingleSkeletonCard from '@/components/loaders/SingleSkeletonCard';
 import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
+import { Button } from '@/components/ui/button';
+import { FaTh, FaThList } from 'react-icons/fa';
+import CardLayout from '@/components/ProductCards/CardLayout';
 
 const ProductPage: React.FC = () => {
+  const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const { productsData, isLoading, isError, nextPageUrl, size, setSize } =
     useProductsData({});
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -31,10 +34,10 @@ const ProductPage: React.FC = () => {
   if (isLoading && size === 1) {
     return (
       <div>
-        <h2 className="text-2xl font-bold mb-4 text-primary_1">
-          Trending Products
-        </h2>
-        <ProductCardSkeleton ITEMS_PER_PAGE={16} />
+        <ProductCardSkeleton
+          ITEMS_PER_PAGE={16}
+          gridClass={`grid grid-cols-2 ${viewType === 'grid' ? 'sm:grid-cols-3 md:grid-cols-4' : 'sm:grid-cols-1'} gap-3`}
+        />
       </div>
     );
   }
@@ -62,12 +65,45 @@ const ProductPage: React.FC = () => {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-2xl font-bold text-primary_1">Trending Products</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-primary_1">Trending Products</h2>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={viewType === 'grid' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => setViewType('grid')}
+            aria-label="View as Grid"
+            className={`transition-colors ${
+              viewType === 'grid'
+                ? 'text-white bg-gray-700'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <FaTh className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewType === 'list' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => setViewType('list')}
+            aria-label="View as List"
+            className={`transition-colors ${
+              viewType === 'list'
+                ? 'text-white bg-gray-700'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <FaThList className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <div
+        className={`grid grid-cols-2 ${viewType === 'grid' ? 'sm:grid-cols-3 md:grid-cols-4' : 'sm:grid-cols-1'} gap-3`}
+      >
         {normalizedProductsData.map((product, index) => (
-          <ProductCard
+          <CardLayout
             key={`${product.id}-${index}`}
             product={product as unknown as SimilarItem}
+            viewType={viewType}
           />
         ))}
         {isLoading &&

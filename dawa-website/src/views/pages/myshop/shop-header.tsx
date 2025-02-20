@@ -91,7 +91,7 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
                     </span>
                   </div>
                   <div className="text-sm">
-                    <p className="text-gray-600">Sold Out</p>
+                    <p className="text-gray-600">Sold</p>
                   </div>
                 </div>
               )}

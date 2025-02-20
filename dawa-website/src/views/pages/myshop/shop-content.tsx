@@ -139,11 +139,7 @@ export const ShopContent: React.FC<ShopContentProps> = ({
               />
             ) : (
               <div
-                className={`grid gap-3 ${
-                  viewType === 'grid'
-                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-                    : 'grid-cols-1'
-                }`}
+                className={`grid grid-cols-2 ${viewType === 'grid' ? 'sm:grid-cols-3 md:grid-cols-4' : 'sm:grid-cols-1'} gap-3`}
               >
                 {sortedItems.map((item) => {
                   const transformedItem = transformItemToSimilarItem(item);

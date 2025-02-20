@@ -263,13 +263,15 @@ const CategoryPage: FC<CategoryPageProps> = ({ category }) => {
             {isProductsLoading ? (
               <ProductCardSkeleton
                 ITEMS_PER_PAGE={16}
-                gridClass="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
+                gridClass={`grid grid-cols-2 ${viewType === 'grid' ? 'sm:grid-cols-3 md:grid-cols-4' : 'sm:grid-cols-1'} gap-3`}
               />
             ) : productsError ? (
               <OopsComponent />
             ) : sortedProducts.length > 0 ? (
               <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <div
+                  className={`grid grid-cols-2 ${viewType === 'grid' ? 'sm:grid-cols-3 md:grid-cols-4' : 'sm:grid-cols-1'} gap-3`}
+                >
                   {sortedProducts.map((product, index) => (
                     <CardLayout
                       key={`${product.id}-${index}`}
