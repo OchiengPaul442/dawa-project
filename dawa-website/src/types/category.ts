@@ -10,6 +10,7 @@ export interface Subcategory {
 export interface Category {
   id: string;
   category_name: string;
+  category_item_count: number;
   name?: string;
   count?: number;
   icon?: string;

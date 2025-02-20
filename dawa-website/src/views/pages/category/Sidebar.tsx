@@ -25,8 +25,7 @@ interface SidebarProps {
 }
 
 /**
- * Transform a Redux category (which may have incomplete subcategory objects)
- * into a local Category that matches our type.
+ * Transform a Redux category into a local Category.
  */
 function transformCategory(cat: any): Category {
   return {
@@ -35,9 +34,9 @@ function transformCategory(cat: any): Category {
       ? cat.subcategories.map((sub: any) => ({
           id: sub.id,
           subcategory_name: sub.subcategory_name,
-          name: sub.subcategory_name, // use subcategory_name as display name
-          count: 0, // default count (adjust if needed)
-          icon: '', // safe serializable value
+          name: sub.subcategory_name, // display name
+          count: sub.count || 0, // use provided subcategory count or 0
+          icon: sub.icon || '',
           href: `/cat/${slugify(cat.category_name)}/${slugify(sub.subcategory_name)}`,
         }))
       : [],
@@ -45,16 +44,17 @@ function transformCategory(cat: any): Category {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
-  // Get Redux categories and transform them.
+  // Retrieve Redux categories and transform them.
   const reduxCategories = useSelector(selectCategories);
   const dispatch = useDispatch();
 
-  // Transform Redux categories to match our local type.
   const categories: Category[] = reduxCategories
     ? reduxCategories.map((cat: any) => transformCategory(cat))
     : [];
 
-  // Local state: currently hovered category.
+  console.info('Categories:', categories);
+
+  // Local state for hovered category.
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   // Track if screen is large (>= 1024px).
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
@@ -68,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // When an item is selected, optionally call onSelect.
+  // When an item is selected, call onSelect if provided.
   const handleItemClick = useCallback(() => {
     if (onSelect) onSelect();
   }, [onSelect]);
@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     [isLargeScreen],
   );
 
-  // Clear hovered category when the mouse leaves.
+  // Clear hovered category when mouse leaves.
   const handleSidebarMouseLeave = useCallback(() => {
     setHoveredCategory(null);
   }, []);
@@ -105,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           }}
         >
           <div
-            className={`p-3 rounded-md cursor-pointer transition-all duration-200 flex items-center justify-between ${
+            className={`p-3 rounded-md cursor-pointer transition-colors duration-200 flex items-center justify-between ${
               isActive
                 ? 'bg-gray-100 text-primary_1'
                 : 'hover:bg-gray-50 hover:text-primary_1'
@@ -114,12 +114,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           >
             <div className="flex items-center gap-2 w-full truncate">
               <Icon className="h-5 w-5" />
-              <span className="text-sm font-medium truncate max-w-[180px]">
-                {category.category_name}
-              </span>
+              <div className="flex flex-col truncate">
+                <span className="text-sm font-medium truncate max-w-[180px]">
+                  {category.category_name}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {category.category_item_count} ads
+                </span>
+              </div>
             </div>
             {isLargeScreen && (
-              <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <ChevronRight className="h-4 w-4 text-gray-500 flex-shrink-0" />
             )}
           </div>
         </Link>
@@ -150,11 +155,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             dispatch(setSelectedSubcategory(subcat));
           }}
         >
-          <div className="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition-colors duration-200 flex items-center">
+          <div className="p-3 rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center">
             <IconComponent className="h-4 w-4 mr-2" />
-            <span className="text-sm font-medium truncate max-w-[180px]">
-              {subcat.subcategory_name}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium truncate max-w-[180px]">
+                {subcat.subcategory_name}
+              </span>
+              <span className="text-xs text-gray-500">{subcat.count} ads</span>
+            </div>
           </div>
         </Link>
       );
@@ -171,14 +179,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       className="relative w-full lg:w-[288px]"
       onMouseLeave={handleSidebarMouseLeave}
     >
-      <div className="sticky top-[100px] flex">
+      <div className="sticky top-[100px] flex flex-col lg:flex-row">
         {/* Category Sidebar */}
         <Card
-          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
+          className={`w-full lg:w-[288px] ${
+            hoveredCategory ? 'rounded-r-none border-r-0' : ''
+          }`}
         >
           <CardContent className="p-0">
             <ScrollArea className="h-[700px]">
-              <div className="p-4 space-y-1">
+              <div className="p-4 space-y-1 divide-y divide-gray-300">
                 {categories.map((category: Category) =>
                   renderCategoryItem(category),
                 )}
@@ -186,12 +196,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             </ScrollArea>
           </CardContent>
         </Card>
-        {/* Subcategory Sidebar */}
+        {/* Subcategory Sidebar (for large screens) */}
         {isLargeScreen && hoveredCategory && (
           <Card className="min-w-[288px] rounded-l-none border-l-0">
             <CardContent className="p-0">
               <ScrollArea className="h-[700px]">
-                <div className="p-4 space-y-1">
+                <div className="p-4 space-y-1 divide-y divide-gray-300">
                   {(hoveredCategory.subcategories || []).map((subcat) =>
                     renderSubcategoryItem(subcat),
                   )}
