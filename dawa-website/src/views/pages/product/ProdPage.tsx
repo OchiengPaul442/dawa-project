@@ -1,30 +1,48 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useSelector } from '@/redux-store/hooks';
 import { useProductDetails } from '@/@core/hooks/useProductData';
 import { ProductDetails } from './ProductDetails';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ProductSkeleton from './product-skeleton';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { decrypt } from '@/utils/crypto';
+import { OopsComponent } from '@/components/shared/oops-component';
+import CustomizableNoData from '@/components/shared/no-data';
 
-interface ProdPageProps {
-  params: { slug: string[] };
-}
-
-const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
-  const { slug } = params;
+const ProdPage: React.FC<any> = ({ params }) => {
+  // Get the product id from Redux.
   const selectedProductId = useSelector(
     (state) => state.product.selectedProductId,
-  );
+  ) as string | null;
+
+  // Get the encrypted ID from the query string.
   const searchParams = useSearchParams();
   const encryptedId = searchParams.get('p');
-  const productIdFromQuery = encryptedId ? decrypt(encryptedId) : null;
+  const productIdFromQuery: string | null = encryptedId
+    ? (decrypt(encryptedId) as string)
+    : null;
 
-  // Use the product ID from Redux if available, otherwise from the query string.
-  const effectiveProductId = productIdFromQuery || selectedProductId;
+  // Local state to hold the effective product id.
+  const [effectiveProductId, setEffectiveProductId] = useState<string | null>(
+    null,
+  );
+
+  // On mount, determine the effective product id.
+  useEffect(() => {
+    let prodId: string | null = productIdFromQuery || selectedProductId;
+    if (!prodId && typeof window !== 'undefined') {
+      prodId = localStorage.getItem('selectedProductId');
+    }
+    if (prodId) {
+      setEffectiveProductId(prodId);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('selectedProductId', prodId);
+      }
+    }
+  }, [productIdFromQuery, selectedProductId]);
 
   const { productData, isLoading, isError } =
     useProductDetails(effectiveProductId);
@@ -32,26 +50,19 @@ const ProdPage: React.FC<ProdPageProps> = ({ params }) => {
   if (isLoading) return <ProductSkeleton />;
 
   if (isError) {
-    return (
-      <div className="text-center">
-        <p className="text-red-600">
-          Failed to load product details. Please try again later.
-        </p>
-      </div>
-    );
+    return <OopsComponent />;
   }
 
-  // Remove the slug check; if productData exists, render it.
   if (!productData) {
     return (
-      <div className="text-center">
-        <p className="text-gray-500">
-          Product not found. Please check the URL or browse our catalog.
-        </p>
-        <Link href="/home" className="text-primary_1 hover:underline">
-          Go back to Home
-        </Link>
-      </div>
+      <CustomizableNoData
+        title="Product not found"
+        description="Sorry, we could not find the product you were looking for. Please check the URL or browse our catalog."
+        ctaText="Go to Homepage"
+        onCtaClick={() => {
+          window.location.href = '/';
+        }}
+      />
     );
   }
 
