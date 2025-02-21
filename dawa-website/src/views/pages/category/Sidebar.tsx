@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { useDispatch, useSelector } from 'react-redux';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Category, Subcategory } from '@/types/category';
@@ -14,51 +13,58 @@ import {
   subcategoryIconMap,
   UniversalFallbackIcon,
 } from './icon-maps';
-import {
-  setSelectedCategory,
-  setSelectedSubcategory,
-} from '@redux-store/slices/categories/categorySlice';
-import { selectCategories } from '@redux-store/slices/categories/categories';
 
 interface SidebarProps {
   onSelect?: () => void;
 }
 
 /**
- * Transform a Redux category into a local Category.
+ * Transform raw category data into a local Category format.
  */
-function transformCategory(cat: any): Category {
+function transformCategory(rawCat: any): Category {
   return {
-    ...cat,
-    subcategories: cat.subcategories
-      ? cat.subcategories.map((sub: any) => ({
+    id: rawCat.id,
+    category_name: rawCat.category_name,
+    category_item_count: rawCat.category_item_count,
+    subcategories: rawCat.subcategories
+      ? rawCat.subcategories.map((sub: any) => ({
           id: sub.id,
           subcategory_name: sub.subcategory_name,
           name: sub.subcategory_name, // display name
-          count: sub.count || 0, // use provided subcategory count or 0
-          icon: sub.icon || '',
-          href: `/cat/${slugify(cat.category_name)}/${slugify(sub.subcategory_name)}`,
+          count: sub.subcategory_item_count || 0, // use subcategory_item_count from JSON
+          icon: sub.icon || '', // fallback icon if provided
+          href: `/cat/${slugify(rawCat.category_name)}/${slugify(
+            sub.subcategory_name,
+          )}`,
         }))
       : [],
   };
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
-  // Retrieve Redux categories and transform them.
-  const reduxCategories = useSelector(selectCategories);
-  const dispatch = useDispatch();
-
-  const categories: Category[] = reduxCategories
-    ? reduxCategories.map((cat: any) => transformCategory(cat))
-    : [];
-
-  console.info('Categories:', categories);
+  // Local state for categories loaded from JSON.
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Local state for hovered category.
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   // Track if screen is large (>= 1024px).
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(false);
 
+  // Fetch categories from the JSON file.
+  useEffect(() => {
+    fetch('/categories.json')
+      .then((res) => res.json())
+      .then((data) => {
+        // Transform raw data into our Category format.
+        const transformed = data.map((cat: any) => transformCategory(cat));
+        setCategories(transformed);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
+
+  // Update screen size state.
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
@@ -99,10 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         <Link
           key={category.id}
           href={`/cat/${slugify(category.category_name)}`}
-          onClick={() => {
-            handleItemClick();
-            dispatch(setSelectedCategory(category));
-          }}
+          onClick={handleItemClick}
         >
           <div
             className={`p-3 rounded-md cursor-pointer transition-colors duration-200 flex items-center justify-between ${
@@ -130,13 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         </Link>
       );
     },
-    [
-      hoveredCategory,
-      isLargeScreen,
-      handleItemClick,
-      handleCategoryMouseEnter,
-      dispatch,
-    ],
+    [hoveredCategory, isLargeScreen, handleItemClick, handleCategoryMouseEnter],
   );
 
   // Render a single subcategory item.
@@ -147,14 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           subcat.subcategory_name
         ] as React.ComponentType<any>) || UniversalFallbackIcon;
       return (
-        <Link
-          key={subcat.id}
-          href={subcat.href}
-          onClick={() => {
-            handleItemClick();
-            dispatch(setSelectedSubcategory(subcat));
-          }}
-        >
+        <Link key={subcat.id} href={subcat.href} onClick={handleItemClick}>
           <div className="p-3 rounded-md cursor-pointer hover:bg-gray-50 transition-colors duration-200 flex items-center">
             <IconComponent className="h-4 w-4 mr-2" />
             <div className="flex flex-col">
@@ -167,8 +157,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
         </Link>
       );
     },
-    [handleItemClick, dispatch],
+    [handleItemClick],
   );
+
+  if (isLoading) return <SidebarSkeleton />;
 
   if (!categories || categories.length === 0) {
     return <SidebarSkeleton />;
@@ -182,16 +174,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
       <div className="sticky top-[100px] flex flex-col lg:flex-row">
         {/* Category Sidebar */}
         <Card
-          className={`w-full lg:w-[288px] ${
-            hoveredCategory ? 'rounded-r-none border-r-0' : ''
-          }`}
+          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
         >
           <CardContent className="p-0">
             <ScrollArea className="h-[700px]">
               <div className="p-4 space-y-1 divide-y divide-gray-300">
-                {categories.map((category: Category) =>
-                  renderCategoryItem(category),
-                )}
+                {categories.map((cat) => renderCategoryItem(cat))}
               </div>
             </ScrollArea>
           </CardContent>
@@ -202,7 +190,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             <CardContent className="p-0">
               <ScrollArea className="h-[700px]">
                 <div className="p-4 space-y-1 divide-y divide-gray-300">
-                  {(hoveredCategory.subcategories || []).map((subcat) =>
+                  {(hoveredCategory?.subcategories ?? []).map((subcat) =>
                     renderSubcategoryItem(subcat),
                   )}
                 </div>

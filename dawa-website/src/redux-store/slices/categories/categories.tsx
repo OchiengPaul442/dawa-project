@@ -5,7 +5,11 @@ import { RootState } from '@/redux-store';
 export interface Category {
   id: string;
   category_name: string;
-  subcategories?: { id: string; subcategory_name: string }[];
+  subcategories?: {
+    id: string;
+    subcategory_name: string;
+    subcategory_item_count: number;
+  }[];
 }
 
 interface CategoriesState {
