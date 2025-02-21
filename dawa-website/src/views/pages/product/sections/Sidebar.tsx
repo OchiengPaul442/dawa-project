@@ -18,11 +18,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onReportAbuse,
 }) => {
   const { isInWishlist, toggle, isLoading } = useWishlist();
-  const isWishlisted = isInWishlist(productId);
+  // const isWishlisted = isInWishlist(productId);
 
-  const handleWishlistToggle = async () => {
-    await toggle(productId);
-  };
+  // const handleWishlistToggle = async () => {
+  //   await toggle(productId);
+  // };
 
   return (
     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1">
@@ -45,7 +45,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </Card>
 
       {/* Quick Actions Card */}
-      <Card className="flex flex-col h-full">
+      {/* <Card className="flex flex-col h-full">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
@@ -61,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
           </Button>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Safety & Reporting Card */}
       <Card className="flex flex-col h-full">

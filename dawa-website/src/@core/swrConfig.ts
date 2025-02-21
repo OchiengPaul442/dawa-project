@@ -20,10 +20,7 @@ export const swrOptions: SWRConfiguration = {
 
   // Custom onErrorRetry function to stop retrying after 3 attempts
   onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
-    // Only retry up to 2 times (3 total attempts)
-    if (retryCount >= 2) return;
-
-    // Retry after 5 seconds
+    if (retryCount >= 2) return; // Limit retries
     setTimeout(() => revalidate({ retryCount: retryCount + 1 }), 5000);
   },
 };

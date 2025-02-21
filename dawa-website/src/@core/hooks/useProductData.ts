@@ -1,7 +1,9 @@
 'use client';
 
-import useSWR from 'swr';
+import useSWR, { SWRConfiguration } from 'swr';
 import useSWRInfinite from 'swr/infinite';
+import useSWRMutation from 'swr/mutation';
+import { useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   getProductsList,
   getPromotedProductsList,
@@ -19,9 +21,6 @@ import {
   updateUserProfile,
   changeUserPassword,
 } from '@/app/server/auth/api';
-import { useCallback, useMemo } from 'react';
-import { swrOptions } from '../swrConfig';
-import useSWRMutation from 'swr/mutation';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
 import { SendMessagePayload } from '@/types/message';
 import { ProductUploadProps, TrendingProductsResponse } from '@/types/product';
@@ -33,6 +32,7 @@ import {
 } from '@/app/server/faqs_newLetter_contactUs/api';
 import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
 import { search } from '@/app/server/search/api';
+import { swrOptions } from '../swrConfig';
 
 /**
  * Helper to remove duplicate products based on their id.
@@ -47,24 +47,25 @@ function deduplicateProducts(products: any[]): any[] {
 
 /**
  * useProductsData accepts an optional body object that will be sent on the initial request.
- * The body is included in the key for the first page so that changing it will revalidate the data.
+ * Changing the body creates a new stable key to trigger revalidation.
  */
 export function useProductsData(body?: any) {
-  // Create a stable string key from the body (if provided).
-  const bodyKey = body ? JSON.stringify(body) : null;
+  const bodyKey = useMemo(() => (body ? JSON.stringify(body) : null), [body]);
 
-  // The getKey function: for the first page include the bodyKey, subsequent pages use the next URL.
-  const getKey = (
-    pageIndex: number,
-    previousPageData: TrendingProductsResponse | null,
-  ): string | null => {
-    if (previousPageData && !previousPageData.next) return null;
-    if (pageIndex === 0)
-      return bodyKey
-        ? `/getitems/?body=${encodeURIComponent(bodyKey)}`
-        : '/getitems/';
-    return previousPageData!.next;
-  };
+  const getKey = useCallback(
+    (
+      pageIndex: number,
+      previousPageData: TrendingProductsResponse | null,
+    ): string | null => {
+      if (previousPageData && !previousPageData.next) return null;
+      if (pageIndex === 0)
+        return bodyKey
+          ? `/getitems/?body=${encodeURIComponent(bodyKey)}`
+          : '/getitems/';
+      return previousPageData!.next;
+    },
+    [bodyKey],
+  );
 
   const { data, error, size, setSize, mutate } =
     useSWRInfinite<TrendingProductsResponse>(
@@ -76,7 +77,7 @@ export function useProductsData(body?: any) {
       },
     );
 
-  // Flatten pages into a single array and deduplicate products by id.
+  // Flatten pages and deduplicate by id
   const rawProductsData = data ? data.flatMap((page) => page.results.data) : [];
   const productsData = deduplicateProducts(rawProductsData);
   const totalCount = data?.[0]?.count || 0;
@@ -125,19 +126,19 @@ export function useCategoryData({
   return { data, error, isLoading, mutate };
 }
 
-//Hooks to send and receive messages
+// Hooks to send and receive messages
 export function useMessages() {
-  const swrOptions = {
+  // Custom options for messages (if needed) can override swrOptions
+  const messagesOptions: SWRConfiguration = {
+    ...swrOptions,
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
-    // Optionally enable periodic refresh:
-    // refreshInterval: 5000,
   };
 
   const { data, error, isLoading, mutate } = useSWR(
     'messages',
     getMessages,
-    swrOptions,
+    messagesOptions,
   );
 
   return {
@@ -165,10 +166,10 @@ export function useSendMessage() {
 
 export function useAddNewProduct() {
   const { trigger, isMutating, error } = useSWRMutation<
-    any, // Replace with the actual response type if available
-    any, // Replace with the actual error type if available
-    string, // Key type
-    ProductUploadProps // Argument type
+    any,
+    any,
+    string,
+    ProductUploadProps
   >('/additem/', addNewProduct);
 
   return {
@@ -194,7 +195,7 @@ export const useProductDetails = (itemId: any) => {
   );
 
   return {
-    productData: productData?.data as any,
+    productData: productData?.data,
     isError: !!error,
     isLoading,
     mutate,
@@ -245,16 +246,16 @@ export function useSendReviews() {
 }
 
 export const useUserProfile = () => {
-  const swrOptions = {
+  const userOptions: SWRConfiguration = {
+    ...swrOptions,
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
   };
 
-  // The SWR hook handles fetching, caching, and revalidation.
   const { data, error, isLoading, mutate } = useSWR<any>(
     '/getuserprofile/',
     fetchUserProfile,
-    swrOptions,
+    userOptions,
   );
 
   return {
@@ -280,6 +281,7 @@ export function useUpdateUserProfile() {
     error,
   };
 }
+
 export function useChangeUserPassword() {
   const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
     '/changepassword/',
@@ -293,7 +295,6 @@ export function useChangeUserPassword() {
   };
 }
 
-// Update product data
 export const useUpdateProduct = () => {
   const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
     '/updateitem/',
@@ -307,7 +308,6 @@ export const useUpdateProduct = () => {
   };
 };
 
-// delete product image
 export const useDeleteItemImage = () => {
   const { trigger, data, error, isMutating } = useSWRMutation(
     '/deleteitemimage/',
@@ -336,7 +336,6 @@ export const useShopData = (userId: any) => {
   };
 };
 
-// Get FAQs
 export const useFaqs = () => {
   const { data, error, isLoading, mutate } = useSWR(
     'faqs',
@@ -352,7 +351,6 @@ export const useFaqs = () => {
   };
 };
 
-// Subscribe to newsletter
 export const useSubscribeToNewsletter = () => {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -368,7 +366,6 @@ export const useSubscribeToNewsletter = () => {
   };
 };
 
-// Contact us
 export const useContactUs = () => {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -384,17 +381,32 @@ export const useContactUs = () => {
   };
 };
 
-// search products
+/**
+ * useSearchProducts implements proper cancellation using a ref to avoid lingering requests.
+ */
 export const useSearchProducts = (query: string) => {
+  // Store the current AbortController in a ref
+  const controllerRef = useRef<AbortController | null>(null);
+
+  // Fetcher wrapped in useCallback to ensure stable identity across renders
   const fetcher = useCallback(() => {
+    // Abort any previous pending request
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
     const controller = new AbortController();
-    const promise = search(query, controller.signal);
-    // Abort the request once it's finished to avoid lingering requests.
-    promise.finally(() => {
-      controller.abort();
-    });
-    return promise;
+    controllerRef.current = controller;
+
+    // Pass the signal to the search API
+    return search(query, controller.signal);
   }, [query]);
+
+  // Cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      controllerRef.current?.abort();
+    };
+  }, []);
 
   const { data, error, mutate, isValidating } = useSWR(
     query ? ['search', query] : null,
