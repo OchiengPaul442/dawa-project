@@ -1,5 +1,5 @@
 import { CategoriesMenu } from '@/views/pages/category/categories-menu';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 import ProductPage from '@/views/pages/trendingProducts';
 import dynamic from 'next/dynamic';
 const Sidebar = dynamic(() => import('@views/pages/category/Sidebar'));

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent } from '@/components/ui/card';
-import type { Category, Subcategory } from '@/types/category';
-import { slugify } from '@/utils/slugify';
+import type { Category, Subcategory } from '@/@core/types/category';
+import { slugify } from '@/@core/utils/slugify';
 import SidebarSkeleton from './SidebarSkeleton';
 import {
   categoryIconMap,

@@ -7,7 +7,7 @@ import { getServerSession } from 'next-auth';
 // Type Imports
 import type { ReactNode } from 'react';
 
-import MainConfigs from '@configs/mainConfigs';
+import MainConfigs from '@/@core/configs/mainConfigs';
 
 interface GuestOnlyRouteProps {
   children: ReactNode;

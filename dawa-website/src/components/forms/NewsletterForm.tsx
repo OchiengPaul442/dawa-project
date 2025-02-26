@@ -19,7 +19,7 @@ const NewsletterForm: React.FC = () => {
     try {
       // Prepare the payload with a fixed name and the entered email.
       await subscribeToNewsletter({
-        name: 'subscribe', // Fixed name field as per your instruction
+        name: 'subscribe',
         email,
       });
 

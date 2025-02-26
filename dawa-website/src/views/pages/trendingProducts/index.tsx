@@ -3,8 +3,8 @@
 import React, { useRef, useState } from 'react';
 import { useProductsData } from '@core/hooks/useProductData';
 import { OopsComponent } from '@/components/shared/oops-component';
-import { SimilarItem } from '@/types/product';
-import { normalizeProducts } from '@/utils/normalizeProductData';
+import { SimilarItem } from '@/@core/types/product';
+import { normalizeProducts } from '@/@core/utils/normalizeProductData';
 import useInfiniteScroll from '@/@core/hooks/useInfiniteScroll';
 import SingleSkeletonCard from '@/components/loaders/SingleSkeletonCard';
 import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';

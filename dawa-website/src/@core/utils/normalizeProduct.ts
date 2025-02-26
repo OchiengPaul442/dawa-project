@@ -1,4 +1,4 @@
-import type { Product } from '@/types/wishList';
+import type { Product } from '@/@core/types/wishList';
 
 export const normalizeProduct = (item: any): Product => ({
   id: item.id,

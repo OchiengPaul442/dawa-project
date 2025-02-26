@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaStore } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import CustomImage from '@/components/shared/CustomImage';
-import { SellerType } from '@/types/product';
+import { SellerType } from '@/@core/types/product';
 import { Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from '@/redux-store/hooks';

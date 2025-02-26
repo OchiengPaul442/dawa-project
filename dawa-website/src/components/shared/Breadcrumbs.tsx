@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { ChevronRight, ChevronDown } from 'lucide-react';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import { useSelector } from '@/redux-store/hooks';
 import { selectCategories } from '@/redux-store/slices/categories/categories';
 import { Button } from '@/components/ui/button';

@@ -1,5 +1,5 @@
 import Layout from '@/components/layout';
-import GuestOnlyRoute from '@hocs/GuestOnlyRoute';
+import GuestOnlyRoute from '@/@core/hocs/GuestOnlyRoute';
 export default function CategoryLayout({
   children,
 }: {

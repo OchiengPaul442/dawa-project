@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import CardLayout from '@/components/ProductCards/CardLayout';
-import type { SimilarItem } from '@/types/product';
+import type { SimilarItem } from '@/@core/types/product';
 import { ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EmptyState from './EmptyState';

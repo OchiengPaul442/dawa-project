@@ -1,4 +1,4 @@
-import { FAQ_Category } from '@/types/faq';
+import { FAQ_Category } from '@/@core/types/faq';
 
 export const FAQCategory: FAQ_Category[] = [
   {

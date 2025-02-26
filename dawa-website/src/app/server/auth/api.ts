@@ -2,13 +2,13 @@ import {
   secureApiClient,
   openApiClient,
   secureMultipartApiClient,
-} from '@/utils/apiClient';
+} from '@/@core/utils/apiClient';
 import {
   RegisterRequest,
   ActivationRequest,
   ForgotPasswordRequest,
   ResetPasswordPayload,
-} from '@/types/api';
+} from '@/@core/types/api';
 
 /**
  * Register a new user.

@@ -9,7 +9,7 @@ import { SellerInfo } from './sections/SellerInfo';
 import { ActionButtons } from './sections/ActionButtons';
 import { Sidebar } from './sections/Sidebar';
 import { ProductDialogs } from './sections/ProductDialogs';
-import type { ProductType } from '@/types/product';
+import type { ProductType } from '@/@core/types/product';
 import { useRouter } from 'next/navigation';
 import ImageCarousel from './ImageCarousel';
 import ProductTabs from './ProductTabs';

@@ -22,15 +22,18 @@ import {
   changeUserPassword,
 } from '@/app/server/auth/api';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
-import { SendMessagePayload } from '@/types/message';
-import { ProductUploadProps, TrendingProductsResponse } from '@/types/product';
-import { ReportAbuseProps } from '@/types/reportAbuse';
+import { SendMessagePayload } from '@/@core/types/message';
+import {
+  ProductUploadProps,
+  TrendingProductsResponse,
+} from '@/@core/types/product';
+import { ReportAbuseProps } from '@/@core/types/reportAbuse';
 import {
   getFaqs,
   subscribeToNewsletter,
   contactUs,
 } from '@/app/server/faqs_newLetter_contactUs/api';
-import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
+import { ContactUsPayload, SubscribePayload } from '@/@core/types/contact-us';
 import { search } from '@/app/server/search/api';
 import { swrOptions } from '../swrConfig';
 

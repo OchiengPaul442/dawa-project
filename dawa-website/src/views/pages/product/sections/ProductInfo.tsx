@@ -1,9 +1,9 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { ProductType } from '@/types/product';
+import { ProductType } from '@/@core/types/product';
 import { CalendarDays, MapPin, Tag } from 'lucide-react';
-import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
-import { formatDate } from '@/utils/dateFormatter';
+import { CurrencyFormatter } from '@/@core/utils/CurrencyFormatter';
+import { formatDate } from '@/@core/utils/dateFormatter';
 
 interface ProductInfoProps {
   product: ProductType;

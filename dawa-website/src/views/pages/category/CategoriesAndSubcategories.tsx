@@ -3,7 +3,7 @@
 import React, { useState, useMemo, FC } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import {
   Dialog,
   DialogContent,

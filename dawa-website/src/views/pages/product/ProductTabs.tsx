@@ -4,7 +4,7 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Description from './sections/Description';
 import Reviews from './sections/Reviews';
-import { ProductType } from '@/types/product';
+import { ProductType } from '@/@core/types/product';
 
 interface ProductTabsProps {
   product: ProductType;

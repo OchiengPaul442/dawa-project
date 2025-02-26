@@ -12,7 +12,7 @@ import {
   ArrowUpRight,
   AlertCircle,
 } from 'lucide-react';
-import { formatCurrency } from '@/utils/CurrencyFormatter';
+import { formatCurrency } from '@/@core/utils/CurrencyFormatter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EditAdvertSheet } from '@/components/shared/edit-advert-sheet';
 import Link from 'next/link';

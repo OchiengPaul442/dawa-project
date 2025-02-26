@@ -1,6 +1,10 @@
-import { openApiClient } from '@/utils/apiClient';
+import { openApiClient } from '@/@core/utils/apiClient';
 
-// get myshop data take in a body
+/**
+ * Get shop data from API
+ * @param url API endpoint
+ * @param body Request body
+ */
 export const getShopData = async (
   url: string,
   body: { user_id: number },

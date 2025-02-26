@@ -15,7 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '@/components/shared/Button';
 import Sidebar from '@/views/pages/category/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
-import MainConfigs from '@/configs/mainConfigs';
+import MainConfigs from '@/@core/configs/mainConfigs';
 import SearchBar from '@/components/shared/SearchBar';
 
 interface DesktopNavProps {

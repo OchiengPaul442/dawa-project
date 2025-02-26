@@ -5,14 +5,14 @@ import useEmblaCarousel from 'embla-carousel-react';
 import AutoplayPlugin from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
 import CustomImage from '@/components/shared/CustomImage';
-import { formatCurrency } from '@/utils/CurrencyFormatter';
+import { formatCurrency } from '@/@core/utils/CurrencyFormatter';
 import { usePromotedProducts } from '@core/hooks/useProductData';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, MapPin } from 'lucide-react';
 import { useDispatch } from '@/redux-store/hooks';
 import { useRouter } from 'next/navigation';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 
 export function ProductCarousel() {
   const dispatch = useDispatch();

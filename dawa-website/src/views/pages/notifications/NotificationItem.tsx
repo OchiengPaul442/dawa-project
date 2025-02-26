@@ -8,7 +8,7 @@ import {
   Settings,
   Bell,
 } from 'lucide-react';
-import { Notification } from '@/types/notifications';
+import { Notification } from '@/@core/types/notifications';
 
 const getIcon = (type: Notification['type']) => {
   switch (type) {

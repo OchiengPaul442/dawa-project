@@ -15,8 +15,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { FAQCategory } from '@/data/faqs';
-import { FAQ_Category, Question } from '@/types/faq';
-import mainConfig from '@/configs/mainConfigs';
+import { FAQ_Category, Question } from '@/@core/types/faq';
+import mainConfig from '@/@core/configs/mainConfigs';
 
 export default function FAQPage() {
   const [searchQuery, setSearchQuery] = React.useState('');

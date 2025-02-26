@@ -1,5 +1,5 @@
 import Layout from '@/components/layout';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 import SearchPage from '@/views/pages/search/searchPage';
 
 const page = () => {

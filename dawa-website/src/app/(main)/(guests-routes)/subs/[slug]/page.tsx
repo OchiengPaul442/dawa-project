@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import type { Category, Subcategory } from '@/types/category';
-import { slugify } from '@/utils/slugify';
+import type { Category, Subcategory } from '@/@core/types/category';
+import { slugify } from '@/@core/utils/slugify';
 import {
   categoryIconMap,
   subcategoryIconMap,

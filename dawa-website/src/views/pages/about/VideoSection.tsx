@@ -4,7 +4,7 @@ import ReactPlayer from 'react-player';
 import Image from 'next/image';
 import { MdOutlineStar, MdPlayArrow } from 'react-icons/md';
 import PuffLoader from 'react-spinners/PuffLoader';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 
 const VideoSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);

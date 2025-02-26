@@ -26,19 +26,15 @@
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/pages/*": ["./src/pages/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/types/*": ["./src/types/*"],
       "@public/*": ["./public/*"],
       "@redux-store/*": ["./src/redux-store/*"],
       "@contexts/*": ["./src/contexts/*"],
       "@data/*": ["./src/data/*"],
       "@views/*": ["./src/views/*"],
       "@core/*": ["./src/@core/*"],
-      "@layouts/*": ["./src/@layouts/*"],
-      "@configs/*": ["./src/configs/*"],
-      "@hocs/*": ["./src/hocs/*"]
+      "@layouts/*": ["./src/@layouts/*"]
     },
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    "typeRoots": ["src/@core/types", "./node_modules/@types"]
   },
   "include": [
     "next-env.d.ts",

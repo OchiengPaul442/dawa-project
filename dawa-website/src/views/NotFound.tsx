@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 
-import MainConfigs from '@configs/mainConfigs';
+import MainConfigs from '@/@core/configs/mainConfigs';
 
 export default function NotFound() {
   return (

@@ -3,7 +3,7 @@ import EnvelopIcons from '@public/assets/icons/envelops.svg';
 import React from 'react';
 
 import Button from '../../shared/Button';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 
 const Newsletter = ({
   container = false,

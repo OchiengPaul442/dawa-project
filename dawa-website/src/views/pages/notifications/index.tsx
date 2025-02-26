@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
-import { Notification, FilterType } from '@/types/notifications';
+import { Notification, FilterType } from '@/@core/types/notifications';
 import { fetchNotifications } from '@/data/notifications';
 import NotificationItem from './NotificationItem';
 import NotificationSkeleton from './NotificationSkeleton';

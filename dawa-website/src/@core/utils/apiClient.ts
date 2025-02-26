@@ -1,4 +1,3 @@
-// apiClient.ts
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { getSession } from 'next-auth/react';
 

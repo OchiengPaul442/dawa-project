@@ -4,7 +4,7 @@
 import { redirect, usePathname } from 'next/navigation';
 
 // configs
-import MainConfigs from '@configs/mainConfigs';
+import MainConfigs from '@/@core/configs/mainConfigs';
 
 const AuthRedirect = () => {
   const pathname = usePathname();

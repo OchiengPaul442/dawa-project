@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import { useRouter } from 'next/navigation';
 import { categoryIconMap, UniversalFallbackIcon } from './icon-maps';
 import { useAuth } from '@/@core/hooks/use-auth';

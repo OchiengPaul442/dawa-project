@@ -3,7 +3,7 @@
 import React, { FC } from 'react';
 import ProductCard from './ProductCard';
 import SkeletonProductCard from './SkeletonProductCard';
-import type { Product } from '@/types/wishList';
+import type { Product } from '@/@core/types/wishList';
 
 interface ProductListProps {
   products: Product[];

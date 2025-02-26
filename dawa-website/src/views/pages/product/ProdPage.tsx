@@ -8,7 +8,7 @@ import { ProductDetails } from './ProductDetails';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import ProductSkeleton from './product-skeleton';
 import Link from 'next/link';
-import { decrypt } from '@/utils/crypto';
+import { decrypt } from '@/@core/utils/crypto';
 import { OopsComponent } from '@/components/shared/oops-component';
 import CustomizableNoData from '@/components/shared/no-data';
 

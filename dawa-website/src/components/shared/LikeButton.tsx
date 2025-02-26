@@ -1,4 +1,3 @@
-// src/components/shared/LikeButton.tsx
 'use client';
 
 import React from 'react';
@@ -14,13 +13,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
-import type { Product } from '@/types/wishList';
+import type { Product } from '@/@core/types/wishList';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 import { useDispatch } from '@/redux-store/hooks';
 
 interface LikeButtonProps {
   productId: string;
-  product?: Product; // Full product details for optimistic update.
+  product?: Product;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'default' | 'minimal' | 'floating';

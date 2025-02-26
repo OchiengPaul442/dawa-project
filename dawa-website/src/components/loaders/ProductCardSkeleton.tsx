@@ -4,10 +4,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProductCardSkeletonProps {
   ITEMS_PER_PAGE?: number;
-  /**
-   * Custom grid classes to control the number of columns.
-   * For example: "grid grid-cols-2 gap-4" or "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-   */
   gridClass?: string;
 }
 

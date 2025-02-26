@@ -18,20 +18,20 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import CustomizableNoData from '@/components/shared/no-data';
 import { OopsComponent } from '@/components/shared/oops-component';
 
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import {
   setSelectedCategory,
   setSelectedSubcategory,
 } from '@redux-store/slices/categories/categorySlice';
 import { useProductsData } from '@core/hooks/useProductData';
 
-import type { Category, Subcategory } from '@/types/category';
+import type { Category, Subcategory } from '@/@core/types/category';
 import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
 import useInfiniteScroll, {
   UseInfiniteScrollOptions,
 } from '@/@core/hooks/useInfiniteScroll';
 import SingleSkeletonCard from '@/components/loaders/SingleSkeletonCard';
-import { normalizeProducts } from '@/utils/normalizeProductData';
+import { normalizeProducts } from '@/@core/utils/normalizeProductData';
 
 type FilterOptionType =
   | 'default'

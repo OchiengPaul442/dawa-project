@@ -1,4 +1,4 @@
-import { secureApiClient } from '@/utils/apiClient';
+import { secureApiClient } from '@/@core/utils/apiClient';
 
 /**
  * Fetches the user's wishlist.
@@ -23,6 +23,5 @@ export const toggleWishlistItem = async (
   { arg }: { arg: { item_id: string } },
 ): Promise<any> => {
   const response = await secureApiClient.post(url, arg);
-  // Adjust this extraction according to your API's response shape.
   return response.data;
 };

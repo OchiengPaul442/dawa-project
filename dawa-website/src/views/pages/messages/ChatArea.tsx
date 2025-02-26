@@ -9,7 +9,7 @@ import type {
   OptimisticMessage,
   User,
   MessageGroup,
-} from '@/types/message';
+} from '@/@core/types/message';
 import { useChat } from '@/contexts/ChatContext';
 import { MessageInput } from './MessageInput';
 import { ScrollArea } from '@/components/ui/scroll-area';

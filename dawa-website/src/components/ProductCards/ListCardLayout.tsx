@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { LikeButton } from '@/components/shared/LikeButton';
 import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
-import { slugify } from '@/utils/slugify';
-import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
+import { slugify } from '@/@core/utils/slugify';
+import { CurrencyFormatter } from '@/@core/utils/CurrencyFormatter';
 import { Edit, MapPin } from 'lucide-react';
-import type { SimilarItem } from '@/types/product';
+import type { SimilarItem } from '@/@core/types/product';
 import {
   Tooltip,
   TooltipContent,

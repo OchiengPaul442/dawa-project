@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import CardLayout from '@/components/ProductCards/CardLayout';
 import type { ShopData, FilterOption } from './types';
-import type { SimilarItem } from '@/types/product';
+import type { SimilarItem } from '@/@core/types/product';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import { ScrollArea } from '@/components/ui/scroll-area';

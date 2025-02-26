@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSearchProducts } from '@/@core/hooks/useProductData';
-import { normalizeProducts } from '@/utils/normalizeProductData';
+import { normalizeProducts } from '@/@core/utils/normalizeProductData';
 import CardLayout from '@/components/ProductCards/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';

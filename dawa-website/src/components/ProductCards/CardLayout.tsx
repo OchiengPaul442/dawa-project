@@ -3,7 +3,7 @@
 import type React from 'react';
 import ImportedProductCard from './GridCardLayout';
 import ListLayout from './ListCardLayout';
-import { SimilarItem } from '@/types/product';
+import { SimilarItem } from '@/@core/types/product';
 
 interface CardLayoutProps {
   product: SimilarItem;

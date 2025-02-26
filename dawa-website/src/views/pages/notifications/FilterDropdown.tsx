@@ -1,4 +1,4 @@
-import { FilterType } from '@/types/notifications';
+import { FilterType } from '@/@core/types/notifications';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,

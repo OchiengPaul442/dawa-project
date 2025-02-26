@@ -58,8 +58,6 @@ const ContactForm: React.FC = () => {
   // The custom hook expects a plain object that matches IFormInput.
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
-      // Call the trigger function from the hook.
-      // Under the hood, the hook passes data as { arg: data } to the fetcher.
       await contactUs(data);
       toast.success('Your message has been sent successfully!');
       reset();

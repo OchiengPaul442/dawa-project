@@ -6,9 +6,9 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { setSelectedProduct } from '@redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import { LikeButton } from '@/components/shared/LikeButton';
-import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
+import { CurrencyFormatter } from '@/@core/utils/CurrencyFormatter';
 import { Button } from '@/components/ui/button';
 import { Edit, MapPin } from 'lucide-react';
 import {
@@ -17,7 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { SimilarItem } from '@/types/product';
+import type { SimilarItem } from '@/@core/types/product';
 
 interface ProductCardProps {
   product: SimilarItem;

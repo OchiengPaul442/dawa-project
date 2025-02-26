@@ -9,7 +9,7 @@ import {
   FaYoutube,
   FaLinkedin,
 } from 'react-icons/fa';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 
 const ContactPage: React.FC = () => {
   return (

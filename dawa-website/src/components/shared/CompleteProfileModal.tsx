@@ -5,7 +5,6 @@ import { useUpdateUserProfile } from '@/@core/hooks/useProductData';
 import { useProfile } from '@/contexts/profile-context';
 import { useAuth } from '@/@core/hooks/use-auth';
 
-// Import shadcn/ui components
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';

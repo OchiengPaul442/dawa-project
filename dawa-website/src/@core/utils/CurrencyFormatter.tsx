@@ -1,4 +1,4 @@
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 import React from 'react';
 
 // Define the props interface

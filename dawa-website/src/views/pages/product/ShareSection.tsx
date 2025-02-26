@@ -9,7 +9,7 @@ import {
   FaXTwitter,
 } from 'react-icons/fa6';
 import { toast } from 'sonner';
-import { encrypt } from '@/utils/crypto';
+import { encrypt } from '@/@core/utils/crypto';
 
 interface ShareSectionProps {
   productId: string;

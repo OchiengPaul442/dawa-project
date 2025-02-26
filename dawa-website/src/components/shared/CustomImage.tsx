@@ -19,7 +19,7 @@ const CustomImage: React.FC<CustomImageProps> = ({
   src,
   fallbackSrc = DEFAULT_FALLBACK_IMAGE,
   alt = '',
-  quality = 85, // Increased default quality
+  quality = 85,
   className,
   containerClassName,
   ...props

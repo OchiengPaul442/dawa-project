@@ -2,11 +2,17 @@ import {
   secureApiClient,
   openApiClient,
   secureMultipartApiClient,
-} from '@/utils/apiClient';
-import { ProductUploadProps, TrendingProductsResponse } from '@/types/product';
-import { ReportAbuseProps } from '@/types/reportAbuse';
+} from '@/@core/utils/apiClient';
+import {
+  ProductUploadProps,
+  TrendingProductsResponse,
+} from '@/@core/types/product';
+import { ReportAbuseProps } from '@/@core/types/reportAbuse';
 
-// Fetch categories
+/**
+ * Fetch categories list
+ * @returns {Promise<any>}
+ */
 export const getCategoriesList = async (): Promise<any> => {
   try {
     const response = await openApiClient.get('/getcategories/');
@@ -17,7 +23,10 @@ export const getCategoriesList = async (): Promise<any> => {
   }
 };
 
-// Fetch categories for a specific category
+/**
+ * Fetch subcategories list
+ * @returns {Promise<any>}
+ */
 export const getCategoryData = async (body: any): Promise<any> => {
   try {
     const response = await openApiClient.post('/getitems/', body);
@@ -28,7 +37,10 @@ export const getCategoryData = async (body: any): Promise<any> => {
   }
 };
 
-// Fetch products
+/**
+ * Fetch trending products
+ * @returns {Promise<TrendingProductsResponse>}
+ */
 export const getProductsList = async (
   url: string,
   body: any = {},
@@ -42,7 +54,10 @@ export const getProductsList = async (
   }
 };
 
-// get product details
+/**
+ * Fetch product details
+ * @returns {Promise<any>}
+ */
 export const getProductDetails = async (body: any): Promise<any> => {
   try {
     const response = await openApiClient.post('/getitemdetails/', body);
@@ -53,7 +68,10 @@ export const getProductDetails = async (body: any): Promise<any> => {
   }
 };
 
-//get promoted products
+/**
+ * Fetch promoted products list
+ * @returns {Promise<any>}
+ */
 export const getPromotedProductsList = async (): Promise<any> => {
   try {
     const response = await openApiClient.get('/getitemspromoted/');
@@ -64,7 +82,26 @@ export const getPromotedProductsList = async (): Promise<any> => {
   }
 };
 
-// Add a new product
+/**
+ * Fetch search results
+ * @returns {Promise<any>}
+ */
+export const getSearchResults = async (
+  url: string,
+  body: any = {},
+): Promise<any> => {
+  try {
+    const response = await openApiClient.post(url, body);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * Add new product
+ * @returns {Promise<any>}
+ */
 export const addNewProduct = async (
   url: string,
   { arg }: { arg: ProductUploadProps },
@@ -74,7 +111,10 @@ export const addNewProduct = async (
     .then((response) => response.data);
 };
 
-// Update a product
+/**
+ * Update product
+ * @returns {Promise<any>}
+ */
 export const updateProduct = async (
   url: string,
   { arg }: { arg: ProductUploadProps },
@@ -84,7 +124,25 @@ export const updateProduct = async (
     .then((response) => response.data);
 };
 
-// delete a product image
+/**
+ * Delete product
+ * @returns {Promise<any>}
+ */
+export const deleteProduct = async (
+  url: string,
+  { arg }: { arg: any },
+): Promise<any> => {
+  return secureApiClient
+    .delete(url, { data: arg })
+    .then((response) => response.data);
+};
+
+/**
+ * Delete product image
+ * @returns {Promise<any>}
+ * @param url
+ * @param arg
+ */
 export const deleteProductImage = async (
   url: string,
   { arg }: { arg: any },
@@ -94,16 +152,26 @@ export const deleteProductImage = async (
     .then((response) => response.data);
 };
 
-// report abuse
+/**
+ * Report abuse
+ * @returns {Promise<any>}
+ * @param url
+ * @param arg
+ */
 export const reportAbuse = async (
   url: string,
   { arg }: { arg: ReportAbuseProps },
 ): Promise<any> => {
-  console.log(arg);
   return secureApiClient.post(url, arg).then((response) => response.data);
 };
 
-// send review
+/**
+ * Send review
+ * @returns {Promise<any>}
+ * @param url
+ * @param arg
+ * @param productId
+ */
 export const sendReview = async (
   url: string,
   { arg }: { arg: any },

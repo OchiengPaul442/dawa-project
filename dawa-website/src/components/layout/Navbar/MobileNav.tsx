@@ -8,7 +8,7 @@ import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
 import Button from '@/components/shared/Button';
-import MainConfigs from '@/configs/mainConfigs';
+import MainConfigs from '@/@core/configs/mainConfigs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import BackButton from '@/components/shared/BackButton';
 import SearchBar from '@/components/shared/SearchBar';

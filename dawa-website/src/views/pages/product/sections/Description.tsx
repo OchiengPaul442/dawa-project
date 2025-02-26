@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ProductType } from '@/types/product';
+import { ProductType } from '@/@core/types/product';
 import { AlertCircle } from 'lucide-react';
 
 interface DescriptionProps {

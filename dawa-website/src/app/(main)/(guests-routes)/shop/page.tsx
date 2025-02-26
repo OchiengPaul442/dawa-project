@@ -1,6 +1,6 @@
 import MyShop from '@/views/pages/myshop/myShopPage';
 import Layout from '@/components/layout';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 
 const page = () => {
   return (

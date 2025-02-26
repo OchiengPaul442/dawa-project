@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FaArrowLeft } from 'react-icons/fa';
-import GuestOnlyRoute from '@hocs/GuestOnlyRoute';
+import GuestOnlyRoute from '@/@core/hocs/GuestOnlyRoute';
 
 export default function ActivateLayout({
   children,

@@ -5,14 +5,14 @@ import { Trash2, ExternalLink, Share2, CalendarDays } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import CustomImage from '@/components/shared/CustomImage';
 import { useRouter } from 'next/navigation';
-import { slugify } from '@/utils/slugify';
+import { slugify } from '@/@core/utils/slugify';
 import { useWishlist } from '@/contexts/WishlistContext';
-import type { ProductCardProps } from '@/types/wishList';
-import { CurrencyFormatter } from '@/utils/CurrencyFormatter';
-import { formatDate } from '@/utils/dateFormatter';
+import type { ProductCardProps } from '@/@core/types/wishList';
+import { CurrencyFormatter } from '@/@core/utils/CurrencyFormatter';
+import { formatDate } from '@/@core/utils/dateFormatter';
 import { setSelectedProduct } from '@/redux-store/slices/products/productSlice';
 import { useDispatch } from '@/redux-store/hooks';
-import { encrypt } from '@/utils/crypto';
+import { encrypt } from '@/@core/utils/crypto';
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const router = useRouter();

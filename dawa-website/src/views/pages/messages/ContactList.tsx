@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { format, isValid } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, X, AlertCircle } from 'lucide-react';
-import type { MessageGroup, User, Message } from '@/types/message';
+import type { MessageGroup, User, Message } from '@/@core/types/message';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CustomizableNoData from '@/components/shared/no-data';
 

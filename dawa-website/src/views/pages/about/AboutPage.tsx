@@ -1,8 +1,8 @@
 'use client';
-import { assetConfig } from '@/configs/assestConfig';
+import { assetConfig } from '@/@core/configs/assestConfig';
 import VideoSection from './VideoSection';
 import CustomImage from '@/components/shared/CustomImage';
-import mainConfig from '@/configs/mainConfigs';
+import mainConfig from '@/@core/configs/mainConfigs';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import {
   MdOutlineStar,

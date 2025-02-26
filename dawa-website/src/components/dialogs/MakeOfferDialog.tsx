@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { AlertCircle } from 'lucide-react';
 import { useSendMessage } from '@core/hooks/useProductData';
-import { formatCurrency } from '@/utils/CurrencyFormatter';
+import { formatCurrency } from '@/@core/utils/CurrencyFormatter';
 import { toast } from 'sonner';
 
 interface MakeOfferDialogProps {

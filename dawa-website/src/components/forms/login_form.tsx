@@ -11,8 +11,6 @@ import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { authSchema } from '@core/validations/authValidation';
-// Instead of using your useAuth hook that might immediately return a user,
-// you can use NextAuth’s useSession hook if available:
 import { useSession } from 'next-auth/react';
 import GoogleIcon from '@public/assets/svgs/google.svg';
 

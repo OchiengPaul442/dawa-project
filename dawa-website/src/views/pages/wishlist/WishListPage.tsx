@@ -5,8 +5,8 @@ import WishlistHeader from './WishlistHeader';
 import ProductList from './ProductList';
 import Button from '@/components/shared/Button';
 import { useWishlist } from '@/contexts/WishlistContext';
-import type { Product } from '@/types/wishList';
-import { normalizeProduct } from '@/utils/normalizeProduct';
+import type { Product } from '@/@core/types/wishList';
+import { normalizeProduct } from '@/@core/utils/normalizeProduct';
 import CustomizableNoData from '@/components/shared/no-data';
 
 const WishlistPage = () => {

@@ -1,13 +1,21 @@
-import { ContactUsPayload, SubscribePayload } from '@/types/contact-us';
-import { openApiClient } from '@/utils/apiClient';
+import { ContactUsPayload, SubscribePayload } from '@/@core/types/contact-us';
+import { openApiClient } from '@/@core/utils/apiClient';
 
-// Get FAQs
+/**
+ *  Get FAQs
+ *  @returns {Promise<any>}
+ */
 export const getFaqs = async () => {
   const response = await openApiClient.get('/getfaqs/');
   return response.data;
 };
 
-// subscribe to newsletter
+/**
+ *  Subscribe to newsletter
+ *  @param {string} key - API key
+ *  @param {SubscribePayload} arg - Subscribe payload
+ *  @returns {Promise<any>}
+ */
 export const subscribeToNewsletter = async (
   key: string,
   { arg }: { arg: SubscribePayload },
@@ -16,7 +24,12 @@ export const subscribeToNewsletter = async (
   return response.data;
 };
 
-// contact us
+/**
+ *  Contact us
+ *  @param {string} key - API key
+ *  @param {ContactUsPayload} arg - Contact us payload
+ *  @returns {Promise<any>}
+ */
 export const contactUs = async (
   key: string,
   { arg }: { arg: ContactUsPayload },
