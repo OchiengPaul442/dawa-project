@@ -11,7 +11,7 @@ import React, {
 import { useSWRConfig } from 'swr';
 import useSWR from 'swr';
 import { getUserWishList, toggleWishlistItem } from '@/app/server/wishList/api';
-import { swrOptions } from '@core/swrConfig';
+import { swrOptions } from '@/@core/configs/swrConfig';
 import { useAuth } from '@core/hooks/use-auth';
 import type { Product } from '@/@core/types/wishList';
 import { normalizeProduct } from '@/@core/utils/normalizeProduct';

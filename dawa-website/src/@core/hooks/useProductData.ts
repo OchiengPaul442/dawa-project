@@ -4,6 +4,8 @@ import useSWR, { SWRConfiguration } from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import useSWRMutation from 'swr/mutation';
 import { useCallback, useMemo, useRef, useEffect } from 'react';
+
+// API Methods
 import {
   getProductsList,
   getPromotedProductsList,
@@ -35,10 +37,12 @@ import {
 } from '@/app/server/faqs_newLetter_contactUs/api';
 import { ContactUsPayload, SubscribePayload } from '@/@core/types/contact-us';
 import { search } from '@/app/server/search/api';
-import { swrOptions } from '../swrConfig';
+import { swrOptions } from '../configs/swrConfig';
 
 /**
- * Helper to remove duplicate products based on their id.
+ * Removes duplicate products based on their `id` property.
+ * @param products - Array of product objects.
+ * @returns Array of unique products.
  */
 function deduplicateProducts(products: any[]): any[] {
   const uniqueMap = new Map<number, any>();
@@ -49,17 +53,21 @@ function deduplicateProducts(products: any[]): any[] {
 }
 
 /**
- * useProductsData accepts an optional body object that will be sent on the initial request.
- * Changing the body creates a new stable key to trigger revalidation.
+ * Custom hook to fetch paginated product data.
+ * Utilizes SWRInfinite for asynchronous, non-blocking pagination.
+ * @param body - Optional request body for filtering products.
+ * @returns Object with product data, total count, pagination info, loading status, and mutate functions.
  */
 export function useProductsData(body?: any) {
   const bodyKey = useMemo(() => (body ? JSON.stringify(body) : null), [body]);
 
+  // Generate a key for each page request
   const getKey = useCallback(
     (
       pageIndex: number,
       previousPageData: TrendingProductsResponse | null,
     ): string | null => {
+      // If no more pages are available, stop fetching
       if (previousPageData && !previousPageData.next) return null;
       if (pageIndex === 0)
         return bodyKey
@@ -77,10 +85,11 @@ export function useProductsData(body?: any) {
       {
         revalidateAll: false,
         revalidateOnFocus: false,
+        ...swrOptions, // Custom SWR configuration
       },
     );
 
-  // Flatten pages and deduplicate by id
+  // Flatten results from multiple pages and remove duplicates
   const rawProductsData = data ? data.flatMap((page) => page.results.data) : [];
   const productsData = deduplicateProducts(rawProductsData);
   const totalCount = data?.[0]?.count || 0;
@@ -102,6 +111,12 @@ export function useProductsData(body?: any) {
   };
 }
 
+/**
+ * Custom hook to fetch category data.
+ * It determines the request body based on the selected category or subcategory.
+ * @param params - Object containing `selectedCategory` and `selectedSubcategory`.
+ * @returns Object with category data, loading state, error info, and mutate function.
+ */
 export function useCategoryData({
   selectedCategory,
   selectedSubcategory,
@@ -129,9 +144,11 @@ export function useCategoryData({
   return { data, error, isLoading, mutate };
 }
 
-// Hooks to send and receive messages
+/**
+ * Custom hook to fetch messages.
+ * @returns Object with messages data, loading state, error, and mutate function.
+ */
 export function useMessages() {
-  // Custom options for messages (if needed) can override swrOptions
   const messagesOptions: SWRConfiguration = {
     ...swrOptions,
     revalidateOnFocus: true,
@@ -152,6 +169,10 @@ export function useMessages() {
   };
 }
 
+/**
+ * Custom hook to send a message.
+ * @returns Object with a trigger function to send a message, sending state, and error info.
+ */
 export function useSendMessage() {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -167,6 +188,10 @@ export function useSendMessage() {
   };
 }
 
+/**
+ * Custom hook to add a new product.
+ * @returns Object with a trigger function to add a product, loading state, and error info.
+ */
 export function useAddNewProduct() {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -182,6 +207,11 @@ export function useAddNewProduct() {
   };
 }
 
+/**
+ * Custom hook to fetch product details based on an item ID.
+ * @param itemId - ID of the product to retrieve details for.
+ * @returns Object with product details, loading state, error info, and mutate function.
+ */
 export const useProductDetails = (itemId: any) => {
   const {
     data: productData,
@@ -205,6 +235,10 @@ export const useProductDetails = (itemId: any) => {
   };
 };
 
+/**
+ * Custom hook to fetch promoted products.
+ * @returns Object with promoted products data, loading state, error info, and mutate function.
+ */
 export function usePromotedProducts() {
   const { data, error, isLoading, mutate } = useSWR(
     'promotedProducts',
@@ -220,6 +254,10 @@ export function usePromotedProducts() {
   };
 }
 
+/**
+ * Custom hook to report abuse for a product.
+ * @returns Object with a trigger function to report abuse, loading state, and error info.
+ */
 export function useReportAbuse() {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -235,6 +273,10 @@ export function useReportAbuse() {
   };
 }
 
+/**
+ * Custom hook to send a review for a product.
+ * @returns Object with a trigger function to send a review, loading state, and error info.
+ */
 export function useSendReviews() {
   const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
     '/submitreview/',
@@ -248,6 +290,10 @@ export function useSendReviews() {
   };
 }
 
+/**
+ * Custom hook to fetch the user profile.
+ * @returns Object with user profile data, associated items, loading state, error info, and mutate function.
+ */
 export const useUserProfile = () => {
   const userOptions: SWRConfiguration = {
     ...swrOptions,
@@ -270,6 +316,10 @@ export const useUserProfile = () => {
   };
 };
 
+/**
+ * Custom hook to update the user profile.
+ * @returns Object with a trigger function to update the user profile, loading state, and error info.
+ */
 export function useUpdateUserProfile() {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -285,6 +335,10 @@ export function useUpdateUserProfile() {
   };
 }
 
+/**
+ * Custom hook to change the user's password.
+ * @returns Object with a trigger function to change the password, loading state, and error info.
+ */
 export function useChangeUserPassword() {
   const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
     '/changepassword/',
@@ -298,6 +352,10 @@ export function useChangeUserPassword() {
   };
 }
 
+/**
+ * Custom hook to update product details.
+ * @returns Object with a trigger function to update a product, loading state, and error info.
+ */
 export const useUpdateProduct = () => {
   const { trigger, isMutating, error } = useSWRMutation<any, any, string, any>(
     '/updateitem/',
@@ -311,6 +369,10 @@ export const useUpdateProduct = () => {
   };
 };
 
+/**
+ * Custom hook to delete a product image.
+ * @returns Object with a trigger function to delete an image, response data, error info, and loading state.
+ */
 export const useDeleteItemImage = () => {
   const { trigger, data, error, isMutating } = useSWRMutation(
     '/deleteitemimage/',
@@ -325,6 +387,11 @@ export const useDeleteItemImage = () => {
   };
 };
 
+/**
+ * Custom hook to fetch shop data for a given user.
+ * @param userId - ID of the user whose shop data is requested.
+ * @returns Object with shop data, loading state, error info, and mutate function.
+ */
 export const useShopData = (userId: any) => {
   const { data, error, isLoading, mutate } = useSWR<any>(
     userId ? [`/getshopprofile`, userId] : null,
@@ -339,6 +406,10 @@ export const useShopData = (userId: any) => {
   };
 };
 
+/**
+ * Custom hook to fetch FAQs.
+ * @returns Object with FAQs data, loading state, error info, and mutate function.
+ */
 export const useFaqs = () => {
   const { data, error, isLoading, mutate } = useSWR(
     'faqs',
@@ -354,6 +425,10 @@ export const useFaqs = () => {
   };
 };
 
+/**
+ * Custom hook to subscribe to the newsletter.
+ * @returns Object with a trigger function to subscribe, loading state, and error info.
+ */
 export const useSubscribeToNewsletter = () => {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -369,6 +444,10 @@ export const useSubscribeToNewsletter = () => {
   };
 };
 
+/**
+ * Custom hook to send a "Contact Us" request.
+ * @returns Object with a trigger function for contact requests, loading state, and error info.
+ */
 export const useContactUs = () => {
   const { trigger, isMutating, error } = useSWRMutation<
     any,
@@ -385,26 +464,27 @@ export const useContactUs = () => {
 };
 
 /**
- * useSearchProducts implements proper cancellation using a ref to avoid lingering requests.
+ * Custom hook to search for products with proper request cancellation.
+ * This hook ensures that only the latest search request is processed.
+ * @param query - Search query string.
+ * @returns Object with search results, query status, loading state, error info, and mutate function.
  */
 export const useSearchProducts = (query: string) => {
-  // Store the current AbortController in a ref
+  // Use a ref to store the current AbortController for cancellation.
   const controllerRef = useRef<AbortController | null>(null);
 
-  // Fetcher wrapped in useCallback to ensure stable identity across renders
+  // Stable fetcher to ensure async search requests without waiting/blocking.
   const fetcher = useCallback(() => {
-    // Abort any previous pending request
+    // Cancel any ongoing request
     if (controllerRef.current) {
       controllerRef.current.abort();
     }
     const controller = new AbortController();
     controllerRef.current = controller;
-
-    // Pass the signal to the search API
     return search(query, controller.signal);
   }, [query]);
 
-  // Cleanup on unmount to prevent memory leaks
+  // Cleanup on unmount to prevent memory leaks.
   useEffect(() => {
     return () => {
       controllerRef.current?.abort();
