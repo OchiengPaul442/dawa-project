@@ -470,30 +470,10 @@ export const useContactUs = () => {
  * @returns Object with search results, query status, loading state, error info, and mutate function.
  */
 export const useSearchProducts = (query: string) => {
-  // Use a ref to store the current AbortController for cancellation.
-  const controllerRef = useRef<AbortController | null>(null);
-
-  // Stable fetcher to ensure async search requests without waiting/blocking.
-  const fetcher = useCallback(() => {
-    // Cancel any ongoing request
-    if (controllerRef.current) {
-      controllerRef.current.abort();
-    }
-    const controller = new AbortController();
-    controllerRef.current = controller;
-    return search(query, controller.signal);
-  }, [query]);
-
-  // Cleanup on unmount to prevent memory leaks.
-  useEffect(() => {
-    return () => {
-      controllerRef.current?.abort();
-    };
-  }, []);
-
+  // Only fetch when query is provided
   const { data, error, mutate, isValidating } = useSWR(
     query ? ['search', query] : null,
-    fetcher,
+    () => search(query),
     swrOptions,
   );
 

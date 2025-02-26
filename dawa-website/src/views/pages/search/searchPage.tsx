@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSearchProducts } from '@/@core/hooks/useProductData';
 import { normalizeProducts } from '@/@core/utils/normalizeProductData';
@@ -12,12 +12,15 @@ import { OopsComponent } from '@/components/shared/oops-component';
 import Loader from '@/components/Loader';
 
 const SearchPage: React.FC = () => {
+  // Get query param from URL.
   const searchParams = useSearchParams();
   const queryParam = searchParams.get('query') || '';
+
+  // Use search hook.
   const { searchQuery, productsData, isLoading, isError } =
     useSearchProducts(queryParam);
 
-  // Filter criteria states
+  // Filter criteria states.
   const [appliedPriceRange, setAppliedPriceRange] = useState<[number, number]>([
     0, 1_000_000_000,
   ]);
@@ -26,23 +29,47 @@ const SearchPage: React.FC = () => {
     [],
   );
 
-  // View type and sorting option states
+  // View type and sorting.
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [filterOption, setFilterOption] = useState<string>('default');
-  const handleFilterChange = (value: string) => setFilterOption(value);
 
-  // Category filter state
+  // Category filter state (default is "all" so that all items show).
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const handleCategorySelect = (category: string) =>
-    setSelectedCategory(category);
 
-  // Normalize fetched products (defaulting to an empty array if no data)
+  // Handlers for filter changes.
+  const handleFilterChange = useCallback(
+    (value: string) => setFilterOption(value),
+    [],
+  );
+  const handleCategorySelect = useCallback(
+    (category: string) => setSelectedCategory(category),
+    [],
+  );
+  const handleApplyFilters = useCallback(
+    (
+      newPriceRange: [number, number],
+      newLocation: string,
+      newSelectedColors: string[],
+    ) => {
+      setAppliedPriceRange(newPriceRange);
+      setAppliedLocation(newLocation);
+      setAppliedSelectedColors(newSelectedColors);
+    },
+    [],
+  );
+  const handleResetFilters = useCallback(() => {
+    setAppliedPriceRange([0, 1_000_000_000]);
+    setAppliedLocation('');
+    setAppliedSelectedColors([]);
+  }, []);
+
+  // Normalize products.
   const normalizedProducts = useMemo(
     () => normalizeProducts(productsData || []),
     [productsData],
   );
 
-  // Derive unique categories from normalized products and include "all"
+  // Derive unique categories and add "all" as the first option.
   const uniqueCategories = useMemo(() => {
     const cats = new Set<string>();
     normalizedProducts.forEach((product) => {
@@ -51,37 +78,30 @@ const SearchPage: React.FC = () => {
     return ['all', ...Array.from(cats)];
   }, [normalizedProducts]);
 
-  // Filter products based on the applied criteria
+  // Filtering logic.
   const filteredProducts = useMemo(() => {
     return normalizedProducts.filter((product) => {
-      // Price filtering
       const price = Number(product.price);
-      if (price < appliedPriceRange[0] || price > appliedPriceRange[1]) {
+      if (price < appliedPriceRange[0] || price > appliedPriceRange[1])
         return false;
-      }
 
-      // Location filtering (case-insensitive)
       if (appliedLocation && product.location) {
         if (
           !product.location
             .toLowerCase()
             .includes(appliedLocation.toLowerCase())
-        ) {
+        )
           return false;
-        }
       }
 
-      // Colors filtering (if applicable)
       if (appliedSelectedColors.length > 0) {
         const productColors: string[] = (product as any).colors || [];
         if (
           !appliedSelectedColors.some((color) => productColors.includes(color))
-        ) {
+        )
           return false;
-        }
       }
 
-      // Category filtering (if a specific category is selected)
       if (
         selectedCategory !== 'all' &&
         (product.category ?? '').toLowerCase() !==
@@ -100,7 +120,7 @@ const SearchPage: React.FC = () => {
     selectedCategory,
   ]);
 
-  // Sorting logic based on the selected filter option
+  // Sorting logic.
   const sortedProducts = useMemo(() => {
     const products = [...filteredProducts];
     switch (filterOption) {
@@ -111,32 +131,14 @@ const SearchPage: React.FC = () => {
         products.sort((a, b) => Number(b.price) - Number(a.price));
         break;
       default:
-        // Default: sort by newest first (using dateAdded)
+        // Newest first based on dateAdded.
         products.sort(
           (a, b) =>
             new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
         );
-        break;
     }
     return products;
   }, [filteredProducts, filterOption]);
-
-  // Handlers to update filter criteria from ProductFilter component
-  const handleApplyFilters = (
-    newPriceRange: [number, number],
-    newLocation: string,
-    newSelectedColors: string[],
-  ) => {
-    setAppliedPriceRange(newPriceRange);
-    setAppliedLocation(newLocation);
-    setAppliedSelectedColors(newSelectedColors);
-  };
-
-  const handleResetFilters = () => {
-    setAppliedPriceRange([0, 1_000_000_000]);
-    setAppliedLocation('');
-    setAppliedSelectedColors([]);
-  };
 
   return (
     <div className="min-h-screen space-y-6">
@@ -150,7 +152,6 @@ const SearchPage: React.FC = () => {
         )}
       </header>
       <main>
-        {/* Grid layout for responsive design */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar: Product Filters */}
           <aside className="lg:col-span-1">
@@ -164,12 +165,12 @@ const SearchPage: React.FC = () => {
           </aside>
 
           {/* Main Content: Filters & Product List */}
-          <section className="lg:col-span-3">
+          <section className="lg:col-span-3 space-y-6">
             <FiltersAndSorting
               category={uniqueCategories}
               selectedCategory={selectedCategory}
               onCategorySelect={handleCategorySelect}
-              categoryTitle=""
+              categoryTitle="Filter by Category"
               viewType={viewType}
               setViewType={setViewType}
               filterOption={filterOption}
