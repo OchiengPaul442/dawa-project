@@ -1,232 +1,225 @@
 'use client';
 
 import * as React from 'react';
-import { Search, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-
+import { Search, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { FAQCategory } from '@/data/faqs';
-import { FAQ_Category, Question } from '@/@core/types/faq';
-import mainConfig from '@/@core/configs/mainConfigs';
+import Loader from '@/components/Loader';
+import { useFaqs } from '@/@core/hooks/useProductData';
+import CustomizableNoData from '@/components/shared/no-data';
+import { OopsComponent } from '@/components/shared/oops-component';
 
+/**
+ * FAQPage Component
+ */
 export default function FAQPage() {
+  const { faqsData, isLoading, isError } = useFaqs();
+
+  // Local states
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState(
-    FAQCategory[0]?.id || '',
-  );
   const [selectedQuestionId, setSelectedQuestionId] = React.useState<
     string | null
   >(null);
-  const [isCategorySheetOpen, setIsCategorySheetOpen] = React.useState(false);
 
-  const answerRef = React.useRef<HTMLDivElement>(null);
+  // Extract the array of FAQs from the API response.
+  // If `faqsData` is already an array, use it directly;
+  // otherwise assume the array is in `faqsData.data`.
+  const faqsArray = Array.isArray(faqsData) ? faqsData : faqsData?.data || [];
 
+  // Group FAQs by category
+  const groupedCategories = React.useMemo(() => {
+    const groups: Record<
+      string,
+      {
+        id: string;
+        title: string;
+        questions: { id: string; title: string; content: string }[];
+      }
+    > = {};
+
+    faqsArray.forEach((faq: any) => {
+      const category = faq.category || 'Other';
+      if (!groups[category]) {
+        groups[category] = {
+          id: category,
+          title: category,
+          questions: [],
+        };
+      }
+      groups[category].questions.push({
+        id: String(faq.id),
+        title: faq.question,
+        content: faq.answer,
+      });
+    });
+
+    return Object.values(groups);
+  }, [faqsArray]);
+
+  // Deep Search in both question title & content
   const filteredCategories = React.useMemo(() => {
-    return FAQCategory.map((category) => ({
-      ...category,
-      questions: category.questions.filter((question) =>
-        question.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    }));
-  }, [searchQuery]);
+    const query = searchQuery.toLowerCase();
+    return groupedCategories
+      .map((category) => {
+        const filteredQuestions = category.questions.filter((q) => {
+          const inTitle = q.title.toLowerCase().includes(query);
+          const inContent = q.content.toLowerCase().includes(query);
+          return inTitle || inContent;
+        });
+        return {
+          ...category,
+          questions: filteredQuestions,
+        };
+      })
+      .filter((category) => category.questions.length > 0);
+  }, [groupedCategories, searchQuery]);
 
-  const currentCategory = React.useMemo(() => {
-    return (
-      filteredCategories.find(
-        (category) => category.id === selectedCategoryId,
-      ) || filteredCategories[0]
-    );
-  }, [filteredCategories, selectedCategoryId]);
-
+  // Find the currently selected question among all categories
   const selectedQuestion = React.useMemo(() => {
+    for (const cat of groupedCategories) {
+      const found = cat.questions.find((q) => q.id === selectedQuestionId);
+      if (found) return found;
+    }
+    return null;
+  }, [groupedCategories, selectedQuestionId]);
+
+  // Loading & Error states
+  if (isLoading) {
     return (
-      currentCategory?.questions.find(
-        (question) => question.id === selectedQuestionId,
-      ) || null
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
     );
-  }, [currentCategory, selectedQuestionId]);
+  }
 
-  React.useEffect(() => {
-    if (currentCategory && currentCategory.questions.length > 0) {
-      setSelectedQuestionId(currentCategory.questions[0].id);
-    } else {
-      setSelectedQuestionId(null);
-    }
-  }, [currentCategory]);
+  if (isError) {
+    return (
+      <OopsComponent
+        title="Oops! Something went wrong"
+        description="We're having trouble loading the data. Please try again."
+        actionText="Try Again"
+        onAction={() => window.location.reload()}
+      />
+    );
+  }
 
-  const handleQuestionClick = (questionId: string) => {
-    setSelectedQuestionId(questionId);
-    if (answerRef.current) {
-      answerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  /**
+   * Renders the left column (search + categories + questions)
+   * for desktop and also for mobile (when no question is selected).
+   */
+  const renderCategoryList = () => (
+    <div className="bg-white border rounded-md p-2 md:p-4">
+      {/* Search Box */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <Input
+          placeholder="Search questions or answers"
+          className="pl-10"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-  return (
-    <div className="relative">
-      <div className="bg-primary_1">
-        <div className={`relative ${mainConfig.maxWidthClass} -mt-8 py-12`}>
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white">FAQ</h1>
-            <p className="mt-3 text-lg md:text-xl text-white/90">
-              Find answers to common questions about our platform.
-            </p>
-          </div>
-          <div className="relative -mb-24">
-            <div className="mx-auto max-w-3xl rounded-lg bg-white p-4 shadow-lg">
-              <div className="flex gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    placeholder="Haven't found anything? Try find here"
-                    className="pl-10 py-6 text-base md:text-lg border-0 shadow-none focus-visible:ring-0"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button className="bg-primary_1 px-8 hover:bg-primary_1/80 h-10 hidden md:block">
-                  Search
-                </Button>
+      {/* Scrollable list of categories + questions */}
+      <ScrollArea className="max-h-[calc(100vh-200px)]">
+        {filteredCategories.length === 0 ? (
+          <p className="text-gray-500">No questions found.</p>
+        ) : (
+          filteredCategories.map((category, idx) => (
+            <div key={category.id} className="mb-6">
+              {/* Category Title */}
+              <h3 className="text-xs font-semibold uppercase mb-2">
+                {category.title}
+              </h3>
+              {/* Questions */}
+              <div className="space-y-1">
+                {category.questions.map((q) => (
+                  <button
+                    key={q.id}
+                    onClick={() => setSelectedQuestionId(q.id)}
+                    className={cn(
+                      'w-full flex items-center justify-between text-left px-3 py-2 rounded transition-colors border border-transparent',
+                      selectedQuestionId === q.id
+                        ? 'bg-primary_1/10 text-primary_1 font-medium'
+                        : 'hover:bg-primary_1/5',
+                    )}
+                  >
+                    <span>{q.title}</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </button>
+                ))}
               </div>
+
+              {/* Horizontal line to separate categories, except after last */}
+              {idx < filteredCategories.length - 1 && (
+                <hr className="mt-4 border-t border-gray-200" />
+              )}
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="h-24 bg-white" />
-      <div className={`relative ${mainConfig.maxWidthClass} py-12`}>
-        <Sheet open={isCategorySheetOpen} onOpenChange={setIsCategorySheetOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-full mb-6 h-10 border-orange-200 hover:bg-orange-50 text-primary_1"
-            >
-              <span className="flex-1 text-left">Browse categories</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-80 sm:max-w-md">
-            <SheetTitle className="text-center text-2xl font-bold mb-4">
-              Categories
-            </SheetTitle>
-            <CategoryNav
-              categories={filteredCategories}
-              selectedCategoryId={selectedCategoryId}
-              onSelectCategory={(categoryId) => {
-                setSelectedCategoryId(categoryId);
-                setIsCategorySheetOpen(false);
-              }}
-            />
-          </SheetContent>
-        </Sheet>
-        <main>
-          <div className="grid gap-4 lg:grid-cols-[2fr_4fr]">
-            <div className="lg:max-w-md">
-              <ScrollArea className="h-[300px] lg:h-[calc(100vh-300px)] rounded-lg border border-slate-200">
-                <div className="space-y-2 p-4">
-                  {currentCategory?.questions.map((question) => (
-                    <QuestionButton
-                      key={question.id}
-                      question={question}
-                      isSelected={selectedQuestionId === question.id}
-                      onClick={() => handleQuestionClick(question.id)}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-            <div
-              ref={answerRef}
-              className="rounded-lg border border-slate-200 bg-white p-6 lg:p-8"
-            >
-              <AnimatePresence mode="wait">
-                {selectedQuestion ? (
-                  <motion.div
-                    key={selectedQuestion.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                  >
-                    <h2 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6 text-primary_1">
-                      {selectedQuestion.title}
-                    </h2>
-                    <div className="prose prose-sm lg:prose-base prose-slate max-w-none">
-                      {selectedQuestion.content}
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex h-[300px] lg:h-[calc(100vh-300px)] items-center justify-center text-slate-500"
-                  >
-                    Select a question to view the answer
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </main>
-      </div>
+          ))
+        )}
+      </ScrollArea>
     </div>
   );
-}
 
-function CategoryNav({
-  categories,
-  selectedCategoryId,
-  onSelectCategory,
-}: {
-  categories: FAQ_Category[];
-  selectedCategoryId: string;
-  onSelectCategory: (categoryId: string) => void;
-}) {
-  return (
-    <nav className="flex flex-col space-y-2">
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => onSelectCategory(category.id)}
-          className={cn(
-            'w-full rounded-lg px-4 py-2.5 text-left transition-all duration-200',
-            selectedCategoryId === category.id
-              ? 'bg-primary_1 text-white'
-              : 'text-slate-600 hover:bg-orange-100',
-          )}
-        >
-          {category.title}
-        </button>
-      ))}
-    </nav>
-  );
-}
-
-function QuestionButton({
-  question,
-  isSelected,
-  onClick,
-}: {
-  question: Question;
-  isSelected: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'w-full rounded-lg px-4 py-3 text-left transition-all duration-200',
-        isSelected ? 'bg-primary_1 text-white' : 'bg-white hover:bg-orange-100',
+  /**
+   * Renders the right column (selected question & answer)
+   * for desktop and for mobile (when a question is selected).
+   */
+  const renderSelectedQuestion = () => (
+    <div className="bg-white border rounded-md p-2 md:p-4">
+      {selectedQuestion ? (
+        <>
+          <h2 className="text-lg font-semibold mb-4 text-primary_1">
+            {selectedQuestion.title}
+          </h2>
+          <div className="prose">{selectedQuestion.content}</div>
+        </>
+      ) : (
+        <p className="text-gray-500">Select a question to view the answer</p>
       )}
-    >
-      <h3 className="font-medium">{question.title}</h3>
-    </button>
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Page Title */}
+      <h1 className="text-2xl font-bold mb-6">Frequently Asked Questions</h1>
+
+      {/* ======================
+          MOBILE LAYOUT
+          ====================== */}
+      <div className="block md:hidden">
+        {/* If user hasn't selected a question, show categories & questions */}
+        {!selectedQuestion ? (
+          renderCategoryList()
+        ) : (
+          /* If user selected a question, show the question detail in a full page */
+          <div className="bg-white border rounded-md p-2 md:p-4 relative">
+            <button
+              onClick={() => setSelectedQuestionId(null)}
+              className="mb-4 flex items-center text-primary_1 hover:text-primary_1/80"
+            >
+              <ArrowLeft className="mr-2" />
+              <span>Back</span>
+            </button>
+            <h2 className="text-lg font-semibold mb-4 text-primary_1">
+              {selectedQuestion.title}
+            </h2>
+            <div className="prose">{selectedQuestion.content}</div>
+          </div>
+        )}
+      </div>
+
+      {/* ======================
+          DESKTOP LAYOUT
+          ====================== */}
+      <div className="hidden md:grid grid-cols-[300px_minmax(0,1fr)] gap-4">
+        {/* LEFT COLUMN: category list */}
+        {renderCategoryList()}
+        {/* RIGHT COLUMN: selected question & answer */}
+        {renderSelectedQuestion()}
+      </div>
+    </div>
   );
 }
