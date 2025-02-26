@@ -9,7 +9,8 @@ interface ApiUserData {
   first_name?: string;
   last_name?: string;
   user_profile_picture?: string;
-  user_role?: string;
+  // user_role must always be "Client" or "Vendor"
+  user_role?: 'Client' | 'Vendor';
 }
 
 interface LoginResponse {
@@ -29,9 +30,9 @@ declare module 'next-auth' {
       name: string;
       email: string;
       image: string | null;
-      role: string | null;
+      role: 'Client' | 'Vendor'; // must be one of these, not null
     };
-    accessToken: string | null;
+    accessToken: string; // always a string
   }
 
   interface User {
@@ -39,8 +40,8 @@ declare module 'next-auth' {
     name: string;
     email: string;
     image: string | null;
-    role: string | null;
-    token: string | null;
+    role: 'Client' | 'Vendor'; // must be one of these
+    token: string; // always a string
   }
 }
 
@@ -50,8 +51,8 @@ declare module 'next-auth/jwt' {
     name: string;
     email: string;
     picture: string | null;
-    role: string | null;
-    accessToken: string | null;
+    role: 'Client' | 'Vendor'; // always defined
+    accessToken: string; // always defined
   }
 }
 
@@ -75,13 +76,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        // Ensure credentials were provided
         if (!credentials?.username || !credentials?.password) {
           throw new Error('Username or password missing');
         }
 
         try {
-          // Attempt login
           const response = await axios.post<LoginResponse>(
             `${process.env.NEXT_PUBLIC_API_URL}/login/`,
             {
@@ -95,7 +94,6 @@ export const authOptions: NextAuthOptions = {
 
           const { status, user_data, message } = response.data;
 
-          // Validate response
           if (status !== 202 || !user_data?.user_data) {
             console.error('Invalid login response:', response.data);
             throw new Error(message || 'Invalid login response');
@@ -103,7 +101,6 @@ export const authOptions: NextAuthOptions = {
 
           const userInfo = user_data.user_data;
 
-          // Validate user info
           if (!userInfo.id || !userInfo.email) {
             console.error(
               'Incomplete user data returned from login API:',
@@ -112,68 +109,65 @@ export const authOptions: NextAuthOptions = {
             throw new Error('Incomplete user data returned from login API');
           }
 
-          // Return the user object that NextAuth will store in the JWT
+          // Ensure role and token are always defined (fallbacks provided)
           return {
             id: userInfo.id.toString(),
             name: `${userInfo.first_name || ''} ${userInfo.last_name || ''}`.trim(),
             email: userInfo.email,
             image: userInfo.user_profile_picture ?? null,
-            role: userInfo.user_role ?? null,
-            token: user_data.token ?? null,
+            role: userInfo.user_role ?? 'Client',
+            token: user_data.token ?? '',
           };
         } catch (error) {
           console.error('Login error:', error);
-          throw error; // Rethrow to stop flow
+          throw error;
         }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user, account }) {
-      if (!account || !user) {
-        return token;
-      }
-
-      if (account.provider === 'google') {
-        try {
-          const response = await axios.post<LoginResponse>(
-            `${process.env.NEXT_PUBLIC_API_URL}/googlelogin/`,
-            {
-              google_token: account.id_token,
-              user_role: 'Client',
-            },
-          );
-
-          const { user_data } = response.data;
-          const userInfo = user_data?.user_data;
-
-          if (!userInfo || !userInfo.id) {
-            throw new Error(
-              'Invalid Google login response or user info missing',
+      // When first logging in, user and account will be defined
+      if (account && user) {
+        if (account.provider === 'google') {
+          try {
+            const response = await axios.post<LoginResponse>(
+              `${process.env.NEXT_PUBLIC_API_URL}/googlelogin/`,
+              {
+                google_token: account.id_token,
+                user_role: 'Client',
+              },
             );
+
+            const { user_data } = response.data;
+            const userInfo = user_data?.user_data;
+
+            if (!userInfo || !userInfo.id) {
+              throw new Error(
+                'Invalid Google login response or user info missing',
+              );
+            }
+
+            token.id = userInfo.id.toString();
+            token.name =
+              `${userInfo.first_name || ''} ${userInfo.last_name || ''}`.trim();
+            token.email = userInfo.email;
+            token.picture = userInfo.user_profile_picture ?? null;
+            token.role = userInfo.user_role ?? 'Client';
+            token.accessToken = user_data?.token ?? '';
+          } catch (error) {
+            console.error('Error during Google login:', error);
+            throw error;
           }
-
-          token.id = userInfo.id.toString();
-          token.name =
-            `${userInfo.first_name || ''} ${userInfo.last_name || ''}`.trim();
-          token.email = userInfo.email;
-          token.picture = userInfo.user_profile_picture ?? null;
-          token.role = userInfo.user_role ?? null;
-          token.accessToken = user_data?.token ?? null;
-        } catch (error) {
-          console.error('Error during Google login:', error);
-          throw error; // Abort the flow
+        } else if (account.provider === 'credentials') {
+          token.id = user.id;
+          token.name = user.name;
+          token.email = user.email;
+          token.picture = user.image ?? null;
+          token.role = user.role;
+          token.accessToken = user.token;
         }
-      } else if (account.provider === 'credentials') {
-        // Credentials provider logic
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-        token.picture = user.image ?? null;
-        token.role = user.role ?? null;
-        token.accessToken = user.token ?? null;
       }
-
       return token;
     },
     async session({ session, token }) {

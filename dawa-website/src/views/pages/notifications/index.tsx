@@ -5,10 +5,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
 import { Notification, FilterType } from '@/@core/types/notifications';
-import { fetchNotifications } from '@/data/notifications';
 import NotificationItem from './NotificationItem';
 import NotificationSkeleton from './NotificationSkeleton';
 import FilterDropdown from './FilterDropdown';
+
+const fetchNotifications = () =>
+  new Promise<Notification[]>((resolve) => setTimeout(() => {}, 500)).then(
+    () => [],
+  );
 
 export default function NotificationsPage() {
   const [filter, setFilter] = useState<FilterType>('all');
