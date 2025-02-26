@@ -28,106 +28,114 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
   stats,
   isAdmin = false,
 }) => (
-  <div className="bg-white rounded-xl shadow-sm">
-    <div className="p-6 border-b border-gray-100">
+  <header className="bg-white rounded-xl shadow-md overflow-hidden">
+    {/* Profile & Stats Section */}
+    <div className="p-6 border-b border-gray-200">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-        <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
+        <Avatar
+          className="w-20 h-20 border-4 border-white shadow-lg"
+          aria-label="User avatar"
+        >
           <AvatarImage
             src={user.user_profile_picture}
-            alt={user.user.first_name}
+            alt={`${user.user.first_name} ${user.user.last_name}`}
           />
           <AvatarFallback>{user.user.first_name[0]}</AvatarFallback>
         </Avatar>
 
         <div className="flex-grow">
           <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               {`${user.user.first_name} ${user.user.last_name}'s Shop`}
             </h1>
-            <div className="flex flex-wrap gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge variant="secondary" className="gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {user.address || 'Unknown'}
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Shop Location</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1 cursor-help"
+                  >
+                    <MapPin className="h-4 w-4" aria-hidden="true" />
+                    <span>{user.address || 'Unknown'}</span>
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Shop Location</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
-          <div className="flex flex-wrap gap-6">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-semibold">
-                    {stats.total_items}
-                  </span>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Total Items</p>
-                </div>
+          <div className="grid grid-cols-3 gap-6">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-50">
+                <span className="text-blue-600 font-semibold">
+                  {stats.total_items}
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-full bg-green-50 flex items-center justify-center">
-                  <span className="text-green-600 font-semibold">
-                    {stats.available_items}
-                  </span>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Available</p>
-                </div>
+              <div className="text-sm">
+                <p className="text-gray-600">Total Items</p>
               </div>
-              {isAdmin && (
-                <div className="flex items-center gap-2">
-                  <div className="h-10 w-10 rounded-full bg-orange-50 flex items-center justify-center">
-                    <span className="text-orange-600 font-semibold">
-                      {stats.sold_items}
-                    </span>
-                  </div>
-                  <div className="text-sm">
-                    <p className="text-gray-600">Sold</p>
-                  </div>
-                </div>
-              )}
             </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-50">
+                <span className="text-green-600 font-semibold">
+                  {stats.available_items}
+                </span>
+              </div>
+              <div className="text-sm">
+                <p className="text-gray-600">Available</p>
+              </div>
+            </div>
+            {isAdmin && (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-orange-50">
+                  <span className="text-orange-600 font-semibold">
+                    {stats.sold_items}
+                  </span>
+                </div>
+                <div className="text-sm">
+                  <p className="text-gray-600">Sold</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 md:ml-auto">
+        <div className="flex flex-col sm:flex-row gap-3 ml-auto">
           <Button
-            className="bg-[#25D366] hover:bg-[#128C7E] gap-2"
+            className="bg-[#25D366] hover:bg-[#128C7E] transition-colors duration-200 flex items-center gap-2"
             onClick={() =>
               window.open(`https://wa.me/${user.contact}`, '_blank')
             }
+            aria-label="Contact via WhatsApp"
           >
             <FaWhatsapp className="h-4 w-4" />
-            WhatsApp
+            <span>WhatsApp</span>
           </Button>
+          {/* Uncomment below if messaging should be enabled for non-admin users */}
           {/* {!isAdmin && (
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="flex items-center gap-2" aria-label="Send a message">
               <FaEnvelope className="h-4 w-4" />
-              Message
+              <span>Message</span>
             </Button>
           )} */}
         </div>
       </div>
     </div>
 
-    <div className="px-6 py-3 bg-gray-50/50 flex flex-wrap gap-4 text-sm text-gray-600">
+    {/* Contact Information Section */}
+    <div className="px-6 py-3 bg-gray-50 flex flex-wrap gap-4 text-sm text-gray-700">
       <div className="flex items-center gap-2">
-        <FaPhone className="h-4 w-4 text-primary_1" />
+        <FaPhone className="h-4 w-4" aria-hidden="true" />
         <span>{user.contact}</span>
       </div>
       <div className="flex items-center gap-2">
-        <FaEnvelope className="h-4 w-4 text-primary_1" />
+        <FaEnvelope className="h-4 w-4" aria-hidden="true" />
         <span>{user.user.email}</span>
       </div>
     </div>
-  </div>
+  </header>
 );
+
+export default ShopHeader;

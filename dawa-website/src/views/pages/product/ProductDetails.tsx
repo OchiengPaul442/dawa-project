@@ -94,7 +94,11 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
               {/* Product details section */}
               <div className="space-y-6">
                 <ProductInfo product={product} />
-                <SellerInfo seller={product.seller} reviews={product.reviews} />
+                <SellerInfo
+                  seller={product.seller}
+                  productId={product.id}
+                  reviews={product.reviews}
+                />
                 <ActionButtons
                   onContact={() => toggleDialog('contact')}
                   onMessage={() => handleAction(() => toggleDialog('message'))}
