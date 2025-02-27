@@ -22,6 +22,13 @@ export default function FAQPage() {
     string | null
   >(null);
 
+  // When a question is selected, scroll to the top smoothly.
+  React.useEffect(() => {
+    if (selectedQuestionId) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedQuestionId]);
+
   // Extract the array of FAQs from the API response.
   // If `faqsData` is already an array, use it directly;
   // otherwise assume the array is in `faqsData.data`.
@@ -121,8 +128,8 @@ export default function FAQPage() {
         />
       </div>
 
-      {/* Scrollable list of categories + questions */}
-      <ScrollArea className="max-h-[calc(100vh-200px)]">
+      {/* List of categories + questions without a fixed max-height */}
+      <div>
         {filteredCategories.length === 0 ? (
           <p className="text-gray-500">No questions found.</p>
         ) : (
@@ -158,7 +165,7 @@ export default function FAQPage() {
             </div>
           ))
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 
