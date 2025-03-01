@@ -8,7 +8,6 @@ import { useDispatch } from '@redux-store/hooks';
 import { useAuth } from '@core/hooks/use-auth';
 import { useProfile } from '@/contexts/profile-context';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
-import { ChatProvider } from '@/contexts/ChatContext';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 
@@ -63,30 +62,28 @@ const NavBar: React.FC<any> = ({ closeOnSelect = true }) => {
   };
 
   return (
-    <ChatProvider>
-      <div className="relative z-50">
-        <motion.nav
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, type: 'tween', ease: 'anticipate' }}
-          className="mb-8"
-        >
-          <DesktopNav
-            isSticky={isSticky}
-            user={normalizedUserProfile || normalizedUserFromAuth}
-            loading={loading}
-            logout={logout}
-            handleSellClick={handleSellClick}
-          />
-          <MobileNav
-            isHomePage={isHomePage}
-            user={user}
-            normalizedUserProfile={normalizedUserProfile}
-            normalizedUserFromAuth={normalizedUserFromAuth}
-          />
-        </motion.nav>
-      </div>
-    </ChatProvider>
+    <div className="relative z-50">
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, type: 'tween', ease: 'anticipate' }}
+        className="fixed top-0 left-0 right-0 z-50 shadow"
+      >
+        <DesktopNav
+          isSticky={isSticky}
+          user={normalizedUserProfile || normalizedUserFromAuth}
+          loading={loading}
+          logout={logout}
+          handleSellClick={handleSellClick}
+        />
+        <MobileNav
+          isHomePage={isHomePage}
+          user={user}
+          normalizedUserProfile={normalizedUserProfile}
+          normalizedUserFromAuth={normalizedUserFromAuth}
+        />
+      </motion.nav>
+    </div>
   );
 };
 

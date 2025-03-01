@@ -56,7 +56,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     fetch('/categories.json')
       .then((res) => res.json())
       .then((data) => {
-        // Transform raw data into our Category format.
         const transformed = data.map((cat: any) => transformCategory(cat));
         setCategories(transformed);
         setIsLoading(false);
@@ -108,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           onClick={handleItemClick}
         >
           <div
-            className={`p-3 rounded-md cursor-pointer transition-colors duration-200 flex items-center justify-between ${
+            className={`py-2 px-1 rounded-md cursor-pointer transition-colors duration-200 flex items-center justify-between ${
               isActive
                 ? 'bg-gray-100 text-primary_1'
                 : 'hover:bg-gray-50 hover:text-primary_1'
@@ -116,7 +115,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             onMouseEnter={() => handleCategoryMouseEnter(category)}
           >
             <div className="flex items-center gap-2 w-full truncate">
-              <Icon className="h-5 w-5" />
+              <div className="bg-primary_2 p-1 mr-2 rounded-md">
+                <Icon className="h-5 w-5" />
+              </div>
               <div className="flex flex-col truncate">
                 <span className="text-sm font-medium truncate max-w-[180px]">
                   {category.category_name}
@@ -161,21 +162,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   );
 
   if (isLoading) return <SidebarSkeleton />;
-
-  if (!categories || categories.length === 0) {
-    return <SidebarSkeleton />;
-  }
+  if (!categories || categories.length === 0) return <SidebarSkeleton />;
 
   return (
     <div
       className="relative w-full lg:w-[288px]"
       onMouseLeave={handleSidebarMouseLeave}
     >
-      <div className="sticky top-[100px] flex flex-col lg:flex-row">
+      {/* Use gap-4 (or your preferred spacing) to separate the two columns */}
+      <div className="flex flex-col lg:flex-row gap-2">
         {/* Category Sidebar */}
-        <Card
-          className={`w-full lg:w-[288px] ${hoveredCategory ? 'rounded-r-none border-r-0' : ''}`}
-        >
+        <Card className="w-full lg:w-[288px]">
           <CardContent className="p-0">
             <ScrollArea className="h-[700px]">
               <div className="p-4 space-y-1 divide-y divide-gray-300">
@@ -184,9 +181,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
             </ScrollArea>
           </CardContent>
         </Card>
+
         {/* Subcategory Sidebar (for large screens) */}
         {isLargeScreen && hoveredCategory && (
-          <Card className="min-w-[288px] rounded-l-none border-l-0">
+          <Card className="min-w-[288px]">
             <CardContent className="p-0">
               <ScrollArea className="h-[700px]">
                 <div className="p-4 space-y-1 divide-y divide-gray-300">

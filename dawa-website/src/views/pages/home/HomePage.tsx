@@ -13,7 +13,7 @@ export default function HomePage() {
       <section>
         <div className="flex gap-4">
           <div className="hidden lg:block w-72 flex-shrink-0">
-            <div className="sticky top-6 z-40">
+            <div className="sticky top-[100px] z-40">
               <Sidebar />
             </div>
           </div>

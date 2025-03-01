@@ -7,18 +7,17 @@ import { BottomNav } from './Navbar/BottomNav';
 
 interface LayoutProps {
   children: ReactNode;
-
   addFooter?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, addFooter = true }) => {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navigation Bar */}
+      {/* Fixed Navigation Bar */}
       <NavBar />
 
-      {/* Main Content */}
-      <main className="flex-grow mb-20">{children}</main>
+      {/* Main Content: add top padding to avoid overlap with fixed Navbar */}
+      <main className="flex-grow pt-20 md:pt-28 mb-20">{children}</main>
 
       {/* Scroll to Top Button */}
       <ScrollToTopButton />

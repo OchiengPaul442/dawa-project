@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 // TODO: Remove this once SpeedInsights is ready
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
+import { ChatProvider } from '@/contexts/ChatContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -38,12 +39,14 @@ export default function RootLayout({
       <body className={`${poppins.className} antialiased`}>
         <Suspense fallback={<Loader />}>
           <Provider preloadedState={preloadedState as any}>
-            <WishlistProvider>
-              <ProfileProvider>
-                <main className="min-h-screen flex flex-col">{children}</main>
-                <CompleteProfileModal />
-              </ProfileProvider>
-            </WishlistProvider>
+            <ChatProvider>
+              <WishlistProvider>
+                <ProfileProvider>
+                  <main className="min-h-screen flex flex-col">{children}</main>
+                  <CompleteProfileModal />
+                </ProfileProvider>
+              </WishlistProvider>
+            </ChatProvider>
             <AuthDialog />
           </Provider>
         </Suspense>

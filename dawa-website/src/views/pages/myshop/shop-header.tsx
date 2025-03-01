@@ -113,13 +113,6 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
             <FaWhatsapp className="h-4 w-4" />
             <span>WhatsApp</span>
           </Button>
-          {/* Uncomment below if messaging should be enabled for non-admin users */}
-          {/* {!isAdmin && (
-            <Button variant="outline" className="flex items-center gap-2" aria-label="Send a message">
-              <FaEnvelope className="h-4 w-4" />
-              <span>Message</span>
-            </Button>
-          )} */}
         </div>
       </div>
     </div>

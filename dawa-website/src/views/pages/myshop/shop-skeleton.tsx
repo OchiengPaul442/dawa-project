@@ -2,10 +2,10 @@ import type React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const ShopSkeleton: React.FC = () => (
-  <div className="container mx-auto px-4 py-8 space-y-8">
+  <div className="space-y-8">
     {/* Header Card */}
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className="flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0">
+      <div className="flex md:flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0">
         {/* Profile Image Skeleton */}
         <Skeleton className="w-24 h-24 sm:w-32 sm:h-32 rounded-full" />
         {/* Info Skeleton */}
