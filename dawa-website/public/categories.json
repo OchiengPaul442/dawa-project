@@ -224,12 +224,12 @@
   {
     "id": 7,
     "category_name": "Fashion",
-    "category_item_count": 9,
+    "category_item_count": 10,
     "subcategories": [
       {
         "id": 37,
         "subcategory_name": "Clothing",
-        "subcategory_item_count": 4
+        "subcategory_item_count": 5
       },
       {
         "id": 38,
@@ -443,7 +443,7 @@
   {
     "id": 14,
     "category_name": "Agriculture & Food",
-    "category_item_count": 5,
+    "category_item_count": 6,
     "subcategories": [
       {
         "id": 71,
@@ -468,7 +468,7 @@
       {
         "id": 75,
         "subcategory_name": "Meals & Drinks",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 76,

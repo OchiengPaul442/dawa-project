@@ -4,9 +4,11 @@ export interface UserProfile {
     last_name: string;
     email: string;
   };
-  user_profile_picture: string;
+  profile_picture: string;
   address: string;
   contact: string;
+  national_id_or_passport_number: string;
+  national_id_or_passport_document: string;
 }
 
 export interface Item {

@@ -1,17 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search } from 'lucide-react';
+import MainConfigs from '@/@core/configs/mainConfigs';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
+import SearchBar from '@/components/shared/SearchBar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
 import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
-import Button from '@/components/shared/Button';
-import MainConfigs from '@/@core/configs/mainConfigs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import BackButton from '@/components/shared/BackButton';
-import SearchBar from '@/components/shared/SearchBar';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Search } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
 
 import {
   DropdownMenu,
@@ -23,16 +23,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import {
-  MessageSquare,
-  Settings,
-  User,
-  ShoppingCart,
-  LogOut,
-} from 'lucide-react';
+import { LogOut, Settings, ShoppingCart, User } from 'lucide-react';
 
-import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 import { useAuth } from '@/@core/hooks/use-auth';
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 
 const MobileNav: React.FC<any> = ({
   isHomePage,
@@ -83,8 +77,8 @@ const MobileNav: React.FC<any> = ({
                       <Avatar className="h-full w-full">
                         <AvatarImage
                           src={
-                            normalizedUserProfile?.user_profile_picture ||
-                            normalizedUserFromAuth?.user_profile_picture
+                            normalizedUserProfile?.profile_picture ||
+                            normalizedUserFromAuth?.profile_picture
                           }
                           alt={`${normalizedUserProfile?.first_name || normalizedUserFromAuth?.first_name} ${
                             normalizedUserProfile?.last_name ||

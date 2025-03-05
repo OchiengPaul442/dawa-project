@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, type ReactNode } from 'react';
 import { useAuth } from '@/@core/hooks/use-auth';
 import { useUserProfile } from '@/@core/hooks/useProductData';
+import { createContext, useContext, type ReactNode } from 'react';
 
 interface UserProfile {
   id: number;
@@ -17,9 +17,9 @@ interface UserProfile {
   };
   contact: string | null;
   address: string | null;
-  user_profile_picture: string | null;
-  user_national_id_or_passport: string | null;
-  scanned_national_id_or_passport: string | null;
+  profile_picture: string | null;
+  national_id_or_passport_number: string | null;
+  national_id_or_passport_document: string | null;
 }
 
 interface ProfileContextType {

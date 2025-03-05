@@ -1,12 +1,11 @@
-import type React from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, Upload, FileText, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Camera } from 'lucide-react';
+import type React from 'react';
 import type { ProfileFormData } from './SettingsPage';
 
 interface FileData {
@@ -34,6 +33,12 @@ interface PersonalInfoFormProps {
   isProfileLoading: boolean;
 }
 
+/**
+ * PersonalInfoForm
+ * - Displays the avatar upload.
+ * - Shows personal info fields.
+ * - (Scanned Document upload section commented out for now)
+ */
 export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
   formData,
   files,
@@ -43,6 +48,17 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
   removeFile,
   isProfileLoading,
 }) => {
+  // Helper: format bytes into a human-readable string.
+  const formatBytes = (bytes: number, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  };
+
+  // Generate initials for the avatar fallback.
   const getInitials = () => {
     const name = `${formData.firstName}`.toUpperCase();
     return name.match(/\b\w/g)?.join('') || '';
@@ -55,7 +71,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
       </CardHeader>
       <CardContent>
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          {/* Avatar Upload */}
+          {/* =============== Avatar Upload =============== */}
           <div className="flex justify-center mb-6">
             <div className="relative">
               <Avatar className="w-24 h-24">
@@ -87,7 +103,7 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             </div>
           </div>
 
-          {/* Personal Information Fields */}
+          {/* =============== Personal Info Fields =============== */}
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               label="First Name"
@@ -128,14 +144,15 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
             />
             <FormField
               label="National ID or Passport Number"
-              id="user_national_id_or_passport"
-              value={formData.user_national_id_or_passport}
+              id="national_id_or_passport_number"
+              value={formData.national_id_or_passport_number}
               onChange={handleInputChange}
               disabled={isProfileLoading}
             />
           </div>
 
-          {/* Document Upload */}
+          {/*
+          // =============== Document Upload (Simple Input) ===============
           <div className="space-y-2">
             <Label>Scanned Document</Label>
             <div className="border rounded-lg p-4 space-y-4">
@@ -145,26 +162,34 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
                   files.scanned_national_id_or_passport_document.file.type.startsWith(
                     'image/',
                   ) ? (
-                    <div className="relative h-48 w-full">
+                    <div className="relative w-full h-48">
                       <Image
                         src={
                           files.scanned_national_id_or_passport_document
                             .preview || ''
                         }
                         alt="Uploaded document preview"
-                        layout="fill"
-                        objectFit="contain"
+                        fill
+                        style={{ objectFit: 'contain' }}
                         className="rounded-md"
                       />
                     </div>
-                  ) : (
-                    <div className="flex items-center space-x-2 p-2">
+                  ) : null}
+                  <div className="mt-2 flex flex-col">
+                    <div className="flex items-center space-x-2">
                       <FileText className="h-6 w-6 text-primary" />
                       <span className="text-sm font-medium">
                         {files.scanned_national_id_or_passport_document.name}
                       </span>
                     </div>
-                  )}
+                    {files.scanned_national_id_or_passport_document.file && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatBytes(
+                          files.scanned_national_id_or_passport_document.file.size,
+                        )}
+                      </span>
+                    )}
+                  </div>
                   <Button
                     size="icon"
                     variant="ghost"
@@ -177,25 +202,15 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-4 border-2 border-dashed rounded-lg">
-                  <Upload className="h-8 w-8 mb-2 text-primary" />
-                  <p className="mb-2 text-sm text-muted-foreground">
-                    <span className="font-semibold">Click to upload</span> or
-                    drag and drop
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    PDF, PNG, or JPG (max. 10MB)
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="mt-2"
-                    onClick={() => fileInputRefs.scanned.current?.click()}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Document
-                  </Button>
-                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRefs.scanned.current?.click()}
+                  className="w-full"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload Document
+                </Button>
               )}
               <input
                 ref={fileInputRefs.scanned}
@@ -211,12 +226,14 @@ export const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               />
             </div>
           </div>
+          */}
         </form>
       </CardContent>
     </Card>
   );
 };
 
+/* =============== FormField Component =============== */
 interface FormFieldProps {
   label: string;
   id: string;

@@ -1,13 +1,13 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { useDispatch } from '@redux-store/hooks';
-import { useAuth } from '@core/hooks/use-auth';
 import { useProfile } from '@/contexts/profile-context';
+import { useAuth } from '@core/hooks/use-auth';
+import { useDispatch } from '@redux-store/hooks';
 import { openAuthDialog } from '@redux-store/slices/authDialog/authDialogSlice';
+import { motion } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
 
@@ -19,7 +19,7 @@ export const normalizeUserProfile = (userProfile: any): any | null => {
     first_name: userProfile.user.first_name,
     last_name: userProfile.user.last_name,
     email: userProfile.user.email,
-    user_profile_picture: userProfile.user_profile_picture || DEFAULT_AVATAR,
+    user_profile_picture: userProfile.profile_picture || DEFAULT_AVATAR,
   };
 };
 

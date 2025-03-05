@@ -1,9 +1,6 @@
-import type React from 'react';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { FaWhatsapp, FaPhone, FaEnvelope } from 'react-icons/fa';
-import type { UserProfile } from './types';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +8,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { MapPin } from 'lucide-react';
+import type React from 'react';
+import { FaEnvelope, FaPhone, FaWhatsapp } from 'react-icons/fa';
+import type { UserProfile } from './types';
 
 interface ShopHeaderProps {
   user: UserProfile;
@@ -37,7 +37,7 @@ export const ShopHeader: React.FC<ShopHeaderProps> = ({
           aria-label="User avatar"
         >
           <AvatarImage
-            src={user.user_profile_picture}
+            src={user.profile_picture}
             alt={`${user.user.first_name} ${user.user.last_name}`}
           />
           <AvatarFallback>{user.user.first_name[0]}</AvatarFallback>

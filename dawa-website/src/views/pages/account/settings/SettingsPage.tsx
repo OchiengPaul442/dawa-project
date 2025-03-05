@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useProfile } from '@/contexts/profile-context';
-import {
-  useUpdateUserProfile,
-  useChangeUserPassword,
-} from '@core/hooks/useProductData';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import { useProfile } from '@/contexts/profile-context';
 import { cn } from '@/lib/utils';
+import {
+  useChangeUserPassword,
+  useUpdateUserProfile,
+} from '@core/hooks/useProductData';
+import { Loader2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { NotificationPreferences } from './NotificationPreferences';
 import { PersonalInfoForm } from './PersonalInfoForm';
 import { SecurityForm } from './SecurityForm';
-import { NotificationPreferences } from './NotificationPreferences';
 
 export interface ProfileFormData {
   firstName: string;
@@ -21,21 +21,8 @@ export interface ProfileFormData {
   email: string;
   phone: string;
   address: string;
-  user_national_id_or_passport: string;
-  // Remains a string (or null) for the preview URL
+  national_id_or_passport_number: string;
   user_profile_picture: string | null;
-}
-
-interface PasswordData {
-  confirm_password: string;
-  new_password: string;
-  old_password: string;
-}
-
-interface FileData {
-  name: string;
-  preview: string | null;
-  file: File | null;
 }
 
 const initialFormData: ProfileFormData = {
@@ -44,7 +31,7 @@ const initialFormData: ProfileFormData = {
   email: '',
   phone: '',
   address: '',
-  user_national_id_or_passport: '',
+  national_id_or_passport_number: '',
   user_profile_picture: null,
 };
 
@@ -56,14 +43,22 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState<ProfileFormData>(initialFormData);
   const [originalData, setOriginalData] =
     useState<ProfileFormData>(initialFormData);
-  const [passwordData, setPasswordData] = useState<PasswordData>({
+  const [passwordData, setPasswordData] = useState({
     old_password: '',
     new_password: '',
     confirm_password: '',
   });
   const [files, setFiles] = useState<{
-    user_profile_picture: FileData | null;
-    scanned_national_id_or_passport_document: FileData | null;
+    user_profile_picture: {
+      name: string;
+      preview: string | null;
+      file: File | null;
+    } | null;
+    scanned_national_id_or_passport_document: {
+      name: string;
+      preview: string | null;
+      file: File | null;
+    } | null;
   }>({
     user_profile_picture: null,
     scanned_national_id_or_passport_document: null,
@@ -81,9 +76,9 @@ export default function SettingsPage() {
         email: userProfile.user?.email || '',
         phone: userProfile.contact || '',
         address: userProfile.address || '',
-        user_national_id_or_passport:
-          userProfile.user_national_id_or_passport || '',
-        user_profile_picture: userProfile.user_profile_picture || null,
+        national_id_or_passport_number:
+          userProfile.national_id_or_passport_number || '',
+        user_profile_picture: userProfile.profile_picture || null,
       };
       setFormData(mappedData);
       setOriginalData(mappedData);
@@ -138,15 +133,14 @@ export default function SettingsPage() {
   const handleProfileUpdate = async () => {
     if (isUpdating) return;
 
-    // Update all editable fields:
-    // firstName, lastName, email, phone, address, and user_national_id_or_passport.
+    // Update all editable fields: firstName, lastName, email, phone, address, and national_id_or_passport_number.
     const keysToUpdate = [
       'firstName',
       'lastName',
       'email',
       'phone',
       'address',
-      'user_national_id_or_passport',
+      'national_id_or_passport_number',
     ];
     const fieldMapping: { [key: string]: string } = {
       firstName: 'firstname',
@@ -154,7 +148,7 @@ export default function SettingsPage() {
       email: 'email',
       phone: 'contact',
       address: 'address',
-      user_national_id_or_passport: 'user_national_id_or_passport',
+      national_id_or_passport_number: 'national_id_or_passport_number',
     };
 
     const changedData: { [key: string]: string | File } = {};
@@ -162,7 +156,6 @@ export default function SettingsPage() {
     keysToUpdate.forEach((key) => {
       const currentValue = formData[key as keyof typeof formData];
       const originalValue = originalData[key as keyof typeof originalData];
-      // Only update if currentValue is not null, not empty, and differs from the original.
       if (
         currentValue !== null &&
         currentValue !== '' &&
@@ -177,7 +170,7 @@ export default function SettingsPage() {
       changedData.user_profile_picture = files.user_profile_picture.file;
     }
     if (files.scanned_national_id_or_passport_document?.file) {
-      changedData.scanned_national_id_or_passport_document =
+      changedData.national_id_or_passport_document =
         files.scanned_national_id_or_passport_document.file;
     }
 

@@ -1,4 +1,3 @@
-import { useWishlist } from '@/contexts/WishlistContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,18 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useWishlist } from '@/contexts/WishlistContext';
+import { useDispatch } from '@/redux-store/hooks';
+import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
+import { motion } from 'framer-motion';
 import {
+  LogOut,
   MessageSquare,
   Settings,
-  User,
   ShoppingCart,
-  LogOut,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
-import { useDispatch } from '@/redux-store/hooks';
 
 import { useAuth } from '@/@core/hooks/use-auth';
 
