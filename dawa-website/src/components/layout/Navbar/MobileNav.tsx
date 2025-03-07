@@ -7,7 +7,8 @@ import SearchBar from '@/components/shared/SearchBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';
-import Logo2 from '@public/assets/svgs/DAWA_VARIATION_06.svg';
+
+import Logo3 from '@public/assets/svgs/DAWA_VARIATION_04.svg';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
@@ -51,7 +52,7 @@ const MobileNav: React.FC<any> = ({
         <div className="flex items-center justify-between">
           {!isHomePage && <BackButton />}
           <Link href={MainConfigs.homePageUrl} className="flex-shrink-0">
-            <Logo2 className="h-20 -m-6 w-auto" />
+            <Logo3 className="h-20 -m-6 w-auto" />
           </Link>
           <div className="flex items-center space-x-2">
             <Button
@@ -74,11 +75,11 @@ const MobileNav: React.FC<any> = ({
                       variant="ghost"
                       className="relative rounded-full h-10 w-10 p-1 overflow-hidden"
                     >
-                      <Avatar className="h-full w-full">
+                      <Avatar className="h-10 w-10">
                         <AvatarImage
                           src={
-                            normalizedUserProfile?.profile_picture ||
-                            normalizedUserFromAuth?.profile_picture
+                            normalizedUserProfile?.user_profile_picture ||
+                            normalizedUserFromAuth?.user_profile_picture
                           }
                           alt={`${normalizedUserProfile?.first_name || normalizedUserFromAuth?.first_name} ${
                             normalizedUserProfile?.last_name ||
