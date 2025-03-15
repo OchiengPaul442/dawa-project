@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ContactForm from '@/components/forms/ContactForm';
+import ContactForm from '@/components/features/forms/ContactForm';
 import {
   FaFacebook,
   FaTwitter,

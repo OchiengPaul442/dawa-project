@@ -11,9 +11,9 @@ import {
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { NotificationPreferences } from './NotificationPreferences';
-import { PersonalInfoForm } from './PersonalInfoForm';
-import { SecurityForm } from './SecurityForm';
+import { NotificationPreferences } from '../../../../../components/features/forms/NotificationPreferences';
+import { PersonalInfoForm } from '../../../../../components/features/forms/PersonalInfoForm';
+import { SecurityForm } from '../../../../../components/features/forms/SecurityForm';
 
 export interface ProfileFormData {
   firstName: string;

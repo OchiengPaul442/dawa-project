@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ChangePasswordForm from '@/components/forms/ChangePasswordForm';
+import ChangePasswordForm from '@/components/features/forms/ChangePasswordForm';
 
 const ChangePasswordPage: React.FC = () => {
   return (

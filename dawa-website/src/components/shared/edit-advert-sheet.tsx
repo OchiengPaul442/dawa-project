@@ -36,7 +36,7 @@ import Image from 'next/image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ImageSkeleton } from './ImageSkeleton';
-import { LocationDialog } from '@/components/dialogs/location-dialog';
+import { LocationDialog } from '@/components/features/dialogs/location-dialog';
 import { locations } from '@/data/locations';
 import { AnimatePresence, motion } from 'framer-motion';
 

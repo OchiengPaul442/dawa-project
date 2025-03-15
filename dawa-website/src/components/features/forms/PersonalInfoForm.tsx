@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Camera } from 'lucide-react';
 import type React from 'react';
-import type { ProfileFormData } from './SettingsPage';
+import type { ProfileFormData } from '@/views/pages/account/views/settings/SettingsPage';
 
 interface FileData {
   name: string;

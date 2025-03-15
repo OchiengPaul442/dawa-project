@@ -12,7 +12,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { LocationDialog } from '../../dialogs/location-dialog';
+import { LocationDialog } from '../dialogs/location-dialog';
 import {
   Dialog,
   DialogContent,

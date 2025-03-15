@@ -1,9 +1,9 @@
 import React from 'react';
-import ReportAbuseDialog from '@/components/dialogs/ReportAbuseDialog';
-import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
-import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
-import SafetyTipsDialog from '@/components/dialogs/SafetyTipsDialog';
-import MakeOfferDialog from '@/components/dialogs/MakeOfferDialog';
+import ReportAbuseDialog from '@/components/features/dialogs/ReportAbuseDialog';
+import SendMessageDialog from '@/components/features/dialogs/SendMessageDialog';
+import ContactSellerDialog from '@/components/features/dialogs/ContactSellerDialog';
+import SafetyTipsDialog from '@/components/features/dialogs/SafetyTipsDialog';
+import MakeOfferDialog from '@/components/features/dialogs/MakeOfferDialog';
 import { ProductType } from '@/views/pages/product/types/product';
 
 const safetyTips = [

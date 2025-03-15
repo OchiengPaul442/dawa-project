@@ -17,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EditAdvertSheet } from '@/components/shared/edit-advert-sheet';
 import Link from 'next/link';
 import CustomPagination from '@/components/shared/CustomPagination';
-import { AdvertCard } from './AdvertCard';
+import { AdvertCard } from '../../components/AdvertCard';
 
 export function AdvertsClient() {
   const { items, isLoading, mutate } = useProfile();

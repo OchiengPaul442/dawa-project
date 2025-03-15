@@ -6,7 +6,7 @@ import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { useAuth } from '@core/hooks/use-auth';
 import FooterLinkSection from './FooterLinkSection';
 import Logo from '@public/assets/svgs/DAWA_VARIATION_04.svg';
-import NewsletterForm from '@/components/forms/NewsletterForm';
+import NewsletterForm from '@/components/features/forms/NewsletterForm';
 
 const Footer: React.FC = () => {
   const { user } = useAuth();
