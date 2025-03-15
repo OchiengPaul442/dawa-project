@@ -33,7 +33,7 @@ const SearchPage: React.FC = () => {
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [filterOption, setFilterOption] = useState<string>('default');
 
-  // Category filter state (default is "all" so that all items show).
+  // Category filter state.
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Handlers for filter changes.
@@ -140,77 +140,84 @@ const SearchPage: React.FC = () => {
     return products;
   }, [filteredProducts, filterOption]);
 
+  // If loading, show a global loader.
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[400px]">
+        <Loader />
+      </div>
+    );
+  }
+
+  // If there is no error and no products found, show the No Data component for the whole page.
+  if (!isLoading && !isError && sortedProducts.length === 0) {
+    return (
+      <div className="h-[400px] flex items-center justify-center">
+        <CustomizableNoData
+          title="No products found"
+          description="Sorry, we couldn't find any products that match your search criteria."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen space-y-6">
-      {isLoading ? (
-        // Global loading state for the entire component.
-        <div className="flex items-center justify-center h-[400px]">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          <header className="border-b pb-4">
-            <h1 className="text-3xl font-bold text-gray-900">
-              {searchQuery || queryParam}
-            </h1>
-          </header>
-          <main>
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* Sidebar: Product Filters */}
-              <aside className="lg:col-span-1">
-                <ProductFilter
-                  appliedPriceRange={appliedPriceRange}
-                  appliedLocation={appliedLocation}
-                  appliedSelectedColors={appliedSelectedColors}
-                  onApplyFilters={handleApplyFilters}
-                  onResetFilters={handleResetFilters}
-                />
-              </aside>
+      <header className="border-b pb-4">
+        <h1 className="text-3xl font-bold text-gray-900">
+          {searchQuery || queryParam}
+        </h1>
+      </header>
+      <main>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar: Product Filters */}
+          <aside className="lg:col-span-1">
+            <ProductFilter
+              appliedPriceRange={appliedPriceRange}
+              appliedLocation={appliedLocation}
+              appliedSelectedColors={appliedSelectedColors}
+              onApplyFilters={handleApplyFilters}
+              onResetFilters={handleResetFilters}
+            />
+          </aside>
 
-              {/* Main Content: Filters & Product List */}
-              <section className="lg:col-span-3 space-y-6">
-                <FiltersAndSorting
-                  category={uniqueCategories}
-                  selectedCategory={selectedCategory}
-                  onCategorySelect={handleCategorySelect}
-                  categoryTitle="Filter by Category"
-                  viewType={viewType}
-                  setViewType={setViewType}
-                  filterOption={filterOption}
-                  handleFilterChange={handleFilterChange}
-                  arrowVisible={true}
-                  autoScroll={true}
-                />
+          {/* Main Content: Filters & Product List */}
+          <section className="lg:col-span-3 space-y-6">
+            <FiltersAndSorting
+              category={uniqueCategories}
+              selectedCategory={selectedCategory}
+              onCategorySelect={handleCategorySelect}
+              categoryTitle="Filter by Category"
+              viewType={viewType}
+              setViewType={setViewType}
+              filterOption={filterOption}
+              handleFilterChange={handleFilterChange}
+              arrowVisible={true}
+              autoScroll={true}
+            />
 
-                {isError ? (
-                  <OopsComponent />
-                ) : sortedProducts.length > 0 ? (
-                  <div
-                    className={`grid gap-3 mt-6 ${
-                      viewType === 'grid'
-                        ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-                        : 'grid-cols-1'
-                    }`}
-                  >
-                    {sortedProducts.map((product) => (
-                      <CardLayout
-                        key={product.id}
-                        product={product as any}
-                        viewType={viewType}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <CustomizableNoData
-                    title="No products found"
-                    description="Sorry, we couldn't find any products that match your search criteria."
+            {isError ? (
+              <OopsComponent />
+            ) : (
+              <div
+                className={`grid gap-3 mt-6 ${
+                  viewType === 'grid'
+                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+                    : 'grid-cols-1'
+                }`}
+              >
+                {sortedProducts.map((product) => (
+                  <CardLayout
+                    key={product.id}
+                    product={product as any}
+                    viewType={viewType}
                   />
-                )}
-              </section>
-            </div>
-          </main>
-        </>
-      )}
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
     </div>
   );
 };
