@@ -2,7 +2,7 @@ import './globals.css';
 import { Suspense } from 'react';
 import { Poppins } from 'next/font/google';
 import Provider from '@/components/Provider';
-import Loader from '@/components/loaders/MainLoader';
+import Loader from '@/components/features/loaders/MainLoader';
 import { AuthDialog } from '@/components/dialogs/auth-dialog';
 import categoriesData from '@public/categories.json';
 import { WishlistProvider } from '@/contexts/WishlistContext';

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { ProductType, Review } from '@/@core/types/product';
+import { ProductType, Review } from '@/views/pages/product/types/product';
 import { useSendReviews } from '@core/hooks/useProductData';
 import { useAuth } from '@/@core/hooks/use-auth';
 import { useDispatch } from '@redux-store/hooks';

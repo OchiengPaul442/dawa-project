@@ -1,4 +1,4 @@
-import FeedbackPage from '@views/pages/account/feedback';
+import FeedbackPage from '@/views/pages/account/views/feedback';
 
 const page = () => {
   return <FeedbackPage />;

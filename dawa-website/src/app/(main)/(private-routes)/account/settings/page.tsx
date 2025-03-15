@@ -1,4 +1,4 @@
-import SettingsPage from '@views/pages/account/settings/SettingsPage';
+import SettingsPage from '@/views/pages/account/views/settings/SettingsPage';
 
 const page = () => {
   return <SettingsPage />;

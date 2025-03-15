@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarDays, MapPin, Tag } from 'lucide-react';
 import { CurrencyFormatter } from '@/@core/utils/CurrencyFormatter';
 import { formatDate } from '@/@core/utils/dateFormatter';
-import { ProductType } from '@/@core/types/product';
+import { ProductType } from '@/views/pages/product/types/product';
 
 interface ProductInfoProps {
   product: ProductType;

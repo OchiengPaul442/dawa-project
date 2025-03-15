@@ -16,7 +16,7 @@ import type {
   OptimisticMessage,
   ChatContextType,
   Message,
-} from '@/@core/types/message';
+} from '@/views/pages/messages/types/message';
 import { useMessages, useSendMessage } from '@core/hooks/useProductData';
 import { useAuth } from '@core/hooks/use-auth';
 

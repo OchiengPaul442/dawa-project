@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
-import WishlistHeader from './WishlistHeader';
-import ProductList from './ProductList';
+import WishlistHeader from './components/WishlistHeader';
+import ProductList from './components/ProductList';
 import Button from '@/components/shared/Button';
 import { useWishlist } from '@/contexts/WishlistContext';
-import type { Product } from '@/@core/types/wishList';
+import type { Product } from '@/views/pages/wishlist/types/wishList';
 import { normalizeProduct } from '@/@core/utils/normalizeProduct';
 import CustomizableNoData from '@/components/shared/no-data';
 

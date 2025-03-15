@@ -4,7 +4,7 @@ import SendMessageDialog from '@/components/dialogs/SendMessageDialog';
 import ContactSellerDialog from '@/components/dialogs/ContactSellerDialog';
 import SafetyTipsDialog from '@/components/dialogs/SafetyTipsDialog';
 import MakeOfferDialog from '@/components/dialogs/MakeOfferDialog';
-import { ProductType } from '@/@core/types/product';
+import { ProductType } from '@/views/pages/product/types/product';
 
 const safetyTips = [
   'Always inspect the item before purchasing.',

@@ -1,4 +1,7 @@
-import { ContactUsPayload, SubscribePayload } from '@/@core/types/contact-us';
+import {
+  ContactUsPayload,
+  SubscribePayload,
+} from '@/views/pages/contact-us/contact-us';
 import { openApiClient } from '@/@core/utils/apiClient';
 
 /**

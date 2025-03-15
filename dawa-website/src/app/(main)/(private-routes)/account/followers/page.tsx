@@ -1,4 +1,4 @@
-import FollowersPage from '@views/pages/account/followers';
+import FollowersPage from '@/views/pages/account/views/followers';
 
 const page = () => {
   return <FollowersPage />;

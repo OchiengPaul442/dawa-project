@@ -5,13 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import type { Category, Subcategory } from '@/@core/types/category';
+import type {
+  Category,
+  Subcategory,
+} from '@/views/pages/category/types/category';
 import { slugify } from '@/@core/utils/slugify';
 import {
   categoryIconMap,
   subcategoryIconMap,
   UniversalFallbackIcon,
-} from '@/views/pages/category/icon-maps';
+} from '@/views/pages/category/components/icon-maps';
 import { selectCategories } from '@redux-store/slices/categories/categories';
 import BackButton from '@/components/shared/BackButton';
 

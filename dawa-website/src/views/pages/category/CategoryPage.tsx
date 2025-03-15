@@ -10,10 +10,10 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import CardLayout from '@/components/ProductCards/CardLayout';
+import CardLayout from '@/components/features/listings/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
-import CategoriesAndSubcategories from '@views/pages/category/CategoriesAndSubcategories';
+import CategoriesAndSubcategories from '@/views/pages/category/components/CategoriesAndSubcategories';
 import Breadcrumbs from '@/components/shared/Breadcrumbs';
 import CustomizableNoData from '@/components/shared/no-data';
 import { OopsComponent } from '@/components/shared/oops-component';
@@ -25,12 +25,15 @@ import {
 } from '@redux-store/slices/categories/categorySlice';
 import { useProductsData } from '@core/hooks/useProductData';
 
-import type { Category, Subcategory } from '@/@core/types/category';
-import ProductCardSkeleton from '@/components/loaders/ProductCardSkeleton';
+import type {
+  Category,
+  Subcategory,
+} from '@/views/pages/category/types/category';
+import ProductCardSkeleton from '@/components/features/listings/loaders/ProductCardSkeleton';
 import useInfiniteScroll, {
   UseInfiniteScrollOptions,
 } from '@/@core/hooks/useInfiniteScroll';
-import SingleSkeletonCard from '@/components/loaders/SingleSkeletonCard';
+import SingleSkeletonCard from '@/components/features/listings/loaders/SingleSkeletonCard';
 import { normalizeProducts } from '@/@core/utils/normalizeProductData';
 
 type FilterOptionType =

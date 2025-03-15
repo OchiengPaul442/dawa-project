@@ -1,4 +1,4 @@
-import Sidebar from '@/views/pages/account/Sidebar';
+import Sidebar from '@/views/pages/account/components/Sidebar';
 import type { ReactNode } from 'react';
 
 export default function AuthenticatedLayout({

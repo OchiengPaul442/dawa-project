@@ -24,18 +24,21 @@ import {
   changeUserPassword,
 } from '@/app/server/auth/api';
 import { getMessages, sendMessage } from '@/app/server/messages/api';
-import { SendMessagePayload } from '@/@core/types/message';
+import { SendMessagePayload } from '@/views/pages/messages/types/message';
 import {
   ProductUploadProps,
   TrendingProductsResponse,
-} from '@/@core/types/product';
-import { ReportAbuseProps } from '@/@core/types/reportAbuse';
+} from '@/views/pages/product/types/product';
+import { ReportAbuseProps } from '@/views/pages/product/types/reportAbuse';
 import {
   getFaqs,
   subscribeToNewsletter,
   contactUs,
 } from '@/app/server/faqs_newLetter_contactUs/api';
-import { ContactUsPayload, SubscribePayload } from '@/@core/types/contact-us';
+import {
+  ContactUsPayload,
+  SubscribePayload,
+} from '@/views/pages/contact-us/contact-us';
 import { search } from '@/app/server/search/api';
 import { swrOptions } from '../configs/swrConfig';
 

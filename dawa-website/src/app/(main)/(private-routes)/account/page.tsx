@@ -1,4 +1,4 @@
-import { AdvertsClient } from '@views/pages/account/advert/AdvertPage';
+import { AdvertsClient } from '@/views/pages/account/views/advert/AdvertPage';
 
 const page = () => {
   return <AdvertsClient />;

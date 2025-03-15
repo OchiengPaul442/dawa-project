@@ -6,7 +6,7 @@ import Button from '@/components/shared/Button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import InputField from '@/views/auth/InputField';
+import InputField from '@/components/shared/InputField';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

@@ -13,7 +13,7 @@ import useSWR from 'swr';
 import { getUserWishList, toggleWishlistItem } from '@/app/server/wishList/api';
 import { swrOptions } from '@/@core/configs/swrConfig';
 import { useAuth } from '@core/hooks/use-auth';
-import type { Product } from '@/@core/types/wishList';
+import type { Product } from '@/views/pages/wishlist/types/wishList';
 import { normalizeProduct } from '@/@core/utils/normalizeProduct';
 
 interface WishlistContextProps {

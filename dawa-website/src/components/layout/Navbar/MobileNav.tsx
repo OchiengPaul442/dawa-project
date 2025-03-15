@@ -3,7 +3,7 @@
 import MainConfigs from '@/@core/configs/mainConfigs';
 import BackButton from '@/components/shared/BackButton';
 import Button from '@/components/shared/Button';
-import SearchBar from '@/components/shared/SearchBar';
+import SearchBar from '@/components/features/search/SearchBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDispatch } from '@/redux-store/hooks';
 import { openAuthDialog } from '@/redux-store/slices/authDialog/authDialogSlice';

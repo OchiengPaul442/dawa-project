@@ -13,10 +13,10 @@ import { UserNav } from './user-nav';
 import { UserNavSkeleton } from './UserNavSkeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Button from '@/components/shared/Button';
-import Sidebar from '@/views/pages/category/Sidebar';
+import Sidebar from '@/views/pages/category/components/Sidebar';
 import MobileSheetContent from './MobileSheetContent';
 import MainConfigs from '@/@core/configs/mainConfigs';
-import SearchBar from '@/components/shared/SearchBar';
+import SearchBar from '@/components/features/search/SearchBar';
 
 interface DesktopNavProps {
   isSticky: boolean;

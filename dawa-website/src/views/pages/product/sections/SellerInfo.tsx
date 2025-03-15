@@ -8,7 +8,7 @@ import { useDispatch } from '@/redux-store/hooks';
 import { setSelectedUserId } from '@/redux-store/slices/myshop/selectedUserSlice';
 import { Button } from '@/components/ui/button';
 import CustomImage from '@/components/shared/CustomImage';
-import { SellerType } from '@/@core/types/product';
+import { SellerType } from '@/views/pages/product/types/product';
 
 // ShadCN AlertDialog components
 import {

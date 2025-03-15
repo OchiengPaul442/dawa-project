@@ -1,4 +1,4 @@
-import { SendMessagePayload } from '@/@core/types/message';
+import { SendMessagePayload } from '@/views/pages/messages/types/message';
 import { secureApiClient } from '@/@core/utils/apiClient';
 
 /**

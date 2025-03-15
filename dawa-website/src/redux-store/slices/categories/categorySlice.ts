@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../';
-import type { Category, Subcategory } from '@/@core/types/category';
+import type {
+  Category,
+  Subcategory,
+} from '@/views/pages/category/types/category';
 
 interface SelectedCategory {
   id: string;

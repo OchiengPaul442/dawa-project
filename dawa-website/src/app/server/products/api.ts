@@ -6,8 +6,8 @@ import {
 import {
   ProductUploadProps,
   TrendingProductsResponse,
-} from '@/@core/types/product';
-import { ReportAbuseProps } from '@/@core/types/reportAbuse';
+} from '@/views/pages/product/types/product';
+import { ReportAbuseProps } from '@/views/pages/product/types/reportAbuse';
 
 /**
  * Fetch categories list

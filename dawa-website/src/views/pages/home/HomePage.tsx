@@ -1,8 +1,10 @@
-import { CategoriesMenu } from '@/views/pages/category/categories-menu';
+import { CategoriesMenu } from '@/views/pages/category/components/categories-menu';
 import mainConfig from '@/@core/configs/mainConfigs';
-import ProductPage from '@/views/pages/trendingProducts';
+import ProductPage from '@/views/pages/home/TrendingProducts';
 import dynamic from 'next/dynamic';
-const Sidebar = dynamic(() => import('@views/pages/category/Sidebar'));
+const Sidebar = dynamic(
+  () => import('@/views/pages/category/components/Sidebar'),
+);
 
 export default function HomePage() {
   return (

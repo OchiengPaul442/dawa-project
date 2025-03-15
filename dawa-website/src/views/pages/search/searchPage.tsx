@@ -4,12 +4,12 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSearchProducts } from '@/@core/hooks/useProductData';
 import { normalizeProducts } from '@/@core/utils/normalizeProductData';
-import CardLayout from '@/components/ProductCards/CardLayout';
+import CardLayout from '@/components/features/listings/CardLayout';
 import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CustomizableNoData from '@/components/shared/no-data';
 import { OopsComponent } from '@/components/shared/oops-component';
-import Loader from '@/components/loaders/SubLoader';
+import Loader from '@/components/features/loaders/SubLoader';
 
 const SearchPage: React.FC = () => {
   // Get query param from URL.

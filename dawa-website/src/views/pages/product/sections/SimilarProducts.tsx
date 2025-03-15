@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import CardLayout from '@/components/ProductCards/CardLayout';
-import type { SimilarItem } from '@/@core/types/product';
+import CardLayout from '@/components/features/listings/CardLayout';
+import type { SimilarItem } from '@/views/pages/product/types/product';
 import { ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import EmptyState from './EmptyState';
+import EmptyState from '../components/EmptyState';
 import { useRouter } from 'next/navigation';
 
 interface SimilarProductsProps {

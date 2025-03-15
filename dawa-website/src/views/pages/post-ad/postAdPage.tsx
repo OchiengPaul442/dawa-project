@@ -6,9 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { PencilIcon } from 'lucide-react';
 
-import InputField from '@/views/auth/InputField';
-import CategorySelect from '../../../components/shared/CategorySelect';
-import ImageUpload from './ImageUpload';
+import InputField from '@/components/shared/InputField';
+import CategorySelect from '@/components/shared/CategorySelect';
+import ImageUpload from './components/ImageUpload';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

@@ -8,7 +8,7 @@ import { FaEnvelope } from 'react-icons/fa';
 import Button from '@/components/shared/Button';
 import { forgotPassword } from '@/app/server/auth/api';
 import { useRouter } from 'next/navigation';
-import InputField from '@/views/auth/InputField';
+import InputField from '@/components/shared/InputField';
 
 const forgotPasswordSchema = yup.object().shape({
   email: yup
