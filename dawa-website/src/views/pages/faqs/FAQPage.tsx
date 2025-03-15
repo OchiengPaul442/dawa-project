@@ -92,7 +92,7 @@ export default function FAQPage() {
   // Loading & Error states
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-[400px]">
         <Loader />
       </div>
     );

@@ -142,74 +142,75 @@ const SearchPage: React.FC = () => {
 
   return (
     <div className="min-h-screen space-y-6">
-      <header className="border-b pb-4">
-        {isLoading ? (
-          <div className="h-10 w-full max-w-[350px] bg-gray-300 animate-pulse rounded" />
-        ) : (
-          <h1 className="text-3xl font-bold text-gray-900">
-            {searchQuery || queryParam}
-          </h1>
-        )}
-      </header>
-      <main>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar: Product Filters */}
-          <aside className="lg:col-span-1">
-            <ProductFilter
-              appliedPriceRange={appliedPriceRange}
-              appliedLocation={appliedLocation}
-              appliedSelectedColors={appliedSelectedColors}
-              onApplyFilters={handleApplyFilters}
-              onResetFilters={handleResetFilters}
-            />
-          </aside>
-
-          {/* Main Content: Filters & Product List */}
-          <section className="lg:col-span-3 space-y-6">
-            <FiltersAndSorting
-              category={uniqueCategories}
-              selectedCategory={selectedCategory}
-              onCategorySelect={handleCategorySelect}
-              categoryTitle="Filter by Category"
-              viewType={viewType}
-              setViewType={setViewType}
-              filterOption={filterOption}
-              handleFilterChange={handleFilterChange}
-              arrowVisible={true}
-              autoScroll={true}
-            />
-
-            {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader />
-              </div>
-            ) : isError ? (
-              <OopsComponent />
-            ) : sortedProducts.length > 0 ? (
-              <div
-                className={`grid gap-3 mt-6 ${
-                  viewType === 'grid'
-                    ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-                    : 'grid-cols-1'
-                }`}
-              >
-                {sortedProducts.map((product) => (
-                  <CardLayout
-                    key={product.id}
-                    product={product as any}
-                    viewType={viewType}
-                  />
-                ))}
-              </div>
-            ) : (
-              <CustomizableNoData
-                title="No products found"
-                description="Sorry, we couldn't find any products that match your search criteria."
-              />
-            )}
-          </section>
+      {isLoading ? (
+        // Global loading state for the entire component.
+        <div className="flex items-center justify-center h-[400px]">
+          <Loader />
         </div>
-      </main>
+      ) : (
+        <>
+          <header className="border-b pb-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {searchQuery || queryParam}
+            </h1>
+          </header>
+          <main>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Sidebar: Product Filters */}
+              <aside className="lg:col-span-1">
+                <ProductFilter
+                  appliedPriceRange={appliedPriceRange}
+                  appliedLocation={appliedLocation}
+                  appliedSelectedColors={appliedSelectedColors}
+                  onApplyFilters={handleApplyFilters}
+                  onResetFilters={handleResetFilters}
+                />
+              </aside>
+
+              {/* Main Content: Filters & Product List */}
+              <section className="lg:col-span-3 space-y-6">
+                <FiltersAndSorting
+                  category={uniqueCategories}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  categoryTitle="Filter by Category"
+                  viewType={viewType}
+                  setViewType={setViewType}
+                  filterOption={filterOption}
+                  handleFilterChange={handleFilterChange}
+                  arrowVisible={true}
+                  autoScroll={true}
+                />
+
+                {isError ? (
+                  <OopsComponent />
+                ) : sortedProducts.length > 0 ? (
+                  <div
+                    className={`grid gap-3 mt-6 ${
+                      viewType === 'grid'
+                        ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+                        : 'grid-cols-1'
+                    }`}
+                  >
+                    {sortedProducts.map((product) => (
+                      <CardLayout
+                        key={product.id}
+                        product={product as any}
+                        viewType={viewType}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <CustomizableNoData
+                    title="No products found"
+                    description="Sorry, we couldn't find any products that match your search criteria."
+                  />
+                )}
+              </section>
+            </div>
+          </main>
+        </>
+      )}
     </div>
   );
 };
