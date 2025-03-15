@@ -13,11 +13,19 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useSendMessage } from '@core/hooks/useProductData';
 import { toast } from 'sonner';
+import useIsMobile from '@/@core/hooks/useIsMobile';
 
 interface SendMessageDialogProps {
   open: boolean;
@@ -40,6 +48,7 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
   receiverId,
   itemId,
 }) => {
+  const isMobile = useIsMobile();
   const { sendMessage, isSending, error } = useSendMessage();
 
   const {
@@ -54,8 +63,8 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
   const onSubmit = async (data: SendMessageFormValues) => {
     try {
       await sendMessage({
-        receiver_id: Number(receiverId), // convert to number
-        item_id: Number(itemId), // convert to number
+        receiver_id: Number(receiverId),
+        item_id: Number(itemId),
         message: data.message,
       });
       reset();
@@ -69,6 +78,63 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
     }
   };
 
+  // Shared form content
+  const FormContent = () => (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+      <div className="space-y-2">
+        <Label htmlFor="message">Your Message</Label>
+        <Textarea
+          id="message"
+          {...register('message')}
+          rows={4}
+          className="resize-none"
+        />
+        {errors.message && (
+          <p className="text-red-500 text-sm">{errors.message.message}</p>
+        )}
+      </div>
+      {error && (
+        <p className="text-red-500 text-sm">
+          {typeof error === 'string' ? error : error.message}
+        </p>
+      )}
+      <DialogFooter>
+        <Button
+          type="submit"
+          className="bg-primary_1 hover:bg-primary_1/90"
+          disabled={isSending}
+        >
+          {isSending ? 'Sending...' : 'Send Message'}
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+
+  if (isMobile) {
+    // Mobile view: use bottom Sheet
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="bottom"
+          // Ensure enough space for keyboard, safe area, and scrolling
+          className="flex flex-col h-auto max-h-[90vh] overflow-y-auto pb-safe"
+        >
+          <SheetHeader>
+            <SheetTitle>Send a Message</SheetTitle>
+            <SheetDescription>
+              Send a message to the seller about this product.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="flex-1">
+            {/* Allows scrolling if content grows */}
+            <FormContent />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop view: use Dialog
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -78,30 +144,7 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
             Send a message to the seller about this product.
           </DialogDescription>
         </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="message">Your Message</Label>
-            <Textarea id="message" {...register('message')} rows={4} />
-            {errors.message && (
-              <p className="text-red-500 text-sm">{errors.message.message}</p>
-            )}
-          </div>
-          {error && (
-            <p className="text-red-500 text-sm">
-              {typeof error === 'string' ? error : error.message}
-            </p>
-          )}
-          <DialogFooter>
-            <Button
-              type="submit"
-              className="bg-primary_1 hover:bg-primary_1/90"
-              disabled={isSending}
-            >
-              {isSending ? 'Sending...' : 'Send Message'}
-            </Button>
-          </DialogFooter>
-        </form>
+        <FormContent />
       </DialogContent>
     </Dialog>
   );

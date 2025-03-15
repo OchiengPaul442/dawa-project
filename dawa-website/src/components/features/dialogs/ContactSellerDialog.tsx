@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,7 +8,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import useIsMobile from '@/@core/hooks/useIsMobile';
 
 interface ContactSellerDialogProps {
   open: boolean;
@@ -22,6 +32,47 @@ const ContactSellerDialog: React.FC<ContactSellerDialogProps> = ({
   onOpenChange,
   sellerContact,
 }) => {
+  const isMobile = useIsMobile();
+
+  // Content shared between Dialog and Sheet.
+  const content = (
+    <>
+      <header>
+        <h2 className="text-lg font-bold">Contact Seller</h2>
+        <p className="text-sm text-gray-600">
+          Here are the contact details for the seller.
+        </p>
+      </header>
+      <div className="mt-4 space-y-2">
+        <p>
+          <strong>Phone:</strong> {sellerContact.phone}
+        </p>
+        <p>
+          <strong>Email:</strong> {sellerContact.email}
+        </p>
+      </div>
+      <div className="mt-4">
+        <Button onClick={() => onOpenChange(false)}>Close</Button>
+      </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Contact Seller</SheetTitle>
+            <SheetDescription>
+              Here are the contact details for the seller.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-4">{content}</div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
