@@ -130,7 +130,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </div>
 
           {/* Right column - Desktop Sidebar (only on large screens) */}
-          <div className="hidden lg:block lg:sticky lg:top-4 h-fit">
+          <div className="hidden lg:block lg:sticky lg:top-24 h-fit">
             <Sidebar
               productId={product.id}
               onPostAd={() => handleAction(() => router.push('/post-ad'))}
