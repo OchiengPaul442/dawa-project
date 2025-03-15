@@ -2,12 +2,12 @@
   {
     "id": 1,
     "category_name": "Vehicles",
-    "category_item_count": 5,
+    "category_item_count": 10,
     "subcategories": [
       {
         "id": 1,
         "subcategory_name": "Cars",
-        "subcategory_item_count": 5
+        "subcategory_item_count": 6
       },
       {
         "id": 2,
@@ -27,7 +27,7 @@
       {
         "id": 5,
         "subcategory_name": "Vehicle Parts & Accessories",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 4
       },
       {
         "id": 6,
@@ -39,7 +39,7 @@
   {
     "id": 2,
     "category_name": "Property",
-    "category_item_count": 8,
+    "category_item_count": 9,
     "subcategories": [
       {
         "id": 7,
@@ -54,7 +54,7 @@
       {
         "id": 9,
         "subcategory_name": "Land & Plots for Sale",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 10,
@@ -108,7 +108,7 @@
   {
     "id": 4,
     "category_name": "Electronics",
-    "category_item_count": 4,
+    "category_item_count": 5,
     "subcategories": [
       {
         "id": 18,
@@ -128,7 +128,7 @@
       {
         "id": 21,
         "subcategory_name": "Computer Accessories",
-        "subcategory_item_count": 1
+        "subcategory_item_count": 2
       },
       {
         "id": 22,
@@ -150,7 +150,7 @@
   {
     "id": 5,
     "category_name": "Home, Appliances & Furniture",
-    "category_item_count": 4,
+    "category_item_count": 5,
     "subcategories": [
       {
         "id": 25,
@@ -165,7 +165,7 @@
       {
         "id": 27,
         "subcategory_name": "Kitchen & Dining",
-        "subcategory_item_count": 0
+        "subcategory_item_count": 1
       },
       {
         "id": 28,

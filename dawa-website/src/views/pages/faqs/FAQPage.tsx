@@ -5,7 +5,7 @@ import { Search, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import Loader from '@/components/Loader';
+import Loader from '@/components/loaders/SubLoader';
 import { useFaqs } from '@/@core/hooks/useProductData';
 import CustomizableNoData from '@/components/shared/no-data';
 import { OopsComponent } from '@/components/shared/oops-component';

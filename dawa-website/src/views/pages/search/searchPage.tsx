@@ -9,7 +9,7 @@ import ProductFilter from '@/components/features/filters/ProductFilter';
 import FiltersAndSorting from '@/components/features/filters/FiltersAndSorting';
 import CustomizableNoData from '@/components/shared/no-data';
 import { OopsComponent } from '@/components/shared/oops-component';
-import Loader from '@/components/Loader';
+import Loader from '@/components/loaders/SubLoader';
 
 const SearchPage: React.FC = () => {
   // Get query param from URL.

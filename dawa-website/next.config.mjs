@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: process.env.BASEPATH,
   images: {
     remotePatterns: [
       {
@@ -44,16 +43,6 @@ const nextConfig = {
     });
 
     return config;
-  },
-  redirects: async () => {
-    return [
-      {
-        source: '/',
-        destination: '/home',
-        permanent: true,
-        locale: false,
-      },
-    ];
   },
   experimental: {
     serverActions: {

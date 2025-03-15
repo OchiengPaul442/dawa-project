@@ -6,7 +6,7 @@ import Layout from '@/components/layout';
 import mainConfig from '@/@core/configs/mainConfigs';
 import { useAuth } from '@core/hooks/use-auth';
 import type React from 'react';
-import Loader from '@/components/Loader';
+import Loader from '@/components/loaders/SubLoader';
 
 export default function WishListLayout({
   children,
