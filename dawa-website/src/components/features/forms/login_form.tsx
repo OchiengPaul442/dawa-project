@@ -97,7 +97,7 @@ const LoginForm: React.FC = () => {
   }, [errorMessage]);
 
   return (
-    <div className="flex-1 p-6 md:p-10">
+    <div className="flex-1">
       <h2 className="text-2xl font-semibold mb-2 text-center">Login</h2>
       <p className="text-gray-500 mb-6 text-center">
         Welcome back! Please login to your account.
@@ -128,7 +128,7 @@ const LoginForm: React.FC = () => {
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <FaUnlock className="text-gray-400 mr-2" />
+            <FaUnlock className="text-gray-400 mr-2 hidden md:block" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"

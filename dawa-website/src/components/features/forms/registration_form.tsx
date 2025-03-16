@@ -129,7 +129,7 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full md:w-[60%] px-6 py-8 md:px-10 md:py-12 bg-white shadow-lg rounded-lg">
+    <div className="flex flex-col w-full md:w-[60%] md:px-10 md:py-12 bg-white md:shadow-lg md:rounded-lg">
       <h2 className="text-2xl font-semibold mb-2 text-center text-black">
         Create an Account
       </h2>
@@ -198,7 +198,7 @@ const RegistrationForm: React.FC = () => {
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
           >
-            <FaUnlock className="text-gray-400 mr-2" />
+            <FaUnlock className="text-gray-400 mr-2 hidden md:block" />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter password"

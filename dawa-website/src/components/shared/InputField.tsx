@@ -19,7 +19,7 @@ const InputField: React.FC<InputFieldProps> = ({
         errors ? 'border-red-500' : 'border-gray-300'
       }`}
     >
-      {Icon && <Icon className="text-gray-400 mr-2" />}
+      {Icon && <Icon className="text-gray-400 mr-2 hidden sm:block" />}
       <input
         {...inputProps}
         className="flex-grow outline-none bg-transparent text-gray-700 placeholder-gray-400"
