@@ -195,7 +195,7 @@ Thank you`;
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="flex flex-col h-auto max-h-[90vh] overflow-y-auto pb-safe"
+          className="flex flex-col rounded-t-3xl h-auto max-h-[90vh] overflow-y-auto pb-safe"
         >
           <SheetHeader>
             <SheetTitle className="text-center">Make an Offer</SheetTitle>

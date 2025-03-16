@@ -38,7 +38,7 @@ const SafetyTipsDialog: React.FC<SafetyTipsDialogProps> = ({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="flex flex-col max-h-[90vh] overflow-y-auto pb-safe"
+          className="flex flex-col rounded-t-3xl max-h-[90vh] overflow-y-auto pb-safe"
         >
           <SheetHeader>
             <SheetTitle>Safety Tips</SheetTitle>

@@ -218,7 +218,7 @@ const ReportAbuseDialog: React.FC<ReportAbuseDialogProps> = ({
       <Sheet open={open} onOpenChange={handleDialogClose}>
         <SheetContent
           side="bottom"
-          className="flex flex-col max-h-[90vh] overflow-y-auto pb-safe"
+          className="flex flex-col rounded-t-3xl max-h-[90vh] overflow-y-auto pb-safe"
         >
           <SheetHeader>
             <SheetTitle>Report Abuse</SheetTitle>

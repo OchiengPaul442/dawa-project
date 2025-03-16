@@ -116,8 +116,7 @@ const SendMessageDialog: React.FC<SendMessageDialogProps> = ({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          // Ensure enough space for keyboard, safe area, and scrolling
-          className="flex flex-col h-auto max-h-[90vh] overflow-y-auto pb-safe"
+          className="flex flex-col rounded-t-3xl h-auto max-h-[90vh] overflow-y-auto pb-safe"
         >
           <SheetHeader>
             <SheetTitle>Send a Message</SheetTitle>

@@ -60,7 +60,7 @@ const ContactSellerDialog: React.FC<ContactSellerDialogProps> = ({
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom">
+        <SheetContent side="bottom" className="rounded-t-3xl">
           <SheetHeader>
             <SheetTitle>Contact Seller</SheetTitle>
             <SheetDescription>

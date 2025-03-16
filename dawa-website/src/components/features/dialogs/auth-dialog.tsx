@@ -232,7 +232,7 @@ export function AuthDialog() {
       <Sheet open={isOpen as any} onOpenChange={handleOpenChange}>
         <SheetContent
           side="bottom"
-          className="sm:max-w-[425px] flex flex-col max-h-[90vh] overflow-y-auto pb-safe"
+          className="sm:max-w-[425px] rounded-t-3xl flex flex-col max-h-[90vh] overflow-y-auto pb-safe"
         >
           <SheetHeader>
             <SheetTitle className="text-2xl text-center font-bold">
