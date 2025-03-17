@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  MouseEvent as ReactMouseEvent,
+} from 'react';
 import Link from 'next/link';
 import { usePopper } from 'react-popper';
 import { ChevronRight } from 'lucide-react';
@@ -50,13 +56,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   // Track the currently hovered category (for showing subcategories).
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
 
-  // Refs for Popper
+  // Refs for Popper and container
   const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(
     null,
   );
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   );
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize Popper (position the subcategories panel to the right)
   const { styles, attributes, update } = usePopper(
@@ -101,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
 
   // When hovering a category, show subcategories in Popper
   const handleMouseEnterCategory = useCallback(
-    (cat: Category, e: React.MouseEvent<HTMLElement>) => {
+    (cat: Category, e: ReactMouseEvent<HTMLElement>) => {
       setHoveredCategory(cat);
       setReferenceElement(e.currentTarget as HTMLElement);
       // Recalculate Popper’s position
@@ -115,6 +122,22 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
     setHoveredCategory(null);
     setReferenceElement(null);
   }, []);
+
+  // Close subcategories if click is outside the container
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setHoveredCategory(null);
+      setReferenceElement(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
 
   // Render each category item
   const renderCategoryItem = useCallback(
@@ -193,7 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
   if (!categories || categories.length === 0) return <SidebarSkeleton />;
 
   return (
-    <div className="relative w-full lg:w-[288px]">
+    <div ref={containerRef} className="relative w-full lg:w-[288px]">
       {/* Main Category Card */}
       <Card className="w-full">
         <CardContent className="p-0">
@@ -219,7 +242,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect }) => {
           onMouseLeave={handleMouseLeavePopper}
           className="z-50 bg-white border border-gray-200 rounded-md shadow-md w-auto lg:w-[288px]"
         >
-          {/* Ensure subcategories fit in max-h-[400px] and scroll if overflowing */}
           <ScrollArea className="max-h-[400px] overflow-auto">
             <div className="p-3">
               <h3 className="px-2 py-1 text-sm font-semibold text-primary_1 border-b border-gray-200 mb-2">
